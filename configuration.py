@@ -6,11 +6,9 @@ __author__ = 'kitru'
 
 class ConfigurationException(Exception):
     """Exception raised for errors during configuration system.
-
     Attributes:
         msg  -- explanation of the error
     """
-
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
@@ -27,6 +25,10 @@ def getConfigFromFile(fileName):
 
 
 def getDbConfig(config):
+    """ Get database configuration from config file. If Db section is missing raise  Configuration Exception
+    Attributes:
+        config - SafeConfigParser object
+    """
     try:
         list =  config.items("db configuration")
         dictionary={}
@@ -39,18 +41,15 @@ def getDbConfig(config):
 
 
 def getDbConnection(config):
-    dbConfigList = getDbConfig(config)
-    print(dbConfigList)
-    db = MySQLdb.connect(dbConfigList['host'], dbConfigList['user'], dbConfigList['password'], dbConfigList['database'],
-                         port=int(dbConfigList['port']))
-    return db
+    """ Get db connection dased on config file
+    Attributes:
+        config - SafeConfigParser object
+    """
+    try:
+        confDict = getDbConfig(config)
+        db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
+                             port=int(confDict['port']))
+        return db
+    except Exception as error:
+        raise ConfigurationException(error.args)
 
-if __name__ == '__main__':
-    config = getConfigFromFile("default.cnf")
-    db = getDbConnection(config)
-    cursor = db.cursor()
-    cursor.execute('select version()')
-    row = cursor.fetchone()
-    print(row)
-
-    pass
