@@ -24,18 +24,24 @@ def getConfigFromFile(fileName):
         raise ConfigurationException(error.args)
 
 
+def getItemsBySection(config, sectionName):
+    list = config.items(sectionName)
+    print(list)
+    dictionary = {}
+    for key,value in list:
+        dictionary[key] = value
+    print(dictionary)
+    return dictionary
+
+
 def getDbConfig(config):
     """ Get database configuration from config file. If Db section is missing raise  Configuration Exception
     Attributes:
         config - SafeConfigParser object
     """
     try:
-        list =  config.items("db configuration")
-        dictionary={}
-        for item in list:
-            dictionary[item[0]]=item[1]
-        return dictionary
-
+        sectionName = "db configuration"
+        return getItemsBySection(config, sectionName)
     except ConfigParser.NoSectionError as error:
         raise ConfigurationException(error.args)
 
