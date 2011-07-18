@@ -25,6 +25,10 @@ def getConfigFromFile(fileName):
 
 
 def getItemsBySection(config, sectionName):
+    """   Return dictionary of selected section items
+    Attributes:
+        config - config file object (SafeConfigParser
+    """
     list = config.items(sectionName)
     dictionary = {}
     for key, value in list:

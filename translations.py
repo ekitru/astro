@@ -3,28 +3,42 @@ from configuration import getConfigFromFile, getItemsBySection
 
 __author__ = 'kitru'
 
+class Translate(object):
+    def __init__(self, codes):
+        self.codes = codes
+
+    def get(self, key):
+        """
+        return right translation or key
+        """
+        if key in self.codes:
+            return self.codes[key]
+        else:
+            return key
+
+
 def getSelectedTranslation(config):
     """
     Return codes for selected language
     """
-    name = getSelectedLanguage(config)
-    return getCodes(name)
+    name = _getSelectedLanguage(config)
+    return _getCodes(name)
 
 
-def getSelectedLanguage(config):
+def _getSelectedLanguage(config):
     """
     Find selected translation from default config file
     """
     return config.get("common", "selected")
 
 
-def getCodes(name):
-    curTrans = getTranslationConfig(name)
+def _getCodes(name):
+    curTrans = _getTranslationConfig(name)
     codes = getItemsBySection(curTrans, 'codes')
     return codes
 
 
-def getTranslationConfig(name):
+def _getTranslationConfig(name):
     """
     Return SafeConfigParser from name.cnf file
     """
