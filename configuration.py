@@ -1,6 +1,5 @@
 import ConfigParser
 import codecs
-import MySQLdb
 
 __author__ = 'kitru'
 
@@ -9,6 +8,7 @@ class ConfigurationException(Exception):
     Attributes:
         msg  -- explanation of the error
     """
+
     def __init__(self, msg):
         Exception.__init__(self, msg)
 
@@ -26,11 +26,9 @@ def getConfigFromFile(fileName):
 
 def getItemsBySection(config, sectionName):
     list = config.items(sectionName)
-    print(list)
     dictionary = {}
-    for key,value in list:
+    for key, value in list:
         dictionary[key] = value
-    print(dictionary)
     return dictionary
 
 
@@ -43,19 +41,5 @@ def getDbConfig(config):
         sectionName = "db configuration"
         return getItemsBySection(config, sectionName)
     except ConfigParser.NoSectionError as error:
-        raise ConfigurationException(error.args)
-
-
-def getDbConnection(config):
-    """ Get db connection dased on config file
-    Attributes:
-        config - SafeConfigParser object
-    """
-    try:
-        confDict = getDbConfig(config)
-        db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
-                             port=int(confDict['port']))
-        return db
-    except Exception as error:
         raise ConfigurationException(error.args)
 

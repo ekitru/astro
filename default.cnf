@@ -1,5 +1,6 @@
 [common]
-
+translations=est,rus
+selected=rus
 [db configuration]
 user = root
 password = 123456
