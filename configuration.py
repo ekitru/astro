@@ -30,11 +30,11 @@ def getItemsBySection(config, sectionName):
         config - config file object (SafeConfigParser
     """
     list = config.items(sectionName)
-    dictionary = {}
-    for key, value in list:
-        dictionary[key] = value
-    return dictionary
-
+#    dictionary = {}
+#    for key, value in list:
+#        dictionary[key] = value
+#    return dictionary
+    return dict(list)
 
 def getDbConfig(config):
     """ Get database configuration from config file. If Db section is missing raise  Configuration Exception
