@@ -30,13 +30,11 @@ if __name__ == '__main__':
             print("Translation page loaded")
         else:
             print("Translation failed")
-
-
-
     except configuration.ConfigurationException as ce:
         print("Error during configuration occure:"+ce.__str__())
     except Exception as e:
         print("Unexcepted error occur:"+e.__str__())
+
 
     pass
   

@@ -2,9 +2,9 @@
 translations=est,rus
 selected=rus
 [db configuration]
-user = root
-password = 123456
-host = 127.0.0.1
+user = astro
+password = 5gh6w35
+host = localhost
 port = 3306
 database = astro
 
