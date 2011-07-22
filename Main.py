@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 import logging
+import os
+from os.path import join
 
 from configuration import Configuration, ConfigurationException
 from dbManager import DbManager
@@ -10,10 +12,13 @@ __author__ = 'kitru'
 
 if __name__ == '__main__':
     try:
+        if not os.path.exists('logs'):
+            os.makedirs('logs', mode=0711)
+
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
-                            filename='astroFull.log',
+                            filename=join('logs', 'astroFull.log'),
                             filemode='w')
 
         logging.info('======= Program initialization =======')

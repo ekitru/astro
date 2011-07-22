@@ -1,7 +1,6 @@
 import ConfigParser
 import codecs
 import logging
-import os
 from os.path import join
 
 __author__ = 'kitru'
@@ -20,9 +19,7 @@ class ConfigurationException(Exception):
 
 def getLogger(name):
     logger = logging.getLogger(name)
-    if not os.path.exists('logs'):
-        os.makedirs('logs',mode=0711)
-    fileHandler = logging.FileHandler(join('logs',name + '.log'), mode='w')
+    fileHandler = logging.FileHandler(join('logs', name + '.log'), mode='w')
     fileHandler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
     logger.addHandler(fileHandler)
     return logger
@@ -47,7 +44,7 @@ class Configuration(object):
             return config
         except IOError as error:
             msg = error.args + (fileName,)
-            raise ConfigurationException(msg,self.logger)
+            raise ConfigurationException(msg, self.logger)
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
@@ -66,7 +63,7 @@ class Configuration(object):
             self.logger.info('Read section ' + '\"' + section_name + '\"')
             return self.__getItemsBySection(self.config, section_name)
         except ConfigParser.NoSectionError as error:
-            raise ConfigurationException(error.args,self.logger)
+            raise ConfigurationException(error.args, self.logger)
 
     def __getItemsBySection(self, config, section_name):
         """   Return dictionary of selected section items      """
@@ -83,7 +80,7 @@ class Configuration(object):
             codes = self.__getItemsBySection(curTrans, 'codes')
             return codes
         except Exception as ex: #TODO may be create new exception, like Translation exception?
-            raise ConfigurationException(ex.args,self.logger)
+            raise ConfigurationException(ex.args, self.logger)
 
 
     def getDefaultLanguage(self):
