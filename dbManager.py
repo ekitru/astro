@@ -1,15 +1,14 @@
 import MySQLdb
-from configuration import ConfigurationException, getDbConfig
+from configuration import ConfigurationException
 
 __author__ = 'kitru'
 
-def getDbConnection(config):
+def getDbConnection(confDict):
     """ Get db connection dased on config file
     Attributes:
         config - SafeConfigParser object
     """
     try:
-        confDict = getDbConfig(config)
         db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
                              port=int(confDict['port']))
         return db
