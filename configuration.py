@@ -11,8 +11,17 @@ class ConfigurationException(Exception):
         msg  -- explanation of the error
     """
 
-    def __init__(self, msg):
+    def __init__(self, logger, msg):
         Exception.__init__(self, msg)
+        logger.exception(msg)
+
+
+def getLogger(name):
+    logger = logging.getLogger(name)
+    fileHandler = logging.FileHandler(name + '.log', mode='w')
+    fileHandler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
+    logger.addHandler(fileHandler)
+    return logger
 
 
 class Configuration(object):
@@ -22,7 +31,8 @@ class Configuration(object):
     """
 
     def __init__(self, configFileName):
-        logging.info('Read configuration file:' + configFileName)
+        self.logger = getLogger('astroConfig')
+        self.logger.info('Read configuration file:' + configFileName)
         self.config = self.__getConfigFromFile(configFileName)
 
     def __getConfigFromFile(self, fileName):
@@ -32,8 +42,7 @@ class Configuration(object):
             config.readfp(codecs.open(fileName, "r", "utf8"))
             return config
         except IOError as error:
-            print(error.message)
-            raise ConfigurationException(error.args)
+            raise ConfigurationException(self.logger, error.args)
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
@@ -49,9 +58,10 @@ class Configuration(object):
 
     def __getConfigBySection(self, section_name):
         try:
+            self.logger.info('Read section ' + '\"' + section_name + '\"')
             return self.__getItemsBySection(self.config, section_name)
         except ConfigParser.NoSectionError as error:
-            raise ConfigurationException(error.args)
+            raise ConfigurationException(self.logger, error.args)
 
     def __getItemsBySection(self, config, section_name):
         """   Return dictionary of selected section items      """
@@ -61,10 +71,14 @@ class Configuration(object):
 
     # Tranlation stuff
     def getCodes(self):
-        language = self.getDefaultLanguage()
-        curTrans = self.__getTranslationConfig(language)
-        codes = self.__getItemsBySection(curTrans, 'codes')
-        return codes
+        try:
+            self.logger.info('Get translation codes')
+            language = self.getDefaultLanguage()
+            curTrans = self.__getTranslationConfig(language)
+            codes = self.__getItemsBySection(curTrans, 'codes')
+            return codes
+        except Exception as ex: #TODO may be create new exception, like Translation exception?
+            raise ConfigurationException(self.logger, ex.args)
 
 
     def getDefaultLanguage(self):
@@ -72,11 +86,13 @@ class Configuration(object):
         Find default translation from config file
         """
         dict = self.getCommonConfigDict()
+        self.logger.info('Read default translation')
         return dict["default translation"]
 
     def __getTranslationConfig(self, language):
         """
         Return SafeConfigParser from name.cnf file
         """
+        self.logger.info('Read translations for ' + language)
         return self.__getConfigFromFile(join("trans", language + ".cnf"))
 
