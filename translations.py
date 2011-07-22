@@ -14,7 +14,7 @@ class Translate(object):
         if key in self.codes:
             return self.codes[key]
         else:
-            self.logger.warning('Missing translation for '+key)
+            self.logger.warning('Missing translation for ' + key)
             return key
 
 
