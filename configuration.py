@@ -10,10 +10,12 @@ class ConfigurationException(Exception):
     Attributes:
         msg  -- explanation of the error
     """
+    def __init__(self, msg):
+        Exception.__init__(self, msg)
 
     def __init__(self, logger, msg):
         Exception.__init__(self, msg)
-        logger.exception(msg)
+        logger.error(msg)
 
 
 def getLogger(name):
@@ -42,7 +44,8 @@ class Configuration(object):
             config.readfp(codecs.open(fileName, "r", "utf8"))
             return config
         except IOError as error:
-            raise ConfigurationException(self.logger, error.args)
+            msg = error.args + (fileName,)
+            raise ConfigurationException(self.logger, msg)
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
