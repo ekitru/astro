@@ -1,6 +1,7 @@
 import ConfigParser
 import codecs
 import logging
+import os
 from os.path import join
 
 __author__ = 'kitru'
@@ -19,6 +20,8 @@ class ConfigurationException(Exception):
 
 def getLogger(name):
     logger = logging.getLogger(name)
+    if not os.path.exists('logs'):
+        os.makedirs('logs',mode=0711)
     fileHandler = logging.FileHandler(join('logs',name + '.log'), mode='w')
     fileHandler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
     logger.addHandler(fileHandler)
