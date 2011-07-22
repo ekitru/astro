@@ -1,0 +1,6 @@
+2011-07-22 16:10:22,372 astroConfig  INFO     Read configuration file:default.cnf
+2011-07-22 16:10:22,373 astroConfig  INFO     Read section "db configuration"
+2011-07-22 16:10:22,448 astroConfig  INFO     Get translation codes
+2011-07-22 16:10:22,449 astroConfig  INFO     Read section "common"
+2011-07-22 16:10:22,449 astroConfig  INFO     Read default translation
+2011-07-22 16:10:22,459 astroConfig  INFO     Read translations for rus
