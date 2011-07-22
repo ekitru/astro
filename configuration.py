@@ -10,12 +10,11 @@ class ConfigurationException(Exception):
     Attributes:
         msg  -- explanation of the error
     """
-    def __init__(self, msg):
-        Exception.__init__(self, msg)
 
-    def __init__(self, logger, msg):
+    def __init__(self, msg, logger=None):
         Exception.__init__(self, msg)
-        logger.error(msg)
+        if logger:
+            logger.error(msg)
 
 
 def getLogger(name):
@@ -45,7 +44,7 @@ class Configuration(object):
             return config
         except IOError as error:
             msg = error.args + (fileName,)
-            raise ConfigurationException(self.logger, msg)
+            raise ConfigurationException(msg,self.logger)
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
@@ -64,7 +63,7 @@ class Configuration(object):
             self.logger.info('Read section ' + '\"' + section_name + '\"')
             return self.__getItemsBySection(self.config, section_name)
         except ConfigParser.NoSectionError as error:
-            raise ConfigurationException(self.logger, error.args)
+            raise ConfigurationException(error.args,self.logger)
 
     def __getItemsBySection(self, config, section_name):
         """   Return dictionary of selected section items      """
@@ -81,7 +80,7 @@ class Configuration(object):
             codes = self.__getItemsBySection(curTrans, 'codes')
             return codes
         except Exception as ex: #TODO may be create new exception, like Translation exception?
-            raise ConfigurationException(self.logger, ex.args)
+            raise ConfigurationException(ex.args,self.logger)
 
 
     def getDefaultLanguage(self):

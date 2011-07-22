@@ -16,11 +16,9 @@ if __name__ == '__main__':
                             filename='astroFull.log',
                             filemode='w')
 
-        logging.info('=== Program initialization ===')
-        #Read configuration file
+        logging.info('======= Program initialization =======')
         configuration = Configuration('default.cnf')
 
-        #Establish connection to DB
         logging.info('=== DB initialization ===')
         dbConfig = configuration.getDbConfigDict()
         db = DbManager(dbConfig)
@@ -30,8 +28,7 @@ if __name__ == '__main__':
         else:
             print("Dd failed")
 
-        #Read selected language translation
-        logging.info('=== Read translation page  ===')
+        logging.info('=== Read translation page  ===')   #Read selected language translation
         codes = configuration.getCodes()
         translate = Translate(codes)
         if translate.get("help"):
@@ -39,13 +36,13 @@ if __name__ == '__main__':
         else:
             print("Translation failed")
 
-        translate.get('sfasdf')
+
     except ConfigurationException as ce:
         print("Error during configuration occure:" + ce.__str__())
         raise ce
-        #    except Exception as e:
-    #        print("Unexcepted error occur:" + e.__str__())
-    #        raise e
+    except Exception as e:
+        print("Unexcepted error occur:" + e.__str__())
+        raise e
 
     pass
   

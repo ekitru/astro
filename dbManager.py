@@ -19,7 +19,7 @@ class DbManager(object):
                                  port=int(confDict['port']))
             return db
         except Exception as error:
-            raise ConfigurationException(self.logger, error.args)
+            raise ConfigurationException(error.args, self.logger)
 
     def getVersion(self):
         cursor = self.conn.cursor()
