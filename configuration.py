@@ -1,6 +1,7 @@
 import ConfigParser
 import codecs
 import logging
+import os
 from os.path import join
 
 __author__ = 'kitru'
@@ -32,9 +33,19 @@ class Configuration(object):
     """
 
     def __init__(self, configFileName):
+        self.__initLogger()
         self.logger = getLogger('astroConfig')
-        self.logger.info('Read configuration file:' + configFileName)
+        self.logger.info('Read configuration file: ' + configFileName)
         self.config = self.__getConfigFromFile(configFileName)
+
+    def __initLogger(self):
+        if not os.path.exists('logs'):
+            os.makedirs('logs', mode=0711)
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                            datefmt='%m-%d %H:%M',
+                            filename=join('logs', 'astroFull.log'),
+                            filemode='w')
 
     def __getConfigFromFile(self, fileName):
         """ Opens configuration file. If file is missing or could not be read, new COnfigurationException will be raised    """
