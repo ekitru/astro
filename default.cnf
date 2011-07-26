@@ -1,6 +1,7 @@
 [common]
 translations=est,rus
 default translation=rus
+
 [db configuration]
 user = astro
 password = 5gh6w35

@@ -1,4 +1,6 @@
 import logging
+import os
+from posixpath import join
 from CommManager import CommManager
 from DbManager import DbManager
 from configuration import Configuration, ConfigurationException
@@ -20,8 +22,18 @@ class InitializationException(Exception):
 
 class AstroController(object):
     def __init__(self):
+        self.__initLogger()
         self.initialization()
 
+    def __initLogger(self):
+        if not os.path.exists('logs'):
+            os.makedirs('logs', mode=0711)
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                            datefmt='%m-%d %H:%M',
+                            filename=join('logs', 'astroFull.log'),
+                            filemode='w')
+        logging.info("dfwesfsdsfds")
     def initialization(self):
         try:
             config = self.openConfig('default.cnf')
