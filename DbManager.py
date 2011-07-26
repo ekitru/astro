@@ -6,7 +6,6 @@ __author__ = 'kitru'
 class DbManager(object):
     def __init__(self, confDict):
         self.logger = getLogger('astroDbManager')
-        self.logger.info('Establishing connection')
         self.database = confDict['database']
         self.conn = self.__getDbConnection(confDict)
 
@@ -16,8 +15,10 @@ class DbManager(object):
             config - SafeConfigParser object
         """
         try:
+            self.logger.info('Establishing connection')
             db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
                                  port=int(confDict['port']))
+            self.logger.info('Connection established')
             return db
         except Exception as error:
             raise ConfigurationException(error.args, self.logger)

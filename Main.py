@@ -11,7 +11,6 @@ if __name__ == '__main__':
         star = controller.dbManager.getStar('test')
         print(star)
         controller.freeResources()
-
     except InitializationException as e:
         print("Unexcepted error occur:" + e.__str__())
         raise e
