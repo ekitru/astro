@@ -1,7 +1,6 @@
 import ConfigParser
 import codecs
 import logging
-import os
 from os.path import join
 
 __author__ = 'kitru'

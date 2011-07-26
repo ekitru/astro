@@ -3,10 +3,14 @@ translations=est,rus
 default translation=rus
 
 [db configuration]
-user = astro
+user = astro 1
 password = 5gh6w35
 host = localhost
 port = 3306
 database = astro
 
 [communication]
+slave id = 1
+host = 192.168.88.46
+port = 502
+

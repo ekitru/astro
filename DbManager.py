@@ -7,6 +7,7 @@ class DbManager(object):
     def __init__(self, confDict):
         self.logger = getLogger('astroDbManager')
         self.logger.info('Establish connection')
+        self.database = confDict['database']
         self.conn = self.__getDbConnection(confDict)
 
     def __getDbConnection(self, confDict):
@@ -21,10 +22,22 @@ class DbManager(object):
         except Exception as error:
             raise ConfigurationException(error.args, self.logger)
 
-    def getVersion(self):
+    def saveNewStar(self,name,alfa,delta):
+        sql = "INSERT INTO stars SET name='"+name+"', alfa="+alfa+",delta="+delta+";"
         cursor = self.conn.cursor()
-        cursor.execute('select version()')
-        row = cursor.fetchone()
-        return row
+        cursor.execute(sql)
+        cursor.close()
+
+    def getStar(self,name):
+        sql = "SELECT name,alfa,delta FROM stars where name='"+name+"';"
+        cursor = self.conn.cursor()
+        cursor.execute(sql)
+        response = cursor.fetchone()
+        cursor.close()
+        return response
+
+    def close(self):
+        self.logger.info("Close DB connection")
+        self.conn.close()
 
   

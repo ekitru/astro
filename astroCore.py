@@ -33,7 +33,7 @@ class AstroController(object):
                             datefmt='%m-%d %H:%M',
                             filename=join('logs', 'astroFull.log'),
                             filemode='w')
-        logging.info("dfwesfsdsfds")
+
     def initialization(self):
         try:
             config = self.openConfig('default.cnf')
@@ -41,8 +41,15 @@ class AstroController(object):
             self.dbManager = self.openDbManager(config)
             self.transCodes = self.openTranslationCodes(config)
         except ConfigurationException as ce:
-            print("Error during configuration occure:" + ce.__str__())
+            logging.error('Erron during initialization occure: '+ce.__str__())
             raise InitializationException(ce)
+
+    def freeResources(self):
+        try:
+            logging.info('======= Free all resources: DB, MODBUS =======')
+            self.dbManager.close();
+        except Exception as e:
+            raise ClosingException(e)
 
     def openConfig(self, confFileName):
         logging.info('======= Program initialization =======')
@@ -50,7 +57,8 @@ class AstroController(object):
 
     def openCommConfig(self, config):
         logging.info('=== Communication initialization ===')
-        return CommManager(config)
+        commConfig = config.getCommunicationConfigDict()
+        return CommManager(commConfig)
 
     def openDbManager(self, config):
         logging.info('=== DB initialization ===')
@@ -61,3 +69,4 @@ class AstroController(object):
         logging.info('=== Read translation page  ===')   #Read selected language translation
         codes = config.getCodes()
         return Translate(codes)
+
