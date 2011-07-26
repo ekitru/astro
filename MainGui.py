@@ -30,6 +30,7 @@ class Example(wx.Frame):
         hbox_common = wx.BoxSizer(wx.HORIZONTAL)
         vbox_control = wx.BoxSizer(wx.VERTICAL)
         vbox_starlist = wx.BoxSizer(wx.VERTICAL)
+        wx.BoxSizer()
 
         hbox_common.Add(vbox_control, flag=wx.LEFT)
         hbox_common.Add(vbox_starlist, flag=wx.RIGHT)
