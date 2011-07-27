@@ -1,2 +1,4 @@
-This program will control TU telescope in Tartu, Estonia
+Needed modules:
+    wxPython
+    modbus_tk
 
