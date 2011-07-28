@@ -2,3 +2,6 @@ Needed modules:
     wxPython
     modbus_tk
 
+apt-get install python-dev
+easy_install pyephem
+
