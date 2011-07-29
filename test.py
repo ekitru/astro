@@ -42,5 +42,6 @@ if __name__ == '__main__':
     telescope.long =  ephem.degrees('26.46008849143982')
     telescope.lat = ephem.degrees('58.26574454393915')
     telescope.elevation = 200
-    print(telescope.sidereal_time())  #correct
+    print('local sidereal time',telescope.sidereal_time())  #correct
+    ephem.readtle
 
