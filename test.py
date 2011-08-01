@@ -26,22 +26,23 @@ if __name__ == 'la__main__':
 if __name__ == '__main__':
     import ephem
 
-    starRA = ephem.hours("12:00:00")
-    starDEC= ephem.degrees("10:10:10")
-    d = ephem.Equatorial(starRA, starDEC)
-    print(d.ra,d.dec)
-
-    epoch_date = ephem.Date(ephem.J2000)
-    print(epoch_date.real)
-    julian_epoch_date = ephem.julian_date(epoch_date)
-    print(julian_epoch_date)
-
     print('yulian date is correct',ephem.julian_date())     #correct
 
     telescope = ephem.Observer()
+    telescope.date = ephem.now()
     telescope.long =  ephem.degrees('26.46008849143982')
     telescope.lat = ephem.degrees('58.26574454393915')
-    telescope.elevation = 200
+    telescope.elevation = 320
+    telescope.temp = 25;
+
+
+    print('telescope',telescope)
     print('local sidereal time',telescope.sidereal_time())  #correct
-    ephem.readtle
+
+    star = ephem.star('Arcturus')
+    star.compute(telescope)
+    print(star.a_ra, star.a_dec)
+    print(star.g_ra, star.g_dec)
+    print(star.ra, star.dec)
+    print(star.alt)
 
