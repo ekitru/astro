@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 import wx
-from AstroGui import AstroGui
-from astroCore import AstroController, InitializationException, ClosingException
+from AstroController import AstroController, InitializationException, ClosingException
+from MainGui import MainGui
 
 __author__ = 'kitru'
 
@@ -14,7 +14,7 @@ if __name__ == '__main__':
         raise exception
 
     app = wx.App()
-    AstroGui(None, title='AstroLab', controller=controller)
+    MainGui(None, title='AstroLab', controller=controller)
     app.MainLoop()
 
     try:

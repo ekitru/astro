@@ -1,6 +1,6 @@
 [common]
 translations=est,rus
-default translation=est
+default translation=rus
 
 [observer]
 latitude = 58.26574454393915

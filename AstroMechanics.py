@@ -22,6 +22,18 @@ class AstroMechanics(object):
         observer.temp = float(temp)
         return observer
 
+    def updateObserverTime(self):
+        self.observer.date = ephem.now()
+
+    def getCurrentTimeDate(self):
+        """ return tuple of LT, UTC, JD, LST """
+        self.updateObserverTime()
+        utc = str(self.observer.date)
+        lst = str(self.observer.sidereal_time())
+        localtime = str(strftime("%Z %H:%M:%S"))
+        jd = str(ephem.julian_date())
+        return localtime, utc, jd, lst
+
     def getLT(self):
         localtime = str(strftime("%Z %H:%M:%S"))
         return localtime
@@ -30,7 +42,7 @@ class AstroMechanics(object):
         return ephem.julian_date()
 
     def getUTC(self):
-        self.observer.date = ephem.now()
+        self.updateObserverTime()
         return self.observer.date
 
     def getLST(self):
