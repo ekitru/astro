@@ -1,5 +1,9 @@
 [common]
 name=Eesti
 [codes]
-file = FailÖääǒǔȌȁǿȀȬ
-help = Abi
+Time & Date=Time&&Date
+Time=Time
+Local time=LocalTime
+UTC=UTC
+Julian day=Julian Day
+Local sidereal time=Sidereal time

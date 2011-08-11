@@ -46,6 +46,10 @@ class Configuration(object):
             msg = error.args + (fileName,)
             raise ConfigurationException(msg, self.logger)
 
+    def getObserverDict(self):
+        """ Get observer parameters: position, altitude  """
+        return self.__getConfigBySection("observer")
+
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
         return self.__getConfigBySection("common")

@@ -1,6 +1,7 @@
 import logging
 import os
 from posixpath import join
+from AstroMechanics import AstroMechanics
 from CommManager import CommManager
 from DbManager import DbManager
 from configuration import Configuration, ConfigurationException
@@ -10,6 +11,18 @@ __author__ = 'kitru'
 
 class InitializationException(Exception):
     """Exception raised for errors during system initialization.
+    Attributes:
+        msg  -- explanation of the error
+    """
+
+    def __init__(self, msg, logger=None):
+        Exception.__init__(self, msg)
+        if logger:
+            logger.error(msg)
+
+
+class ClosingException(object):
+    """Exception raised for errors during system closing.
     Attributes:
         msg  -- explanation of the error
     """
@@ -35,19 +48,23 @@ class AstroController(object):
                             filemode='w')
 
     def initialization(self):
+        """ Initialization for all components
+        Opens DB connection and connection with PLCm also reads translation codes
+        """
         try:
             config = self.openConfig('default.cnf')
-            self.communication = self.openCommConfig(config)
+            self.mechanics = self.openAstroMechanics(config)
+            self.commManager = self.openCommManager(config)
             self.dbManager = self.openDbManager(config)
             self.transCodes = self.openTranslationCodes(config)
         except ConfigurationException as ce:
-            logging.error('Erron during initialization occure: '+ce.__str__())
+            logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
 
     def freeResources(self):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
-            self.dbManager.close();
+            self.dbManager.close()
         except Exception as e:
             raise ClosingException(e)
 
@@ -55,7 +72,7 @@ class AstroController(object):
         logging.info('======= Program initialization =======')
         return Configuration(confFileName)
 
-    def openCommConfig(self, config):
+    def openCommManager(self, config):
         logging.info('=== Communication initialization ===')
         commConfig = config.getCommunicationConfigDict()
         return CommManager(commConfig)
@@ -66,7 +83,12 @@ class AstroController(object):
         return DbManager(dbConfig)
 
     def openTranslationCodes(self, config):
-        logging.info('=== Read translation page  ===')   #Read selected language translation
+        logging.info('=== Reading translation page  ===')   #Read selected language translation
         codes = config.getCodes()
         return Translate(codes)
 
+    def openAstroMechanics(self, config):
+        """ get observer for telescope position """
+        logging.info('=== Reading telescope configurations ===')
+        configs = config.getObserverDict()
+        return AstroMechanics(configs)

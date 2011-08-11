@@ -1,5 +1,7 @@
 [common]
 name=Русский
 [codes]
-file = Файл
-help = Помощь
+Time & Date=Время, Дата
+Local time=Местное время
+Julian day=Юлианское время
+Local sidereal time=Cолнечное время

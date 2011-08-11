@@ -1,6 +1,12 @@
 [common]
 translations=est,rus
-default translation=rus
+default translation=est
+
+[observer]
+latitude = 58.26574454393915
+longitude = 26.46008849143982
+elevation = 65.42
+temperature = 24.0
 
 [db configuration]
 user = astro
