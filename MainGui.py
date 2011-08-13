@@ -5,21 +5,23 @@
 
 import wx
 import time
-from panels import TimeDatePanel
+from panels import TimeDatePanel, ObjectPanel
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
-                                       size=(400, 400))
+                                       size=(800, 400))
         self.controller = controller
-        mainLayout = wx.GridSizer(2, 2, 0, 0)
-        self.timeDatePanel = TimeDatePanel(self, codes=self.controller.transCodes)
-        self.timeDatePanel.SetBackgroundColour("green")
+        mainLayout = wx.GridSizer(2, 2, 10, 10)
+        self.objectPanel = ObjectPanel(parent=self, codes=self.controller.transCodes)
+        self.timeDatePanel = TimeDatePanel(parent=self, codes=self.controller.transCodes)
 
+        mainLayout.Add(self.objectPanel)
         mainLayout.Add(self.timeDatePanel)
         self.SetSizer(mainLayout)
+#        self.Fit()
         self.Centre()
-        self.Show()
+#        self.Show()
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
@@ -27,4 +29,7 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         print(time.ctime())
-        self.timeDatePanel.updateTimeDate(self.controller.mechanics)
+        self.timeDatePanel.update(self.controller.mechanics)
+
+        self.Fit()
+        self.Show()

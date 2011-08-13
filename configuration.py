@@ -97,8 +97,8 @@ class Configuration(object):
 
     def __getTranslationConfig(self, language):
         """
-        Return SafeConfigParser from name.cnf file
+        Return SafeConfigParser from name.conf file
         """
         self.logger.info('Read translations for ' + language)
-        return self.__getConfigFromFile(join("trans", language + ".cnf"))
+        return self.__getConfigFromFile(join("trans", language + ".conf"))
 

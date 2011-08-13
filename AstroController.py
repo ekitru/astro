@@ -52,7 +52,7 @@ class AstroController(object):
         Opens DB connection and connection with PLCm also reads translation codes
         """
         try:
-            config = self.openConfig('default.cnf')
+            config = self.openConfig('default.conf')
             self.mechanics = self.openAstroMechanics(config)
             self.commManager = self.openCommManager(config)
             self.dbManager = self.openDbManager(config)

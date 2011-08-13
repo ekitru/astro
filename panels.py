@@ -2,30 +2,43 @@ import wx
 
 __author__ = 'kitru'
 
-class TimeDatePanel(wx.Panel):
-    def __init__(self, parent, ID=wx.ID_ANY, pos=wx.DefaultPosition, size=(200, 200), codes=None):
-        wx.Panel.__init__(self, parent, ID, pos, size)
+class SimplePanel(wx.Panel):
+    def __init__(self, parent=None, ID=wx.ID_ANY):
+        wx.Panel.__init__(self, parent, ID)
 
-        layout = wx.FlexGridSizer(5, 2, 0, 20)
-        self.addLine(layout, codes.get("Time & Date"), wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD))
-        self.LT = self.addLine(layout, codes.get("Local Time"))
-        self.UTC = self.addLine(layout, codes.get("UTC"))
-        self.JD = self.addLine(layout, codes.get("Julian day"))
-        self.LST = self.addLine(layout, codes.get("Local sidereal time"))
+    def addLine(self, layout, key="",value="", keyFont=None, valueFont=None, keyFlag=None, valueFlag=None):
+        keyField = wx.StaticText(self, wx.ID_ANY, key)
+        valueField = wx.StaticText(self, wx.ID_ANY, value)
 
-        self.SetSizer(layout)
-        self.Fit()
+        if keyFont:
+            keyField.SetFont(keyFont)
+        if valueFont:
+            valueField.SetFont(valueFont)
 
-    def addLine(self, layout, name, font=None):
-        keyField = wx.StaticText(self, wx.ID_ANY, name)
-        if font:
-            keyField.SetFont(font)
-        element = wx.StaticText(self, wx.ID_ANY, "                                              ")
-        layout.Add(keyField, 0, flag=wx.ALL | wx.ALIGN_RIGHT)
-        layout.Add(element)
-        return element
+        self.__addElement(layout, keyField, keyFlag)
+        self.__addElement(layout, valueField, valueFlag)
 
-    def updateTimeDate(self, mechanics):
+        return keyField, valueField
+
+    def __addElement(self, layout, element, flag):
+        if flag is None:
+            flag = wx.ALL | wx.EXPAND | wx.CENTER
+        layout.Add(element, 0, flag)
+
+
+class TimeDatePanel(SimplePanel):
+    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, ID)
+
+        sizer = wx.GridSizer(5, 2, 0, 20)
+        self.addLine(sizer, codes.get("Time & Date"), keyFont=wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD))
+        caption, self.LT = self.addLine(sizer, codes.get("Local Time"), keyFlag=wx.wx.ALL | wx.ALIGN_RIGHT)
+        caption, self.UTC = self.addLine(sizer, codes.get("UTC"), keyFlag=wx.wx.ALL | wx.ALIGN_RIGHT)
+        caption, self.JD = self.addLine(sizer, codes.get("Julian day"), keyFlag=wx.wx.ALL | wx.ALIGN_RIGHT)
+        caption, self.LST = self.addLine(sizer, codes.get("Local sidereal time"), keyFlag=wx.wx.ALL | wx.ALIGN_RIGHT)
+        self.SetSizer(sizer)
+
+    def update(self, mechanics):
         """ Updates local time, sidereal time, julian day and UTC time
         Attributes:
            mechanics - AstroMechanics class instance
@@ -36,3 +49,19 @@ class TimeDatePanel(wx.Panel):
         self.JD.SetLabel(jd)
         self.LST.SetLabel(lst)
         self.Fit()
+
+
+class ObjectPanel(SimplePanel):
+    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, ID)
+
+        sizer = wx.GridSizer(4,4,0,20)
+
+        caption, self.objectName = self.addLine(sizer, key=codes.get("Object"), keyFont=wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD))
+        self.addLine(sizer, keyFont=wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD)) # dummy line
+        self.addLine(sizer, value = codes.get('absoluteRADEC'), valueFont=wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD))
+        self.addLine(sizer, value = codes.get('currentRADEC'), valueFont=wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD))
+
+
+
+        self.SetSizer(sizer)
