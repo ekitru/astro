@@ -106,31 +106,52 @@ class TimeDatePanel(SimplePanel):
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])
         self.LST.SetLabel(times[3])
-        self.Fit()
 
 
 class PositioningPanel(SimplePanel):
+    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, ID)
+
+        sizer = wx.FlexGridSizer(4, 3, 5, 10)
+        self.RA = self.CreateField()
+        self.DEC = self.CreateField()
+        self.focus = self.CreateField()
+
+        temp = wx.BoxSizer(wx.HORIZONTAL)
+        temp.Add(wx.Button(self, label='+', size=(20, 20)))
+        temp.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (10, 10), (100, 20), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
+        temp.Add(wx.Button(self, label='-', size=(20, 20)))
+        temp2 = wx.BoxSizer(wx.HORIZONTAL)
+        temp2.Add(wx.Button(self, label='+', size=(20, 20)))
+        temp2.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (10, 10), (100, 20), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
+        temp2.Add(wx.Button(self, label='-', size=(20, 20)))
+        temp3 = wx.BoxSizer(wx.HORIZONTAL)
+        temp3.Add(wx.Button(self, label='+', size=(20, 20)))
+        temp3.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (10, 10), (100, 20), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
+        temp3.Add(wx.Button(self, label='-', size=(20, 20)))
+
+        sizer.Add(self.CreateHeader('Positioning'))
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateCaption(codes.get('scopeRA')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.RA)
+        sizer.Add(temp)
+        sizer.Add(self.CreateCaption(codes.get('scopeDEC')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.DEC)
+        sizer.Add(temp2)
+        sizer.Add(self.CreateCaption(codes.get('scopeFocus')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.focus)
+        sizer.Add(temp3)
+        self.SetSizer(sizer)
+
     """This panel represents telescope position with manual positioning opportunities
     Attributes:
         codes - Translation codes
     """
 
-    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent, ID)
-
-        sizer = wx.FlexGridSizer(4, 3, 5, 10)
-        sizer.Add(self.CreateHeader('Positioning'))
-        sizer.Add(self.CreateField())
-        sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('telescopeRA')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateField())
-        sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('telescopeDEC')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateField())
-        sizer.Add(self.CreateField())
-        self.SetSizer(sizer)
-
     def update(self):
-        pass
+        self.RA.SetLabel('10:10:10')
+        self.DEC.SetLabel('22:22:22')
+        self.focus.SetLabel('23.23')
 
 

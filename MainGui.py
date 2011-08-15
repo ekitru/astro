@@ -32,7 +32,8 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         print(time.ctime())
-        self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
         self.objectPanel.update('John Doe', ('10:10:10','45:00:00'), ('12:00:00','48:32:32'))
+        self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
+        self.positioningPanel.update()
         self.Fit()
         self.Show()
