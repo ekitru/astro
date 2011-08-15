@@ -5,7 +5,7 @@ from AstroMechanics import AstroMechanics
 from CommManager import CommManager
 from DbManager import DbManager
 from configuration import Configuration, ConfigurationException
-from translations import Translate
+from translations import TranslationCodes
 
 __author__ = 'kitru'
 
@@ -85,7 +85,7 @@ class AstroController(object):
     def openTranslationCodes(self, config):
         logging.info('=== Reading translation page  ===')   #Read selected language translation
         codes = config.getCodes()
-        return Translate(codes)
+        return TranslationCodes(codes)
 
     def openAstroMechanics(self, config):
         """ get observer for telescope position """
