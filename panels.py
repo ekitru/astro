@@ -7,10 +7,10 @@ class SimplePanel(wx.Panel):
         wx.Panel.__init__(self, parent, ID)
 
     def CreateHeader(self, name):
-        return self.CreateElement(name, wx.Font(10, wx.SWISS, wx.NORMAL, wx.BOLD))
+        return self.CreateElement(name, wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
 
     def CreateCaption(self, name):
-        return self.CreateElement(name)
+        return self.CreateElement(name, wx.Font(10, wx.SWISS, wx.FONTSTYLE_SLANT, wx.FONTWEIGHT_LIGHT))
 
     def CreateField(self):
         return self.CreateElement()
@@ -19,20 +19,6 @@ class SimplePanel(wx.Panel):
         element = wx.StaticText(self, wx.ID_ANY, name)
         if font:
             element.SetFont(font)
-        return element
-
-    def addKeyValuePair(self, layout, key="", value="", keyFlag=None, valueFlag=None, keyFont=None, valueFont=None):
-        keyField = self.addElement(layout, key, flag=keyFlag, font=keyFont)
-        valueField = self.addElement(layout, value, flag=valueFlag, font=valueFont)
-        return keyField, valueField
-
-    def addElement(self, layout, caption="", flag=None, font=None):
-        element = wx.StaticText(self, wx.ID_ANY, caption)
-        if font:
-            element.SetFont(font)
-        if flag is None:
-            flag = wx.ALL | wx.EXPAND | wx.CENTER
-        layout.Add(element, 0, flag)
         return element
 
 
@@ -45,30 +31,26 @@ class ObjectPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.FlexGridSizer(4, 4, 5, 20)
+        sizer = wx.GridSizer(4, 3, 5, 20)
 
-        caption, self.objectName = self.addKeyValuePair(sizer, key=codes.get("Object"),
-                                                        keyFont=wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD))
-        self.addKeyValuePair(sizer)
-        self.addKeyValuePair(sizer, value=codes.get('absoluteRADEC'), valueFont=wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD)
-                             ,
-                             valueFlag=wx.ALL | wx.ALIGN_RIGHT)
-        self.addKeyValuePair(sizer, value=codes.get('currentRADEC'), valueFont=wx.Font(8, wx.SWISS, wx.NORMAL, wx.BOLD),
-                             valueFlag=wx.ALL | wx.ALIGN_RIGHT)
-        caption, self.objectOrigRA = self.addKeyValuePair(sizer, key=codes.get("objectRA"),
-                                                          keyFlag=wx.ALL | wx.ALIGN_RIGHT)
-        caption, self.objectCurrRA = self.addKeyValuePair(sizer, key=codes.get("objectRA"),
-                                                          keyFlag=wx.ALL | wx.ALIGN_RIGHT)
-        caption, self.objectOrigDEC = self.addKeyValuePair(sizer, key=codes.get("objectDEC"),
-                                                           keyFlag=wx.ALL | wx.ALIGN_RIGHT)
-        caption, self.objectCurrDEC = self.addKeyValuePair(sizer, key=codes.get("objectDEC"),
-                                                           keyFlag=wx.ALL | wx.ALIGN_RIGHT)
+        self.objectName = self.CreateField()
+        self.objectOrigRA = self.CreateField()
+        self.objectCurrRA = self.CreateField()
+        self.objectOrigDEC = self.CreateField()
+        self.objectCurrDEC = self.CreateField()
 
-        sizer.Add(self.CreateHeader(codes.get("Object")))
+        sizer.Add(self.CreateHeader(codes.get('Object')))
+        sizer.Add(self.objectName, 0, wx.ALL | wx.CENTER | wx.EXPAND)
         sizer.Add(self.CreateField())
         sizer.Add(self.CreateField())
-
-
+        sizer.Add(self.CreateCaption(codes.get('absoluteRADEC')), 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('currentRADEC')), 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('objectRA')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objectOrigRA, 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.objectCurrRA, 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('objectDEC')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objectOrigDEC, 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.objectCurrDEC, 0, wx.ALL | wx.ALIGN_CENTER)
 
         self.SetSizer(sizer)
 
@@ -83,7 +65,6 @@ class ObjectPanel(SimplePanel):
         self.objectOrigDEC.SetLabel(origRADEC[1])
         self.objectCurrRA.SetLabel(currRADEC[0])
         self.objectCurrDEC.SetLabel(currRADEC[1])
-
 
 
 class TimeDatePanel(SimplePanel):
@@ -127,6 +108,7 @@ class TimeDatePanel(SimplePanel):
         self.LST.SetLabel(times[3])
         self.Fit()
 
+
 class PositioningPanel(SimplePanel):
     """This panel represents telescope position with manual positioning opportunities
     Attributes:
@@ -137,9 +119,7 @@ class PositioningPanel(SimplePanel):
         SimplePanel.__init__(self, parent, ID)
 
         sizer = wx.FlexGridSizer(4, 4, 5, 20)
-        caption, self.objectName = self.addKeyValuePair(sizer, key=codes.get("Positioning"),
-                                                        keyFont=wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD))
-        self.addKeyValuePair(sizer, keyFont=wx.Font(11, wx.SWISS, wx.NORMAL, wx.BOLD)) # dummy line
+        sizer.Add(self.CreateHeader('Positioning'))
 
         self.SetSizer(sizer)
 
