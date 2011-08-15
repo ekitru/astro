@@ -31,7 +31,7 @@ class ObjectPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(4, 3, 5, 20)
+        sizer = wx.GridSizer(4, 3, 5, 10)
 
         self.objectName = self.CreateField()
         self.objectOrigRA = self.CreateField()
@@ -76,7 +76,7 @@ class TimeDatePanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(5, 2, 0, 20)
+        sizer = wx.GridSizer(5, 2, 5, 10)
 
         self.LT = self.CreateField()
         self.UTC = self.CreateField()
@@ -118,9 +118,16 @@ class PositioningPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.FlexGridSizer(4, 4, 5, 20)
+        sizer = wx.FlexGridSizer(4, 3, 5, 10)
         sizer.Add(self.CreateHeader('Positioning'))
-
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateCaption(codes.get('telescopeRA')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateCaption(codes.get('telescopeDEC')), 0, wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateField())
+        sizer.Add(self.CreateField())
         self.SetSizer(sizer)
 
     def update(self):
