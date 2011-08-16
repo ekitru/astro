@@ -52,7 +52,8 @@ class AstroController(object):
         Opens DB connection and connection with PLCm also reads translation codes
         """
         try:
-            config = self.openConfig('default.conf')
+            logging.info('======= Program initialization =======')
+            config = Configuration('default.conf')
             self.mechanics = self.openAstroMechanics(config)
             self.commManager = self.openCommManager(config)
             self.dbManager = self.openDbManager(config)
@@ -67,10 +68,6 @@ class AstroController(object):
             self.dbManager.close()
         except Exception as e:
             raise ClosingException(e)
-
-    def openConfig(self, confFileName):
-        logging.info('======= Program initialization =======')
-        return Configuration(confFileName)
 
     def openCommManager(self, config):
         logging.info('=== Communication initialization ===')

@@ -1,4 +1,5 @@
 import wx
+import ephem
 
 __author__ = 'kitru'
 
@@ -119,17 +120,13 @@ class PositioningPanel(SimplePanel):
 
         temp = wx.BoxSizer(wx.HORIZONTAL)
         temp.Add(wx.Button(self, label='+', size=(20, 20)))
-        temp.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (10, 10), (100, 20), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
+        temp.Add(wx.Slider(self, wx.ID_ANY, 1.435, float(-3.1419113), float(ephem.pi), (-1,-1), (100, -1), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS |wx.SL_LABELS ))
         temp.Add(wx.Button(self, label='-', size=(20, 20)))
         temp2 = wx.BoxSizer(wx.HORIZONTAL)
         temp2.Add(wx.Button(self, label='+', size=(20, 20)))
-        temp2.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (10, 10), (100, 20), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
+        temp2.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (-1,-1), (100, -1), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
         temp2.Add(wx.Button(self, label='-', size=(20, 20)))
-        temp3 = wx.BoxSizer(wx.HORIZONTAL)
-        temp3.Add(wx.Button(self, label='+', size=(20, 20)))
-        temp3.Add(wx.Slider(self, wx.ID_ANY, 50, 0, 100, (10, 10), (100, 20), wx.SL_HORIZONTAL | wx.SL_AUTOTICKS ))
-        temp3.Add(wx.Button(self, label='-', size=(20, 20)))
-
+        temp3 = wx.StaticText(self)
         sizer.Add(self.CreateHeader('Positioning'))
         sizer.Add(self.CreateField())
         sizer.Add(self.CreateField())
