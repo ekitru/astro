@@ -7,12 +7,13 @@ __author__ = 'kitru'
 
 class CommManager(object):
     def __init__(self, confDict):
-        self.logger = getLogger('astroCommManager')
+        self.logger = getLogger('comm')
         self.logger.info('Establishing connection')
         try:
             #Connect to the slave
             self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=confDict['port'])
             self.ID = confDict['slave id']
+            self.logger.info('Connection established')
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self.logger)
 

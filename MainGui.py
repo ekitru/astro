@@ -12,11 +12,11 @@ class MainGui(wx.Frame):
         super(MainGui, self).__init__(parent, title=title,
                                        size=(800, 400))
         self.controller = controller
-        codes=self.controller.transCodes
+        trans=self.controller.trans
         sizer = wx.FlexGridSizer(2, 2, 10, 10)
-        self.objectPanel = ObjectPanel(parent=self, codes=codes)
-        self.timeDatePanel = TimeDatePanel(parent=self, codes=codes)
-        self.positioningPanel = PositioningPanel(parent=self, codes=codes)
+        self.objectPanel = ObjectPanel(parent=self, codes=trans)
+        self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
+        self.positioningPanel = PositioningPanel(parent=self, codes=trans)
 
         sizer.Add(self.objectPanel)
         sizer.Add(self.timeDatePanel)

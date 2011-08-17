@@ -33,7 +33,7 @@ class ClosingException(object):
             logger.error(msg)
 
 
-class AstroController(object):
+class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.initialization()
@@ -44,7 +44,7 @@ class AstroController(object):
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
-                            filename=join('logs', 'astroFull.log'),
+                            filename=join('logs', 'common.log'),
                             filemode='w')
 
     def initialization(self):
@@ -55,9 +55,9 @@ class AstroController(object):
             logging.info('======= Program initialization =======')
             config = ProgramConfig('default.conf')
             self.mechanics = self.openAstroMechanics(config)
-            self.commManager = self.openCommManager(config)
             self.dbManager = self.openDbManager(config)
-            self.transCodes = self.getTranslationConf(config)
+            self.commManager = self.openCommManager(config)
+            self.trans = self.getTranslationConf(config)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)

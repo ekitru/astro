@@ -5,7 +5,7 @@ __author__ = 'kitru'
 
 class DbManager(object):
     def __init__(self, confDict):
-        self.logger = getLogger('astroDbManager')
+        self.logger = getLogger('database')
         self.database = confDict['database']
         self.conn = self.__getDbConnection(confDict)
 
