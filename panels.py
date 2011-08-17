@@ -32,35 +32,36 @@ class ObjectPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(5, 3, 5, 10)
+        sizer = wx.GridSizer(4, 3, 5, 10)
 
         self.objectName = self.CreateField()
         self.objectOrigRA = self.CreateField()
         self.objectCurrRA = self.CreateField()
         self.objectOrigDEC = self.CreateField()
         self.objectCurrDEC = self.CreateField()
-        self.moveBut = wx.Button(self,wx.ID_ANY,"Move to object")
+        self.moveBut = wx.Button(self, wx.ID_ANY, "Move to object")
 
         sizer.Add(self.CreateHeader(codes.get('Object')))
-        sizer.Add(self.objectName, 0, wx.ALL | wx.CENTER)
+        sizer.Add(self.objectName, flag=wx.ALL | wx.CENTER)
         sizer.Add(self.CreateField())
 
         sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('absoluteRADEC')), 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('currentRADEC')), 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('absoluteRADEC')), flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('currentRADEC')), flag=wx.ALL | wx.ALIGN_CENTER)
 
-        sizer.Add(self.CreateCaption(codes.get('objectRA')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.objectOrigRA, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.objectCurrRA, 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('objectRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objectOrigRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.objectCurrRA, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        sizer.Add(self.CreateCaption(codes.get('objectDEC')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.objectOrigDEC, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.objectCurrDEC, 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('objectDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objectOrigDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.objectCurrDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        sizer.Add(self.CreateField())
-        sizer.Add(self.moveBut)
+        vert = wx.BoxSizer(wx.VERTICAL)
+        vert.Add(sizer)
+        vert.Add(self.moveBut, flag=wx.ALIGN_CENTER_HORIZONTAL)
 
-        self.SetSizer(sizer)
+        self.SetSizer(vert)
 
     def update(self, name, origRADEC, currRADEC):
         """Updates Objects name and coordinates
@@ -94,14 +95,14 @@ class TimeDatePanel(SimplePanel):
         sizer.Add(self.CreateHeader(codes.get("Time & Date")))
         sizer.Add(self.CreateField())
 
-        sizer.Add(self.CreateCaption(codes.get("LT")), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.LT, 0, wx.ALL | wx.EXPAND | wx.CENTER)
-        sizer.Add(self.CreateCaption(codes.get("UTC")), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.UTC, 0, wx.ALL | wx.EXPAND | wx.CENTER)
-        sizer.Add(self.CreateCaption(codes.get("JD")), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.JD, 0, wx.ALL | wx.EXPAND | wx.CENTER)
-        sizer.Add(self.CreateCaption(codes.get("LST")), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.LST, 0, wx.ALL | wx.EXPAND | wx.CENTER)
+        sizer.Add(self.CreateCaption(codes.get("LT")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.LT, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption(codes.get("UTC")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.UTC, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption(codes.get("JD")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.JD, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption(codes.get("LST")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.LST, flag=wx.ALL | wx.CENTER)
 
         self.SetSizer(sizer)
 
@@ -129,31 +130,33 @@ class PositioningPanel(SimplePanel):
         self.curFocus = self.CreateField()
         self.taskFocus = self.CreateField()
 
-        self.control = wx.Button(self,wx.ID_ANY,"  Take control  ")
+        self.control = wx.Button(self, wx.ID_ANY, "Take control")
 
         sizer.Add(self.CreateHeader(codes.get('Positioning')))
-        sizer.Add(self.CreateCaption(' '), 0, wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption(' '), flag=wx.ALL | wx.CENTER)
         sizer.Add(self.CreateField())
 
         sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('pos_cur')), 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('pos_task')), 0, wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('pos_cur')), flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('pos_task')), flag=wx.ALL | wx.ALIGN_CENTER)
 
-        sizer.Add(self.CreateCaption(codes.get('posRA')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.curRA, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.taskRA, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('posDEC')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.curDEC, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.taskDEC, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('posFocus')), 0, wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.curFocus, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.taskFocus, 0, wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateField())
-        sizer.Add(self.control)
+        sizer.Add(self.CreateCaption(codes.get('posRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
 
+        sizer.Add(self.CreateCaption(codes.get('posDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
+        sizer.Add(self.CreateCaption(codes.get('posFocus')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        self.SetSizer(sizer)
+        vert = wx.BoxSizer(wx.VERTICAL)
+        vert.Add(sizer)
+        vert.Add(self.control, flag=wx.ALIGN_CENTER_HORIZONTAL)
+
+        self.SetSizer(vert)
 
     """This panel represents telescope position with manual positioning opportunities
     Attributes:

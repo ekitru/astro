@@ -25,7 +25,7 @@ class MainGui(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText('Program starts')
 
-        sizer = wx.FlexGridSizer(2, 2, 0, 0)
+        sizer = wx.FlexGridSizer(2, 2, 10, 10)
         self.objectPanel = ObjectPanel(parent=self, codes=trans)
         self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
         self.positioningPanel = PositioningPanel(parent=self, codes=trans)
