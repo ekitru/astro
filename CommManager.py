@@ -22,4 +22,7 @@ class CommManager(object):
 
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 44, output_value=xrange(20))
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 60, 1)
-  
+
+    def close(self):
+        self.logger.info("Close Communication connection")
+        self.master.close()

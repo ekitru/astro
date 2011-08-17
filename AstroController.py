@@ -66,6 +66,7 @@ class AstroController(object):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
             self.dbManager.close()
+            self.commManager.close()
         except Exception as e:
             raise ClosingException(e)
 
