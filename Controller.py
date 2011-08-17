@@ -1,4 +1,3 @@
-from apt_pkg import Configuration
 import logging
 import os
 from posixpath import join
@@ -55,8 +54,8 @@ class Controller(object):
             logging.info('======= Program initialization =======')
             config = ProgramConfig('default.conf')
             self.mechanics = self.openAstroMechanics(config)
-            self.dbManager = self.openDbManager(config)
-            self.commManager = self.openCommManager(config)
+            self.dbManager = self.getDbManager(config)
+            self.commManager = self.getCommManager(config)
             self.trans = self.getTranslationConf(config)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
@@ -70,12 +69,12 @@ class Controller(object):
         except Exception as e:
             raise ClosingException(e)
 
-    def openCommManager(self, config):
+    def getCommManager(self, config):
         logging.info('=== Communication initialization ===')
         commConfig = config.getCommunicationConfigDict()
         return CommManager(commConfig)
 
-    def openDbManager(self, config):
+    def getDbManager(self, config):
         logging.info('=== DB initialization ===')
         dbConfig = config.getDbConfigDict()
         return DbManager(dbConfig)
