@@ -14,10 +14,18 @@ class MainGui(wx.Frame):
         self.controller = controller
         trans=self.controller.trans
 
-        self.SetMenuBar(self.CreateObjectMenu())
+        menuBar = wx.MenuBar()
+        objMenu = self.CreateObjectMenu(trans)
+        toolsMenu = self.CreateToolsMenu(trans)
+
+        menuBar.Append(objMenu, trans.get('menu Object'))
+        menuBar.Append(toolsMenu, trans.get('menu Tools'))
+        self.SetMenuBar(menuBar)
+
         self.CreateStatusBar()
         self.SetStatusText('Program starts')
-        sizer = wx.FlexGridSizer(2, 2, 10, 10)
+
+        sizer = wx.FlexGridSizer(2, 2, 0, 0)
         self.objectPanel = ObjectPanel(parent=self, codes=trans)
         self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
         self.positioningPanel = PositioningPanel(parent=self, codes=trans)
@@ -34,21 +42,23 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
-    def CreateObjectMenu(self):
+    def CreateObjectMenu(self, codes):
         menu = wx.Menu()
-        menu.Append(wx.ID_ANY, "&Select object",
-                    "Select object from database or add new one")
-        menu.Append(wx.ID_ANY, "&Edit objects", "Add, Delete, Edit object properties")
-        menu.AppendSeparator()
+        self.selectObj = wx.MenuItem(menu, wx.ID_ANY,text=codes.get("&Select object")+"\tctrl+s", help="Select object from database or add new one")
+        self.editObj = wx.MenuItem(menu, wx.ID_ANY, text=codes.get("&Edit objects")+"\tctrl+e", help="Add, Delete, Edit object properties")
+        menu.AppendItem(self.selectObj)
+        menu.AppendItem(self.editObj)
+        return menu
 
-        menuBar = wx.MenuBar()
-        menuBar.Append(menu, "&Object");
-
-        return menuBar
+    def CreateToolsMenu(self, codes):
+        menu = wx.Menu()
+        self.settings = wx.MenuItem(menu, wx.ID_ANY,text=codes.get("Settings"), help="System setup")
+        menu.AppendItem(self.settings)
+        return menu
 
     def update(self, event):
         print(time.ctime())
-        self.objectPanel.update('John Doe', ('10:10:10','45:00:00'), ('12:00:00','48:32:32'))
+        self.objectPanel.update('Sirius', ('10:10:10','45:00:00'), ('12:00:00','48:32:32'))
         self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
         self.positioningPanel.update()
         self.Fit()
