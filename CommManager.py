@@ -1,5 +1,5 @@
 import modbus_tk
-from configuration import getLogger, ConfigurationException
+from config import getLogger, ConfigurationException
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 

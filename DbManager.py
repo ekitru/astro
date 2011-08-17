@@ -1,5 +1,5 @@
 import MySQLdb
-from configuration import ConfigurationException, getLogger
+from config import ConfigurationException, getLogger
 
 __author__ = 'kitru'
 

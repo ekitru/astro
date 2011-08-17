@@ -1,11 +1,11 @@
+from apt_pkg import Configuration
 import logging
 import os
 from posixpath import join
 from AstroMechanics import AstroMechanics
 from CommManager import CommManager
 from DbManager import DbManager
-from configuration import Configuration, ConfigurationException
-from translations import TranslationCodes
+from config import ConfigurationException, TransConf, ProgramConfig
 
 __author__ = 'kitru'
 
@@ -53,11 +53,11 @@ class AstroController(object):
         """
         try:
             logging.info('======= Program initialization =======')
-            config = Configuration('default.conf')
+            config = ProgramConfig('default.conf')
             self.mechanics = self.openAstroMechanics(config)
             self.commManager = self.openCommManager(config)
             self.dbManager = self.openDbManager(config)
-            self.transCodes = self.openTranslationCodes(config)
+            self.transCodes = self.getTranslationConf(config)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
@@ -79,10 +79,10 @@ class AstroController(object):
         dbConfig = config.getDbConfigDict()
         return DbManager(dbConfig)
 
-    def openTranslationCodes(self, config):
+    def getTranslationConf(self, config):
         logging.info('=== Reading translation page  ===')   #Read selected language translation
-        codes = config.getCodes()
-        return TranslationCodes(codes)
+        language = config.getDefaultLanguage()
+        return TransConf(language)
 
     def openAstroMechanics(self, config):
         """ get observer for telescope position """
