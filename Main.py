@@ -14,7 +14,7 @@ if __name__ == '__main__':
         raise exception
 
     app = wx.App()
-    MainGui(None, title='AstroLab', controller=controller)
+    MainGui(None, 'AstroLab', controller)
     app.MainLoop()
 
     try:

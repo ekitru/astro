@@ -13,6 +13,10 @@ class MainGui(wx.Frame):
                                        size=(800, 400))
         self.controller = controller
         trans=self.controller.trans
+
+        self.SetMenuBar(self.CreateObjectMenu())
+        self.CreateStatusBar()
+        self.SetStatusText('Program starts')
         sizer = wx.FlexGridSizer(2, 2, 10, 10)
         self.objectPanel = ObjectPanel(parent=self, codes=trans)
         self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
@@ -29,6 +33,18 @@ class MainGui(wx.Frame):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
+
+    def CreateObjectMenu(self):
+        menu = wx.Menu()
+        menu.Append(wx.ID_ANY, "&Select object",
+                    "Select object from database or add new one")
+        menu.Append(wx.ID_ANY, "&Edit objects", "Add, Delete, Edit object properties")
+        menu.AppendSeparator()
+
+        menuBar = wx.MenuBar()
+        menuBar.Append(menu, "&Object");
+
+        return menuBar
 
     def update(self, event):
         print(time.ctime())
