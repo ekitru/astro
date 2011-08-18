@@ -21,8 +21,8 @@ class MainGui(wx.Frame):
         objMenu = self.CreateObjectMenu(trans)
         toolsMenu = self.CreateToolsMenu(trans)
 
-        menuBar.Append(objMenu, trans.get('menu Object'))
-        menuBar.Append(toolsMenu, trans.get('menu Tools'))
+        menuBar.Append(objMenu, trans.get('mObj'))
+        menuBar.Append(toolsMenu, trans.get('mTools'))
         self.SetMenuBar(menuBar)
 
         self.CreateStatusBar()
@@ -48,15 +48,15 @@ class MainGui(wx.Frame):
 
     def CreateObjectMenu(self, codes):
         menu = wx.Menu()
-        self.selectObj = wx.MenuItem(menu, wx.ID_ANY,text=codes.get("&Select object")+"\tctrl+s", help="Select object from database or add new one")
-        self.editObj = wx.MenuItem(menu, wx.ID_ANY, text=codes.get("&Edit objects")+"\tctrl+e", help="Add, Delete, Edit object properties")
+        self.selectObj = wx.MenuItem(menu, wx.ID_ANY,text=codes.get("smSelObj")+"\tctrl+s", help="Select object from database or add new one")
+        self.editObj = wx.MenuItem(menu, wx.ID_ANY, text=codes.get("smEditObj")+"\tctrl+e", help="Add, Delete, Edit object properties")
         menu.AppendItem(self.selectObj)
         menu.AppendItem(self.editObj)
         return menu
 
     def CreateToolsMenu(self, codes):
         menu = wx.Menu()
-        self.settings = wx.MenuItem(menu, wx.ID_ANY,text=codes.get("Settings"), help="System setup")
+        self.settings = wx.MenuItem(menu, wx.ID_ANY,text=codes.get('mSettings'), help="System setup")
         menu.AppendItem(self.settings)
         return menu
 
