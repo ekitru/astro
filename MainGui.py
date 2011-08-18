@@ -2,15 +2,18 @@
 # -*- coding: utf-8 -*-
 
 # absolute.py
+from unohelper import inspect
 
 import wx
 import time
-from panels import TimeDatePanel, ObjectPanel, PositioningPanel
+from wx.lib.inspection import InspectionTool
+from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
                                        size=(800, 400))
+#        InspectionTool().Show()
         self.controller = controller
         trans=self.controller.trans
 
@@ -25,14 +28,15 @@ class MainGui(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText('Program starts')
 
-        sizer = wx.FlexGridSizer(2, 2, 10, 10)
+        sizer = wx.GridSizer(4, 1, 10, 10)
         self.objectPanel = ObjectPanel(parent=self, codes=trans)
         self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
         self.positioningPanel = PositioningPanel(parent=self, codes=trans)
 
-        sizer.Add(self.objectPanel)
-        sizer.Add(self.timeDatePanel)
+        sizer.Add(self.objectPanel )
+        sizer.Add(self.timeDatePanel, flag = wx.ALL | wx.EXPAND)
         sizer.Add(self.positioningPanel)
+        sizer.Add(TelescopePanel(parent=self), flag = wx.ALL | wx.EXPAND)
         self.SetSizer(sizer)
 #        self.Fit()
         self.Centre()

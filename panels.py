@@ -1,5 +1,4 @@
 import wx
-import ephem
 
 __author__ = 'kitru'
 
@@ -39,10 +38,10 @@ class ObjectPanel(SimplePanel):
         self.objectCurrRA = self.CreateField()
         self.objectOrigDEC = self.CreateField()
         self.objectCurrDEC = self.CreateField()
-        self.moveBut = wx.Button(self, wx.ID_ANY, "Move to object")
+        self.moveBut = wx.Button(self, wx.ID_ANY, codes.get('moveToObj'))
 
-        sizer.Add(self.CreateHeader(codes.get('Object')))
-        sizer.Add(self.objectName, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption(codes.get('starName')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objectName, flag=wx.ALL | wx.EXPAND | wx.CENTER)
         sizer.Add(self.CreateField())
 
         sizer.Add(self.CreateField())
@@ -57,7 +56,7 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.objectOrigDEC, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.objectCurrDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        vert = wx.BoxSizer(wx.VERTICAL)
+        vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("Object")), wx.VERTICAL)
         vert.Add(sizer)
         vert.Add(self.moveBut, flag=wx.ALIGN_CENTER_HORIZONTAL)
 
@@ -85,26 +84,25 @@ class TimeDatePanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(5, 2, 5, 10)
+        sizer = wx.GridSizer(4, 2, 5, 10)
 
         self.LT = self.CreateField()
         self.UTC = self.CreateField()
         self.JD = self.CreateField()
         self.LST = self.CreateField()
 
-        sizer.Add(self.CreateHeader(codes.get("Time & Date")))
-        sizer.Add(self.CreateField())
-
-        sizer.Add(self.CreateCaption(codes.get("LT")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption(codes.get('LT')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.LT, flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateCaption(codes.get("UTC")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption(codes.get('UTC')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.UTC, flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateCaption(codes.get("JD")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption(codes.get('JD')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.JD, flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateCaption(codes.get("LST")), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption(codes.get('LST')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.LST, flag=wx.ALL | wx.CENTER)
 
-        self.SetSizer(sizer)
+        vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('TimeDate')), wx.VERTICAL)
+        vert.Add(sizer)
+        self.SetSizer(vert)
 
     def update(self, times):
         """Updates local time, sidereal time, julian day and UTC time
@@ -118,10 +116,15 @@ class TimeDatePanel(SimplePanel):
 
 
 class PositioningPanel(SimplePanel):
+    """This panel represents telescope position with manual positioning opportunities
+    Attributes:
+        codes - Translation codes
+    """
+
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(5, 3, 5, 10)
+        sizer = wx.GridSizer(4, 3, 5, 10)
 
         self.curRA = self.CreateField()
         self.taskRA = self.CreateField()
@@ -129,12 +132,7 @@ class PositioningPanel(SimplePanel):
         self.taskDEC = self.CreateField()
         self.curFocus = self.CreateField()
         self.taskFocus = self.CreateField()
-
-        self.control = wx.Button(self, wx.ID_ANY, "Take control")
-
-        sizer.Add(self.CreateHeader(codes.get('Positioning')))
-        sizer.Add(self.CreateCaption(' '), flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateField())
+        self.control = wx.Button(self, wx.ID_ANY, codes.get('takeCtrl'))
 
         sizer.Add(self.CreateField())
         sizer.Add(self.CreateCaption(codes.get('pos_cur')), flag=wx.ALL | wx.ALIGN_CENTER)
@@ -152,16 +150,11 @@ class PositioningPanel(SimplePanel):
         sizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        vert = wx.BoxSizer(wx.VERTICAL)
+        vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('positioning')), wx.VERTICAL)
         vert.Add(sizer)
         vert.Add(self.control, flag=wx.ALIGN_CENTER_HORIZONTAL)
 
         self.SetSizer(vert)
-
-    """This panel represents telescope position with manual positioning opportunities
-    Attributes:
-        codes - Translation codes
-    """
 
     def update(self):
         self.curRA.SetLabel('10:10:10')
@@ -171,6 +164,25 @@ class PositioningPanel(SimplePanel):
         self.taskRA.SetLabel('10:10:10')
         self.taskDEC.SetLabel('22:22:22')
         self.taskFocus.SetLabel('23.23')
+
+
+class TelescopePanel(SimplePanel):    #TODO decide, what to do with it, temp mock
+    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, ID)
+        sizer = wx.GridSizer(4, 2, 5, 10)
+
+        sizer.Add(self.CreateCaption("Temp in tube"), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption("25.2"), flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption("Temp under tube"), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption("21.2"), flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption("chair pos"), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption("home"), flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.CreateCaption("Kupol"), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateCaption("somewhere"), flag=wx.ALL | wx.CENTER)
+
+        vert = wx.StaticBoxSizer(wx.StaticBox(self, label='Telescope'), wx.VERTICAL)
+        vert.Add(sizer)
+        self.SetSizer(vert)
 
 
 
