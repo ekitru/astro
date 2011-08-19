@@ -2,11 +2,11 @@ import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 from Exceptions import ConfigurationException
-from SystemConfig import getLog
+from logger import getLog
 
 __author__ = 'kitru'
 
-class CommManager(object):
+class PLCManager(object):
     def __init__(self, confDict):
         self.logger = getLog('comm')
         self.logger.info('Establishing connection')
