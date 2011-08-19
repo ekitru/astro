@@ -2,23 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import wx
+from wx.lib.inspection import InspectionTool
+from dialogs import SelectObjectDiag
+from ids import *
 from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
-
-ID_SELOBJ = 1000
-ID_EDITOBJ = 1001
-
-ID_SETTINGS = 1010
-
-ID_OBJPANEL = 2000
-ID_TIMEPANEL = 2001
-ID_POSITIONING = 2002
-ID_TELESCOPE = 2003
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
-                                      size=(800, 400))
-        #        InspectionTool().Show()
+                                      size=(706, 388))
+#        InspectionTool().Show()
         self.controller = controller
         self.trans = self.controller.trans
 
@@ -32,7 +25,7 @@ class MainGui(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText('Program starts')
 
-        sizer = wx.GridSizer(2, 2, 15, 15)
+        grid = wx.GridSizer(2, 2, 10, 10)
 
         panelArgs = {"parent": self, "codes": self.trans}
         self.objectPanel = ObjectPanel(ID=ID_OBJPANEL, **panelArgs)
@@ -40,19 +33,22 @@ class MainGui(wx.Frame):
         self.positioningPanel = PositioningPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
 
-        sizer.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
-        sizer.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
-        sizer.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
-        sizer.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
-        self.SetSizer(sizer)
+        grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
+        grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
+        grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
+        grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
+
+        canvas = wx.BoxSizer(wx.VERTICAL)
+        canvas.Add(grid, flag=wx.ALL, border=10)
+        self.SetSizer(canvas)
         self.Centre()
+        self.Show()
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
     def OnSelectObject(self, event):
-        print('Select object')
         selObj = SelectObjectDiag(None, wx.ID_ANY, self.controller)
         selObj.ShowModal()
         selObj.Destroy()
@@ -69,7 +65,7 @@ class MainGui(wx.Frame):
         self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
         self.positioningPanel.update()
         self.Fit()
-        self.Show()
+#        self.Show()
 
 
 class AstroMenu(wx.MenuBar):
@@ -95,10 +91,3 @@ class AstroMenu(wx.MenuBar):
         self.settings = wx.MenuItem(menu, ID_SETTINGS, text=trans.get('smSettings') + '\tctrl+s', help=trans.get('smSettingsHelp'))
         menu.AppendItem(self.settings)
         return menu
-
-
-class SelectObjectDiag(wx.Dialog):
-    def __init__(self, parent, id, controller):
-        wx.Dialog.__init__(self, parent, id, controller.trans.get('diaSelObj_title'), style=wx.DEFAULT_DIALOG_STYLE)
-
-#        self.Sizer()
