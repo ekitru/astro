@@ -23,6 +23,7 @@ class InitializationException(Exception):
         if logger:
             logger.error(msg)
 
+
 class ClosingException(object):
     """Exception raised for errors during system closing.
     Attributes:

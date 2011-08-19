@@ -9,16 +9,16 @@ __author__ = 'kitru'
 if __name__ == '__main__':
     try:
         controller = Controller()
+        controller.initialization()
+
+        app = wx.App()
+        MainGui(None, 'AstroLab', controller)
+        app.MainLoop()
+
+        controller.freeResources()
     except InitializationException as exception:
         print("Unexcepted error occur during initialization: " + exception.__str__())
         raise exception
-
-    app = wx.App()
-    MainGui(None, 'AstroLab', controller)
-    app.MainLoop()
-
-    try:
-        controller.freeResources()
     except ClosingException as exception:
         print("Unexcepted error occur during closing resources: " + exception.__str__())
         raise exception

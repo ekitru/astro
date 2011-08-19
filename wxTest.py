@@ -4,10 +4,9 @@ import wx
 import time
 
 class MyForm(wx.Frame):
-
     def __init__(self):
         wx.Frame.__init__(self, None, wx.ID_ANY, "Timer Tutorial 1",
-                                   size=(500,500))
+                          size=(500, 500))
 
         # Add a panel so it looks the correct on all platforms
         panel = wx.Panel(self, wx.ID_ANY)

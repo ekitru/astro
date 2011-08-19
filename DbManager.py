@@ -1,6 +1,6 @@
 import MySQLdb
 from Exceptions import ConfigurationException
-from SystemConfig import getLog
+from logger import getLog
 
 __author__ = 'kitru'
 

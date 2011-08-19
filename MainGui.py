@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import wx
-from wx.lib.inspection import InspectionTool
 from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
 
 ID_SELOBJ = 1000
@@ -54,7 +53,7 @@ class MainGui(wx.Frame):
 
     def OnSelectObject(self, event):
         print('Select object')
-        selObj = SelectObjectDiag(None, wx.ID_ANY, self.trans)
+        selObj = SelectObjectDiag(None, wx.ID_ANY, self.controller)
         selObj.ShowModal()
         selObj.Destroy()
 
@@ -97,9 +96,9 @@ class AstroMenu(wx.MenuBar):
         menu.AppendItem(self.settings)
         return menu
 
-class SelectObjectDiag(wx.Dialog):
 
-    def __init__(self, parent, id, trans):
-        wx.Dialog.__init__(self, parent, id, trans.get('diaSelObj_title'), style=wx.DEFAULT_DIALOG_STYLE)
+class SelectObjectDiag(wx.Dialog):
+    def __init__(self, parent, id, controller):
+        wx.Dialog.__init__(self, parent, id, controller.trans.get('diaSelObj_title'), style=wx.DEFAULT_DIALOG_STYLE)
 
 #        self.Sizer()
