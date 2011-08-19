@@ -6,8 +6,8 @@ GRANT ALL ON astro.* TO 'astro'@'localhost';
 CREATE TABLE IF NOT EXISTS  `astro`.`stars`
 (`id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
  `name` VARCHAR(50) UNIQUE NOT NULL,
- `alfa` INTEGER NOT NULL,
- `delta` INTEGER NOT NULL
+ `alfa` FLOAT NOT NULL,
+ `delta` FLOAT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `astro`.`notes`
