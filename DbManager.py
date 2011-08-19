@@ -1,11 +1,12 @@
 import MySQLdb
-from config import ConfigurationException, getLogger
+from Exceptions import ConfigurationException
+from SystemConfig import getLog
 
 __author__ = 'kitru'
 
 class DbManager(object):
     def __init__(self, confDict):
-        self.logger = getLogger('database')
+        self.logger = getLog('database')
         self.database = confDict['database']
         self.conn = self.__getDbConnection(confDict)
 
@@ -23,14 +24,14 @@ class DbManager(object):
         except Exception as error:
             raise ConfigurationException(error.args, self.logger)
 
-    def saveNewStar(self,name,alfa,delta):
-        sql = "INSERT INTO stars SET name='"+name+"', alfa="+alfa+",delta="+delta+";"
+    def saveNewStar(self, name, alfa, delta):
+        sql = "INSERT INTO stars SET name='" + name + "', alfa=" + alfa + ",delta=" + delta + ";"
         cursor = self.conn.cursor()
         cursor.execute(sql)
         cursor.close()
 
-    def getStar(self,name):
-        sql = "SELECT name,alfa,delta FROM stars where name='"+name+"';"
+    def getStar(self, name):
+        sql = "SELECT name,alfa,delta FROM stars where name='" + name + "';"
         cursor = self.conn.cursor()
         cursor.execute(sql)
         response = cursor.fetchone()

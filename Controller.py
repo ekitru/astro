@@ -1,36 +1,11 @@
-import logging
 import os
 from posixpath import join
-from AstroMechanics import AstroMechanics
-from CommManager import CommManager
-from DbManager import DbManager
-from config import ConfigurationException, TransConf, ProgramConfig
+import logging
+
+from Exceptions import ConfigurationException, InitializationException, ClosingException
+from Config import ProgramConfig
 
 __author__ = 'kitru'
-
-class InitializationException(Exception):
-    """Exception raised for errors during system initialization.
-    Attributes:
-        msg  -- explanation of the error
-    """
-
-    def __init__(self, msg, logger=None):
-        Exception.__init__(self, msg)
-        if logger:
-            logger.error(msg)
-
-
-class ClosingException(object):
-    """Exception raised for errors during system closing.
-    Attributes:
-        msg  -- explanation of the error
-    """
-
-    def __init__(self, msg, logger=None):
-        Exception.__init__(self, msg)
-        if logger:
-            logger.error(msg)
-
 
 class Controller(object):
     def __init__(self):
@@ -53,10 +28,10 @@ class Controller(object):
         try:
             logging.info('======= Program initialization =======')
             config = ProgramConfig('default.conf')
-            self.mechanics = self.openAstroMechanics(config)
-            self.dbManager = self.getDbManager(config)
-            self.commManager = self.getCommManager(config)
-            self.trans = self.getTranslationConf(config)
+            self.mechanics = config.openAstroMechanics()
+            self.dbManager = config.getDbManager()
+            self.commManager = config.getPLCManager()
+            self.trans = config.getTranslationConf()
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
@@ -68,24 +43,3 @@ class Controller(object):
             self.commManager.close()
         except Exception as e:
             raise ClosingException(e)
-
-    def getCommManager(self, config):
-        logging.info('=== Communication initialization ===')
-        commConfig = config.getCommunicationConfigDict()
-        return CommManager(commConfig)
-
-    def getDbManager(self, config):
-        logging.info('=== DB initialization ===')
-        dbConfig = config.getDbConfigDict()
-        return DbManager(dbConfig)
-
-    def getTranslationConf(self, config):
-        logging.info('=== Reading translation page  ===')   #Read selected language translation
-        language = config.getDefaultLanguage()
-        return TransConf(language)
-
-    def openAstroMechanics(self, config):
-        """ get observer for telescope position """
-        logging.info('=== Reading telescope configurations ===')
-        configs = config.getObserverDict()
-        return AstroMechanics(configs)

@@ -1,13 +1,14 @@
 import modbus_tk
-from config import getLogger, ConfigurationException
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
+from Exceptions import ConfigurationException
+from SystemConfig import getLog
 
 __author__ = 'kitru'
 
 class CommManager(object):
     def __init__(self, confDict):
-        self.logger = getLogger('comm')
+        self.logger = getLog('comm')
         self.logger.info('Establishing connection')
         try:
             #Connect to the slave
