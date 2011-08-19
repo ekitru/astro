@@ -45,8 +45,8 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.CreateField())
 
         sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('absoluteRADEC')), flag=wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('currentRADEC')), flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('absoluteRADEC')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        sizer.Add(self.CreateCaption(codes.get('currentRADEC')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
 
         sizer.Add(self.CreateCaption(codes.get('objectRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectOrigRA, flag=wx.ALL | wx.ALIGN_CENTER)
@@ -57,8 +57,8 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.objectCurrDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
         vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("Object")), wx.VERTICAL)
-        vert.Add(sizer)
-        vert.Add(self.moveBut, flag=wx.ALIGN_CENTER_HORIZONTAL)
+        vert.Add(sizer, flag=wx.ALL, border=10)
+        vert.Add(self.moveBut, flag=wx.ALIGN_RIGHT)
 
         self.SetSizer(vert)
 
@@ -101,7 +101,7 @@ class TimeDatePanel(SimplePanel):
         sizer.Add(self.LST, flag=wx.ALL | wx.CENTER)
 
         vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('TimeDate')), wx.VERTICAL)
-        vert.Add(sizer)
+        vert.Add(sizer, flag=wx.ALL, border=10)
         self.SetSizer(vert)
 
     def update(self, times):
@@ -135,8 +135,8 @@ class PositioningPanel(SimplePanel):
         self.control = wx.Button(self, wx.ID_ANY, codes.get('takeCtrl'))
 
         sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('pos_cur')), flag=wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('pos_task')), flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('pos_cur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        sizer.Add(self.CreateCaption(codes.get('pos_task')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
 
         sizer.Add(self.CreateCaption(codes.get('posRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
@@ -151,8 +151,8 @@ class PositioningPanel(SimplePanel):
         sizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
         vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('positioning')), wx.VERTICAL)
-        vert.Add(sizer)
-        vert.Add(self.control, flag=wx.ALIGN_CENTER_HORIZONTAL)
+        vert.Add(sizer, flag=wx.ALL, border=10)
+        vert.Add(self.control, flag=wx.ALIGN_RIGHT)
 
         self.SetSizer(vert)
 
@@ -181,7 +181,7 @@ class TelescopePanel(SimplePanel):    #TODO decide, what to do with it, temp moc
         sizer.Add(self.CreateCaption("somewhere"), flag=wx.ALL | wx.CENTER)
 
         vert = wx.StaticBoxSizer(wx.StaticBox(self, label='Telescope'), wx.VERTICAL)
-        vert.Add(sizer)
+        vert.Add(sizer, flag=wx.ALL, border=10)
         self.SetSizer(vert)
 
 
