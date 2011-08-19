@@ -3,14 +3,13 @@ from posixpath import join
 import logging
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
-from Config import ProgramConfig
+from Configs import ProgramConfig
 
 __author__ = 'kitru'
 
 class Controller(object):
     def __init__(self):
         self.__initLogger()
-        self.initialization()
 
     def __initLogger(self):
         if not os.path.exists('logs'):
