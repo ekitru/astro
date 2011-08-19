@@ -1,14 +1,43 @@
+import ConfigParser
+import codecs
 import logging
 from os.path import join
 
 from Exceptions import ConfigurationException
-from SystemConfig import  SystemConf
+from logger import  getLog
 
 from DbManager import DbManager
-from CommManager import CommManager
+from PLCManager import PLCManager
 from AstroMechanics import AstroMechanics
 
 __author__ = 'kitru'
+
+class SystemConf(object):
+    def __init__(self, loggerName):
+        self.logger = getLog(loggerName)
+
+    def getConfigFromFile(self, fileName):
+        """ Opens configuration file. If file is missing or could not be read, new ConfigurationException will be raised    """
+        try:
+            config = ConfigParser.SafeConfigParser()
+            config.readfp(codecs.open(fileName, "r", "utf8"))
+            return config
+        except IOError as error:
+            msg = error.args + (fileName,)
+            raise ConfigurationException(msg, self.logger)
+
+    def getItemsBySection(self, config, section_name):
+        """   Return dictionary of selected section items      """
+        list = config.items(section_name)
+        return dict(list)
+
+    def getConfigBySection(self, config, section_name):
+        try:
+            self.logger.info('Read section ' + '\"' + section_name + '\"')
+            return self.getItemsBySection(config, section_name)
+        except ConfigParser.NoSectionError as error:
+            raise ConfigurationException(error.args, self.logger)
+
 
 class ProgramConfig(SystemConf):
     """Get configuration from file
@@ -24,7 +53,7 @@ class ProgramConfig(SystemConf):
         """ Get communication configuration from config file. If communication section is missing raise  Configuration Exception  """
         logging.info('=== Communication initialization ===')
         commConfig = self.getConfigBySection(self.config, "communication")
-        return CommManager(commConfig)
+        return PLCManager(commConfig)
 
     def getDbManager(self):
         logging.info('=== DB initialization ===')
