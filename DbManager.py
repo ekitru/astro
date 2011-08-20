@@ -9,6 +9,7 @@ class DbManager(object):
         self.logger = getLog('database')
         self.database = confDict['database']
         self.conn = self.__getDbConnection(confDict)
+        self.cursor = self.conn.cursor()
 
     def __getDbConnection(self, confDict):
         """ Get db connection dased on config file
@@ -24,22 +25,22 @@ class DbManager(object):
         except Exception as error:
             raise ConfigurationException(error.args, self.logger)
 
-    def saveNewStar(self, name, alfa, delta):
-        sql = "INSERT INTO stars SET name='" + name + "', alfa=" + alfa + ",delta=" + delta + ";"
-        cursor = self.conn.cursor()
-        cursor.execute(sql)
-        cursor.close()
+    def getStarById(self, id):
+        sql = "SELECT * FROM stars where id=%(id)s"
+        args = {'id': id}
 
-    def getStar(self, name):
-        sql = "SELECT name,alfa,delta FROM stars where name='" + name + "';"
-        cursor = self.conn.cursor()
-        cursor.execute(sql)
-        response = cursor.fetchone()
-        cursor.close()
-        return response
+        self.cursor.execute(sql, args)
+        return self.cursor.fetchone()
+
+    def getStarsByPartName(self, name):
+        """ looks for all like name%   """
+        sql = "select * from stars where name like %(name)s  limit 50"
+        args = {'name': (name + '%')}
+
+        self.cursor.execute(sql, args)
+        return self.cursor.fetchall()
 
     def close(self):
         self.logger.info("Close DB connection")
+        self.cursor.close()
         self.conn.close()
-
-  
