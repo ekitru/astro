@@ -11,7 +11,7 @@ class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
                                       size=(706, 388))
-#        InspectionTool().Show()
+        #        InspectionTool().Show()
         self.controller = controller
         self.trans = self.controller.trans
 
@@ -42,7 +42,6 @@ class MainGui(wx.Frame):
         canvas.Add(grid, flag=wx.ALL, border=10)
         self.SetSizer(canvas)
         self.Centre()
-        self.Show()
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
@@ -61,11 +60,32 @@ class MainGui(wx.Frame):
         print('Settings')
 
     def update(self, event):
-        self.objectPanel.update('Sirius', ('10:10:10', '45:00:00'), ('12:00:00', '48:32:32'))
+        selStar = self.getSelectedStar(self.controller)
+        self.objectPanel.update(*selStar)
         self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
         self.positioningPanel.update()
-        self.Fit()
-#        self.Show()
+        self.Layout()
+        self.Show()
+
+    def getSelectedStar(self, controller):
+        object = controller.getObject()
+
+        if object and object['name']:
+            name = object['name']
+        else:
+            name = ''
+
+        if object and object['orig']:
+            orig = controller.mechanics.convCoord(*object['orig'])
+        else:
+            orig = ('', '')
+
+        if object and object['curr']:
+            curr = controller.mechanics.convCoord(*object['curr'])
+        else:
+            curr = ('', '')
+
+        return (name, orig, curr)
 
 
 class AstroMenu(wx.MenuBar):
