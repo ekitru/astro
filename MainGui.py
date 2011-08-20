@@ -39,7 +39,7 @@ class MainGui(wx.Frame):
         grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
         canvas = wx.BoxSizer(wx.VERTICAL)
-        canvas.Add(grid, flag=wx.ALL, border=10)
+        canvas.Add(grid, flag=wx.EXPAND, border=10)
         self.SetSizer(canvas)
         self.Centre()
 
@@ -65,6 +65,7 @@ class MainGui(wx.Frame):
         self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
         self.positioningPanel.update()
         self.Layout()
+#        self.Fit()
         self.Show()
 
     def getSelectedStar(self, controller):

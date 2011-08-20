@@ -7,7 +7,7 @@ __author__ = 'kitru'
 
 class SelectObjectDiag(wx.Dialog):
     def __init__(self, parent, id, controller):
-        wx.Dialog.__init__(self, parent, id, controller.trans.get('dSelObj_title'), style=wx.DEFAULT_DIALOG_STYLE)
+        wx.Dialog.__init__(self, parent, id, controller.trans.get('dSelObj_title'), style= wx.CAPTION)
 
         self.controller = controller
         trans = controller.trans

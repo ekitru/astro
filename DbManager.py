@@ -34,7 +34,7 @@ class DbManager(object):
 
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
-        sql = "select * from stars where name like %(name)s  limit 50"
+        sql = "select * from stars where name like %(name)s  limit 20"
         args = {'name': (name + '%')}
 
         self.cursor.execute(sql, args)
