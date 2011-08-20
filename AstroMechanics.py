@@ -8,6 +8,7 @@ class AstroMechanics(object):
         self.observer = self.getObserver(confDict)
 
     def getObserver(self, confDict):
+        """ Create observer based on configuration  """
         latitude = confDict['latitude']
         longitude = confDict['longitude']
         elevation = confDict['elevation']
@@ -20,9 +21,6 @@ class AstroMechanics(object):
         observer.elevation = float(elevation)
         observer.temp = float(temp)
         return observer
-
-    def updateObserverTime(self):
-        self.observer.date = ephem.now()
 
     def getCurrentTimeDate(self):
         """ return tuple of LT, UTC, JD, LST """
@@ -46,3 +44,16 @@ class AstroMechanics(object):
 
     def getLST(self):
         return self.observer.sidereal_time()
+
+    def updateObserverTime(self):
+        self.observer.date = ephem.now()
+
+    def convCoord(self, ra, dec):
+        """ Convert (ra,dec) in radians to more readable form
+        Attr:
+          ra - right ascension in radians
+          dec - declination in radians
+        """
+        ra = ephem.hours(ra)
+        dec = ephem.degrees(dec)
+        return str(ra), str(dec)
