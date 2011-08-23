@@ -23,3 +23,7 @@ if __name__ == '__main__':
     print(star.ra, star.dec)
     print(star.alt)
 
+    deg = ephem.degrees(2.231)
+    e = str(deg)
+    print('deg',deg.real)
+

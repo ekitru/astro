@@ -76,12 +76,12 @@ class MainGui(wx.Frame):
             name = ''
 
         if object and object['orig']:
-            orig = controller.mechanics.convCoord(*object['orig'])
+            orig = controller.mechanics.convCoordRad2Str(*object['orig'])
         else:
             orig = ('', '')
 
         if object and object['curr']:
-            curr = controller.mechanics.convCoord(*object['curr'])
+            curr = controller.mechanics.convCoordRad2Str(*object['curr'])
         else:
             curr = ('', '')
 
