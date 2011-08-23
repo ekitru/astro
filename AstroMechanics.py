@@ -48,12 +48,28 @@ class AstroMechanics(object):
     def updateObserverTime(self):
         self.observer.date = ephem.now()
 
-    def convCoord(self, ra, dec):
+    def convCoordRad2Str(self, ra, dec):
         """ Convert (ra,dec) in radians to more readable form
         Attr:
           ra - right ascension in radians
           dec - declination in radians
         """
+        ra, dec = self.getCoordinates(ra, dec)
+        return str(ra), str(dec)
+
+    def convCoordStr2Rad(self, ra, dec):
+        ra, dec = self.getCoordinates(ra, dec)
+        return ra.real, dec.real
+
+    def getCoordinates(self, ra, dec):
+        """ Return angles RA,DEC (topocentric position)
+        Attr:
+           ra - radians or string (hour:min:sec)
+           dec - radians or string (deg:min:sec)
+        return:
+           tuple(ephem,hours, ephem.degrees)
+        """
+        ra = ephem.hours(ra)
         ra = ephem.hours(ra)
         dec = ephem.degrees(dec)
-        return unicode(ra), unicode(dec)
+        return ra, dec
