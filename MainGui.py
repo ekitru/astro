@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import wx
@@ -65,7 +64,7 @@ class MainGui(wx.Frame):
         self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
         self.positioningPanel.update()
         self.Layout()
-#        self.Fit()
+        self.Fit()
         self.Show()
 
     def getSelectedStar(self, controller):

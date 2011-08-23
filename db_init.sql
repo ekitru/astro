@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS astro;
+CREATE DATABASE IF NOT EXISTS astro CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE USER 'astro'@'localhost' IDENTIFIED BY '5gh6w35';
 GRANT ALL ON astro.* TO 'astro'@'localhost';

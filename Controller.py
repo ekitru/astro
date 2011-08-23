@@ -1,6 +1,8 @@
 import os
 from posixpath import join
 import logging
+import re
+import ephem
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
 from Configs import ProgramConfig
@@ -45,15 +47,26 @@ class Controller(object):
         except Exception as e:
             raise ClosingException(e)
 
+    def isStarExist(self, name):
+        if self.getStarByName(name):
+            return True
+        else:
+            return False
 
-    def getStarById(self, id):
-        """ Take star from database by index ID  """
-        star = self.dbManager.getStarById(id)
-        return self.parseStar(star)
+
+    def getStarByName(self, name):
+        """ Take star from database by name
+        Star name and position in suitable form for customer """
+        star = self.dbManager.getStarByName(name)
+        if star:
+            return self.parseStar(star)
+        else:
+            return None
 
     def getStars(self, name):
         """ Returns list of star objects(id, name,ra,dec)
         Fetchs all rows with similar star name like name%
+        Star name and position in suitable form for customer
         """
         stars = self.dbManager.getStarsByPartName(name)
 
@@ -68,7 +81,7 @@ class Controller(object):
           star - one record fron DB
         """
         id = long(star[0])
-        name = str(star[1])
+        name = star[1]
         ra, dec = self.mechanics.convCoord(star[2], star[3])
         return {'id': id, 'name': name, 'ra': ra, 'dec': dec}
 
@@ -89,3 +102,30 @@ class Controller(object):
 
     def getObject(self):
         return self.object
+
+    def checkHours(self, hours):
+        try:
+            h, m, s = re.split(':', hours)
+            return self._checkHour(h) and self._checkMin(m) and self._checkSec(s)
+        except Exception:
+            return False
+
+    def checkDegrees(self, degrees):
+        try:
+            deg, m, s = re.split(':', degrees)
+            return self._checkDegree(deg) and self._checkMin(m) and self._checkSec(s)
+        except Exception:
+            return False
+
+
+    def _checkDegree(self, deg):
+        return -90 < int(deg) < 90
+
+    def _checkHour(self, hour):
+        return 0 <= int(hour) < 24
+
+    def _checkMin(self, min):
+        return 0 <= int(min) < 60
+
+    def _checkSec(self, sec):
+        return 0 <= float(sec) < 60

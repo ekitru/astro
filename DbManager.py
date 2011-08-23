@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import MySQLdb
 from Exceptions import ConfigurationException
 from logger import getLog
+
 
 __author__ = 'kitru'
 
@@ -19,7 +22,7 @@ class DbManager(object):
         try:
             self.logger.info('Establishing connection')
             db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
-                                 port=int(confDict['port']))
+                                 port=int(confDict['port']), charset = "utf8", use_unicode = True)
             self.logger.info('Connection established')
             return db
         except Exception as error:
@@ -32,8 +35,16 @@ class DbManager(object):
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()
 
+    def getStarByName(self, name):
+        sql = "SELECT * FROM stars where name=%(name)s"
+        args = {'name': name}
+
+        self.cursor.execute(sql, args)
+        return self.cursor.fetchone()
+
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
+        name = name.encode('utf-8')
         sql = "select * from stars where name like %(name)s  limit 20"
         args = {'name': (name + '%')}
 

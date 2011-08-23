@@ -56,4 +56,4 @@ class AstroMechanics(object):
         """
         ra = ephem.hours(ra)
         dec = ephem.degrees(dec)
-        return str(ra), str(dec)
+        return unicode(ra), unicode(dec)
