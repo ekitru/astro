@@ -29,15 +29,22 @@ class DbManager(object):
             raise ConfigurationException(error.args, self.logger)
 
     def getStarById(self, id):
-        sql = "SELECT * FROM stars where id=%(id)s"
+        sql = "SELECT `name`,`ra`,`dec` FROM stars where id=%(id)s"
         args = {'id': id}
 
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()
 
     def getStarByName(self, name):
-        sql = "SELECT * FROM stars where name=%(name)s"
+        sql = "SELECT `name`,`ra`,`dec` FROM stars where name=%(name)s"
         args = {'name': name}
+
+        self.cursor.execute(sql, args)
+        return self.cursor.fetchone()
+
+    def saveStar(self, name, ra, dec):
+        sql = "INSERT INTO `stars` (`id`,`name`,`ra`,`dec`) values (default, %(name)s,%(ra)s,%(dec)s)"
+        args = {'name': name, 'ra':ra,'dec':dec}
 
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()
@@ -45,7 +52,7 @@ class DbManager(object):
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
-        sql = "select * from stars where name like %(name)s  limit 20"
+        sql = "select `name`,`ra`,`dec` from stars where name like %(name)s  limit 20"
         args = {'name': (name + '%')}
 
         self.cursor.execute(sql, args)

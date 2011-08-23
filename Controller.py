@@ -2,7 +2,6 @@ import os
 from posixpath import join
 import logging
 import re
-import ephem
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
 from Configs import ProgramConfig
@@ -56,12 +55,17 @@ class Controller(object):
 
     def getStarByName(self, name):
         """ Take star from database by name
-        Star name and position in suitable form for customer """
+        Star name and position in suitable form for customer
+        If star does not exist, return None"""
         star = self.dbManager.getStarByName(name)
         if star:
             return self.parseStar(star)
         else:
             return None
+
+    def saveStar(self, name, ra, dec):
+        ra, dec = self.mechanics.convCoordStr2Rad(str(ra), str(dec))
+        self.dbManager.saveStar(name, ra, dec)
 
     def getStars(self, name):
         """ Returns list of star objects(id, name,ra,dec)
@@ -80,28 +84,25 @@ class Controller(object):
         Attr:
           star - one record fron DB
         """
-        id = long(star[0])
-        name = star[1]
-        ra, dec = self.mechanics.convCoord(star[2], star[3])
-        return {'id': id, 'name': name, 'ra': ra, 'dec': dec}
+        name = star[0]
+        ra, dec = self.mechanics.convCoordRad2Str(star[1], star[2])
+        return {'name': name, 'ra': ra, 'dec': dec}
 
-    def setObject(self, name, RA, DEC):
+    def setObject(self, name):
         """ Stores new object for observer and current position in the sky
         Attr:
             name - star name
-            RA - epoch2000 position right ascension
-            DEC - epoch2000 position declination
         """
-        print('set object', name, RA, DEC)
-        self.object['name'] = name
-        self.object['orig'] = self.mechanics.convCoord(str(RA), str(DEC))
+        star = self.getStarByName(name)
+        self.object['name'] = star['name']
+        self.object['orig'] = (star['ra'], star['dec'])
         self.object['curr'] = self.computePosition(self.object['orig'])
-
-    def computePosition(self, orig):
-        return ('10', '10') #TODO
 
     def getObject(self):
         return self.object
+
+    def computePosition(self, orig):
+        return ('10', '10') #TODO
 
     def checkHours(self, hours):
         try:
