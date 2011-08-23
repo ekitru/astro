@@ -50,10 +50,10 @@ class SelectObjectDiag(wx.Dialog):
 
     def CreateListCtrl(self, trans):
         vList = wx.ListCtrl(self, style=wx.LC_REPORT)
-        vList.SetMinSize((340, 200))
-        vList.InsertColumn(0, trans.get('dSelObj_listName'), format=wx.LIST_FORMAT_LEFT, width=100)
-        vList.InsertColumn(1, trans.get('dSelObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=120)
-        vList.InsertColumn(2, trans.get('dSelObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=120)
+        vList.SetMinSize((320, 200))
+        vList.InsertColumn(0, trans.get('dSelObj_listName'), format=wx.LIST_FORMAT_LEFT, width=90)
+        vList.InsertColumn(1, trans.get('dSelObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=110)
+        vList.InsertColumn(2, trans.get('dSelObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=110)
         return vList
 
     def CreateObjectPanel(self, trans):
@@ -68,7 +68,7 @@ class SelectObjectDiag(wx.Dialog):
 
 
     def UpdateOnTimer(self, event):
-        self.selectButton.Enable(self.checkInput())
+        self.selectButton.Enable(self.CheckInput())
 
         userInput = self.name.GetValue().strip()
         if userInput != self.starName:
@@ -89,8 +89,8 @@ class SelectObjectDiag(wx.Dialog):
             if confirm.ShowModal()==wx.ID_YES:
                 confirm.Destroy()
                 self.controller.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
-                self.controller.setObject(self.starName)
-                self.EndModal(wx.ID_OK)
+        self.controller.setObject(self.starName)
+        self.EndModal(wx.ID_OK)
 
     def OnCancelClicked(self, event):
         self.EndModal(wx.ID_CANCEL)
@@ -114,7 +114,7 @@ class SelectObjectDiag(wx.Dialog):
             self.vList.SetStringItem(index, 1, star['ra'])
             self.vList.SetStringItem(index, 2, star['dec'])
 
-    def checkInput(self):
+    def CheckInput(self):
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
         return self.controller.checkHours(ra) and self.controller.checkDegrees(dec)
