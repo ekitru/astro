@@ -10,24 +10,24 @@ class SelectObjectDiag(wx.Dialog):
         wx.Dialog.__init__(self, parent, id, controller.trans.get('dSelObj_title'), style=wx.CAPTION)
 
         self.controller = controller
-        trans = controller.trans
+        self.trans = controller.trans
 
         self.starName = ""
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
-        self.vList = self.CreateListCtrl(trans)
+        self.vList = self.CreateListCtrl(self.trans)
 
-        self.selectButton = wx.Button(self, wx.ID_OK, label=trans.get('dSelObj_select'))
+        self.selectButton = wx.Button(self, wx.ID_OK, label=self.trans.get('dSelObj_select'))
         self.selectButton.Disable()
 
         self.FillList(self.controller.getStars(self.starName))
 
-        objProp = self.CreateObjectPanel(trans)
+        objProp = self.CreateObjectPanel(self.trans)
         ctrlButtons = wx.BoxSizer(wx.HORIZONTAL)
         ctrlButtons.Add(self.selectButton, flag=wx.ALIGN_BOTTOM)
-        ctrlButtons.Add(wx.Button(self, wx.ID_CANCEL, label=trans.get('dSelObj_cancel')), flag=wx.ALIGN_BOTTOM)
+        ctrlButtons.Add(wx.Button(self, wx.ID_CANCEL, label=self.trans.get('dSelObj_cancel')), flag=wx.ALIGN_BOTTOM)
 
         vCtrl = wx.BoxSizer(wx.VERTICAL)
         vCtrl.Add(objProp, flag=wx.ALL | wx.ALIGN_RIGHT, border=5)
@@ -70,7 +70,7 @@ class SelectObjectDiag(wx.Dialog):
     def UpdateOnTimer(self, event):
         self.selectButton.Enable(self.checkInput())
 
-        userInput = self.name.GetValue()
+        userInput = self.name.GetValue().strip()
         if userInput != self.starName:
             self.starName = userInput
             self.RA.SetValue("")
@@ -84,15 +84,13 @@ class SelectObjectDiag(wx.Dialog):
         self.SetNewStar(star)
 
     def OnSelectClicked(self, event):
-        starName = self.name.GetValue()
-        starRA = self.RA.GetValue()
-        starDEC = self.DEC.GetValue()
-
-        if not self.controller.isStarExist(starName):
-            print ('add')
-
-        self.controller.setObject(starName, starRA, starDEC)
-        self.EndModal(wx.ID_OK)
+        if not self.controller.isStarExist(self.starName):
+            confirm =  wx.MessageDialog(self, caption=self.starName, message=self.trans.get('dSelObj_addQues'),style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
+            if confirm.ShowModal()==wx.ID_YES:
+                confirm.Destroy()
+                self.controller.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
+                self.controller.setObject(self.starName)
+                self.EndModal(wx.ID_OK)
 
     def OnCancelClicked(self, event):
         self.EndModal(wx.ID_CANCEL)
