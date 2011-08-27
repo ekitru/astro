@@ -66,12 +66,19 @@ class ObjectPanel(SimplePanel):
 
         self.SetSizer(vert)
 
+    def isObjectCorrect(self, object):
+        if object['name']:
+            return True
+        else:
+            return False
+
     def update(self, object, currentPosition):
         """Updates Objects name and coordinates
         Attributes are tuple(RA,DEC) with string types
             object - {'name','ra','dec'}
             currebtPosition - Current coordinates for observer
         """
+        self.moveBut.Enable(self.isObjectCorrect(object))
         self.objectName.SetLabel(object['name'])
         self.objectOrigRA.SetLabel(object['ra'])
         self.objectOrigDEC.SetLabel(object['dec'])
