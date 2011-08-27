@@ -109,9 +109,7 @@ class Controller(object):
         {'current':(str,str) ,'end':(str,str)}
         """
         telescopePosition = self.commManager.getPosition()
-        position = {}
-        position['cur'] = self.mechanics.convCoordRad2Str(*telescopePosition[0])
-        position['end'] = self.mechanics.convCoordRad2Str(*telescopePosition[1])
+        position = {'cur': self.mechanics.convCoordRad2Str(*telescopePosition[0]), 'end': self.mechanics.convCoordRad2Str(*telescopePosition[1])}
         return position
 
 

@@ -156,14 +156,15 @@ class PositioningPanel(SimplePanel):
 
         self.SetSizer(vert)
 
-    def update(self):
-        self.curRA.SetLabel('10:10:10')
-        self.curDEC.SetLabel('22:22:22')
-        self.curFocus.SetLabel('23.23')
+    def update(self, curPos, curFocus, aimPos, aimFocus):
 
-        self.taskRA.SetLabel('10:10:10')
-        self.taskDEC.SetLabel('22:22:22')
-        self.taskFocus.SetLabel('23.23')
+        self.curRA.SetLabel(curPos[0])
+        self.curDEC.SetLabel(curPos[1])
+        self.curFocus.SetLabel(curFocus)
+
+        self.taskRA.SetLabel(aimPos[0])
+        self.taskDEC.SetLabel(aimPos[1])
+        self.taskFocus.SetLabel(aimFocus)
 
 
 class TelescopePanel(SimplePanel):    #TODO decide, what to do with it, temp mock
