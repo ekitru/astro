@@ -1,7 +1,5 @@
 import wx
-from wx.lib.inspection import InspectionTool
 import sys
-from ids import *
 
 __author__ = 'kitru'
 
@@ -12,26 +10,24 @@ class SelectObjectDiag(wx.Dialog):
         self.controller = controller
         self.trans = controller.trans
 
-        self.starName = ""
+        self.selectedStar = ""
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
-        self.vList = self.CreateListCtrl(self.trans)
-
+        ctrlButtons = wx.BoxSizer(wx.HORIZONTAL)
         self.selectButton = wx.Button(self, wx.ID_OK, label=self.trans.get('dSelObj_select'))
         self.selectButton.Disable()
-
-        self.FillList(self.controller.getStars(self.starName))
-
-        objProp = self.CreateObjectPanel(self.trans)
-        ctrlButtons = wx.BoxSizer(wx.HORIZONTAL)
         ctrlButtons.Add(self.selectButton, flag=wx.ALIGN_BOTTOM)
         ctrlButtons.Add(wx.Button(self, wx.ID_CANCEL, label=self.trans.get('dSelObj_cancel')), flag=wx.ALIGN_BOTTOM)
 
         vCtrl = wx.BoxSizer(wx.VERTICAL)
+        objProp = self.CreateObjectPanel(self.trans)
         vCtrl.Add(objProp, flag=wx.ALL | wx.ALIGN_RIGHT, border=5)
-        vCtrl.Add(ctrlButtons, 1, flag=wx.ALL | wx.EXPAND, border=5)
+        vCtrl.Add(ctrlButtons, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
+
+        self.vList = self.CreateListCtrl(self.trans)
+        self.FillList(self.controller.getStars(self.selectedStar))
 
         hMain = wx.FlexGridSizer(1, 2)
         hMain.Add(vCtrl, flag=wx.ALL | wx.EXPAND)
@@ -51,9 +47,9 @@ class SelectObjectDiag(wx.Dialog):
     def CreateListCtrl(self, trans):
         vList = wx.ListCtrl(self, style=wx.LC_REPORT)
         vList.SetMinSize((320, 200))
-        vList.InsertColumn(0, trans.get('dSelObj_listName'), format=wx.LIST_FORMAT_LEFT, width=90)
-        vList.InsertColumn(1, trans.get('dSelObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=110)
-        vList.InsertColumn(2, trans.get('dSelObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=110)
+        vList.InsertColumn(col=0, heading=trans.get('dSelObj_listName'), format=wx.LIST_FORMAT_LEFT, width=90)
+        vList.InsertColumn(col=1, heading=trans.get('dSelObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=110)
+        vList.InsertColumn(col=2, heading=trans.get('dSelObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=110)
         return vList
 
     def CreateObjectPanel(self, trans):
@@ -68,32 +64,36 @@ class SelectObjectDiag(wx.Dialog):
 
 
     def UpdateOnTimer(self, event):
-        self.selectButton.Enable(self.CheckInput())
+        self.selectButton.Enable(self.isCorrectInput())
 
         userInput = self.name.GetValue().strip()
-        if userInput != self.starName:
-            self.starName = userInput
+        if userInput != self.selectedStar:    #if new star name is entered update input fields and reread db
+            self.selectedStar = userInput
             self.RA.SetValue("")
             self.DEC.SetValue("")
-            stars = self.controller.getStars(self.starName)
+            stars = self.controller.getStars(self.selectedStar)
             self.FillList(stars)
+
+    def FillList(self, stars):
+        """ fill control list by stars with stars
+         Attr:
+            stars - dict('name','ra','dec') """
+        self.vList.DeleteAllItems()
+        for star in stars:
+            index = self.vList.InsertStringItem(sys.maxint, star['name'])
+            self.vList.SetStringItem(index, 1, star['ra'])
+            self.vList.SetStringItem(index, 2, star['dec'])
+
+    def isCorrectInput(self):
+        """ Check correct values for RA and DEC """
+        ra = self.RA.GetValue()
+        dec = self.DEC.GetValue()
+        return self.controller.checkHours(ra) and self.controller.checkDegrees(dec)
 
     def OnListItemSelected(self, event):
         name = self.GetSelectedStarName()
         star = self.controller.getStarByName(name)
         self.SetNewStar(star)
-
-    def OnSelectClicked(self, event):
-        if not self.controller.isStarExist(self.starName):
-            confirm =  wx.MessageDialog(self, caption=self.starName, message=self.trans.get('dSelObj_addQues'),style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
-            if confirm.ShowModal()==wx.ID_YES:
-                confirm.Destroy()
-                self.controller.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
-        self.controller.setObject(self.starName)
-        self.EndModal(wx.ID_OK)
-
-    def OnCancelClicked(self, event):
-        self.EndModal(wx.ID_CANCEL)
 
     def GetSelectedStarName(self):
         curItemId = self.vList.GetFirstSelected()
@@ -103,19 +103,22 @@ class SelectObjectDiag(wx.Dialog):
     def SetNewStar(self, star):
         inName = star['name'].strip()
         self.name.SetValue(inName)
-        self.starName = inName
+        self.selectedStar = inName
         self.RA.SetValue(star['ra'])
         self.DEC.SetValue(star['dec'])
 
-    def FillList(self, stars):
-        self.vList.DeleteAllItems()
-        for star in stars:
-            index = self.vList.InsertStringItem(sys.maxint, star['name'])
-            self.vList.SetStringItem(index, 1, star['ra'])
-            self.vList.SetStringItem(index, 2, star['dec'])
+    def OnSelectClicked(self, event):
+        if self.controller.isStarExist(self.selectedStar):
+            self.controller.setObject(self.selectedStar)
+            self.EndModal(wx.ID_OK)
+        else:
+            confirm = wx.MessageDialog(self, caption=self.selectedStar, message=self.trans.get('dSelObj_addQues'), style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
+            if confirm.ShowModal() == wx.ID_YES:
+                confirm.Destroy()
+                self.controller.saveStar(self.selectedStar, self.RA.GetValue(), self.DEC.GetValue())
+                self.controller.setObject(self.selectedStar)
+                self.EndModal(wx.ID_OK)
 
-    def CheckInput(self):
-        ra = self.RA.GetValue()
-        dec = self.DEC.GetValue()
-        return self.controller.checkHours(ra) and self.controller.checkDegrees(dec)
+    def OnCancelClicked(self, event):
+        self.EndModal(wx.ID_CANCEL)
 

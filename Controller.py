@@ -68,7 +68,7 @@ class Controller(object):
         self.dbManager.saveStar(name, ra, dec)
 
     def getStars(self, name):
-        """ Returns list of star objects(id, name,ra,dec)
+        """ Returns list of star objects(name,ra,dec)
         Fetchs all rows with similar star name like name%
         Star name and position in suitable form for customer
         """
@@ -102,7 +102,7 @@ class Controller(object):
         return self.object
 
     def getCurStarPosition(self, orig):
-        return ('10', '10') #TODO
+        return '10', '10' #TODO
 
     def getTelescopePosition(self):
         """ Return current and aim telescope position
