@@ -61,8 +61,14 @@ class MainGui(wx.Frame):
     def update(self, event):
         selStar = self.getSelectedStar(self.controller)
         self.objectPanel.update(*selStar)
-        self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
-        self.positioningPanel.update()
+
+        curDateTime = self.controller.mechanics.getCurrentTimeDate()
+        self.timeDatePanel.update(curDateTime)
+
+        position = self.controller.getTelescopePosition()
+        focus = self.controller.getTelescopeFocus()
+        self.positioningPanel.update(position['cur'],focus['cur'],position['end'], focus['end'])
+
         self.Layout()
         self.Fit()
         self.Show()

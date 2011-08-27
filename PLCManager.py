@@ -25,6 +25,15 @@ class PLCManager(object):
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 44, output_value=xrange(20))
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 60, 1)
 
+    def getPosition(self):
+        """ Return current and aim positions from PLC in radians """
+        return ((0.231, -0.0123), (0.231, -0.0123)) #TODO make real in future
+
+    def getFocus(self):
+        """ Return current and aim focus from PLC in radians
+        """
+        return ((0.3), (0.1)) #TODO make real in future
+
     def close(self):
         self.logger.info("Close Communication connection")
         self.master.close()

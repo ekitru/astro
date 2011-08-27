@@ -96,13 +96,32 @@ class Controller(object):
         star = self.getStarByName(name)
         self.object['name'] = star['name']
         self.object['orig'] = (star['ra'], star['dec'])
-        self.object['curr'] = self.computePosition(self.object['orig'])
+        self.object['curr'] = self.getCurStarPosition(self.object['orig'])
 
     def getObject(self):
         return self.object
 
-    def computePosition(self, orig):
+    def getCurStarPosition(self, orig):
         return ('10', '10') #TODO
+
+    def getTelescopePosition(self):
+        """ Return current and aim telescope position
+        {'current':(str,str) ,'end':(str,str)}
+        """
+        telescopePosition = self.commManager.getPosition()
+        position = {}
+        position['cur'] = self.mechanics.convCoordRad2Str(*telescopePosition[0])
+        position['end'] = self.mechanics.convCoordRad2Str(*telescopePosition[1])
+        return position
+
+
+    def getTelescopeFocus(self):
+        """ Return current and aim telescope focus
+        {'current':str() ,'end':str()}
+        """
+        telescopeFocus = self.commManager.getFocus()
+        focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
+        return focus
 
     def checkHours(self, hours):
         try:
