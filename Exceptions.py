@@ -24,7 +24,7 @@ class InitializationException(Exception):
             logger.error(msg)
 
 
-class ClosingException(object):
+class ClosingException(Exception):
     """Exception raised for errors during system closing.
     Attributes:
         msg  -- explanation of the error
@@ -35,7 +35,7 @@ class ClosingException(object):
         if logger:
             logger.error(msg)
 
-class DbException(object):
+class DbException(Exception):
     """Exception raised if Db return Exception.
     Attributes:
         msg  -- explanation of the error
