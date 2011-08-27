@@ -14,8 +14,7 @@ class MainGui(wx.Frame):
         self.controller = controller
         self.trans = self.controller.trans
 
-        menuBar = AstroMenu(self.trans)
-        self.SetMenuBar(menuBar)
+        self.SetMenuBar(AstroMenu(self.trans))
 
         self.Bind(wx.EVT_MENU, self.OnSelectObject, id=ID_SELOBJ)
         self.Bind(wx.EVT_MENU, self.OnEditObject, id=ID_EDITOBJ)
@@ -24,21 +23,21 @@ class MainGui(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText('Program starts')
 
-        grid = wx.GridSizer(2, 2, 10, 10)
-
         panelArgs = {"parent": self, "codes": self.trans}
+
         self.objectPanel = ObjectPanel(ID=ID_OBJPANEL, **panelArgs)
         self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
         self.positioningPanel = PositioningPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
 
+        grid = wx.GridSizer(2, 2, 10, 10)
         grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
         grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
         grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
         canvas = wx.BoxSizer(wx.VERTICAL)
-        canvas.Add(grid, flag=wx.EXPAND, border=10)
+        canvas.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
         self.SetSizer(canvas)
         self.Centre()
 
@@ -50,7 +49,6 @@ class MainGui(wx.Frame):
         selObj = SelectObjectDiag(None, wx.ID_ANY, self.controller)
         selObj.ShowModal()
         selObj.Destroy()
-
 
     def OnEditObject(self, event):
         print('Edit object')
@@ -67,7 +65,7 @@ class MainGui(wx.Frame):
 
         position = self.controller.getTelescopePosition()
         focus = self.controller.getTelescopeFocus()
-        self.positioningPanel.update(position['cur'],focus['cur'],position['end'], focus['end'])
+        self.positioningPanel.update(position['cur'], focus['cur'], position['end'], focus['end'])
 
         self.Layout()
         self.Fit()
@@ -75,23 +73,8 @@ class MainGui(wx.Frame):
 
     def getSelectedStar(self, controller):
         object = controller.getObject()
-
-        if object and object['name']:
-            name = object['name']
-        else:
-            name = ''
-
-        if object and object['orig']:
-            orig = controller.mechanics.convCoordRad2Str(*object['orig'])
-        else:
-            orig = ('', '')
-
-        if object and object['curr']:
-            curr = controller.mechanics.convCoordRad2Str(*object['curr'])
-        else:
-            curr = ('', '')
-
-        return (name, orig, curr)
+        curPos = controller.getCurrentObjectPosition()
+        return (object, curPos)
 
 
 class AstroMenu(wx.MenuBar):

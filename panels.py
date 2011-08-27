@@ -31,13 +31,14 @@ class ObjectPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(4, 3, 5, 10)
+        sizer = wx.GridSizer(5, 3, 5, 10)
 
         self.objectName = self.CreateField()
         self.objectOrigRA = self.CreateField()
         self.objectCurrRA = self.CreateField()
         self.objectOrigDEC = self.CreateField()
         self.objectCurrDEC = self.CreateField()
+        self.objectCurrALT = self.CreateField()
         self.moveBut = wx.Button(self, wx.ID_ANY, codes.get('moveToObj'))
 
         sizer.Add(self.CreateCaption(codes.get('starName')), flag=wx.ALL | wx.ALIGN_RIGHT)
@@ -55,6 +56,9 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.CreateCaption(codes.get('objectDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectOrigDEC, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.objectCurrDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('objectALT')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateField())
+        sizer.Add(self.objectCurrALT, flag=wx.ALL | wx.ALIGN_CENTER)
 
         vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("Object")), wx.VERTICAL)
         vert.Add(sizer, flag=wx.ALL, border=10)
@@ -62,17 +66,18 @@ class ObjectPanel(SimplePanel):
 
         self.SetSizer(vert)
 
-    def update(self, name, origRADEC, currRADEC):
+    def update(self, object, currentPosition):
         """Updates Objects name and coordinates
         Attributes are tuple(RA,DEC) with string types
-            origRADEC - Epoch coordinates
-            urrRADEC - Current coordinates for observer
+            object - {'name','ra','dec'}
+            currebtPosition - Current coordinates for observer
         """
-        self.objectName.SetLabel(name)
-        self.objectOrigRA.SetLabel(origRADEC[0])
-        self.objectOrigDEC.SetLabel(origRADEC[1])
-        self.objectCurrRA.SetLabel(currRADEC[0])
-        self.objectCurrDEC.SetLabel(currRADEC[1])
+        self.objectName.SetLabel(object['name'])
+        self.objectOrigRA.SetLabel(object['ra'])
+        self.objectOrigDEC.SetLabel(object['dec'])
+        self.objectCurrRA.SetLabel(currentPosition['ra'])
+        self.objectCurrDEC.SetLabel(currentPosition['dec'])
+        self.objectCurrALT.SetLabel(currentPosition['alt'])
 
 
 class TimeDatePanel(SimplePanel):

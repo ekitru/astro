@@ -27,3 +27,15 @@ if __name__ == '__main__':
     e = str(deg)
     print('deg',deg.real)
 
+    telescope2 = ephem.Observer()
+    telescope2.long =  ephem.degrees('10')
+    telescope2.lat = ephem.degrees('60')
+    telescope2.elevation = 200
+
+    radiant = ephem.FixedBody()
+    radiant._ra = ephem.degrees('263.2')
+    radiant._dec = ephem.degrees('55.8')
+    radiant.compute(telescope2)
+
+    print radiant.alt, radiant.az
+    print(radiant.ra, radiant.dec )

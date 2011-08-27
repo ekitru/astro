@@ -16,11 +16,22 @@ class AstroMechanics(object):
         #preassure can be also corrected
 
         observer = ephem.Observer()
-        observer.long = ephem.degrees(str(longitude))
-        observer.lat = ephem.degrees(str(latitude))
+        observer.long = ephem.degrees(float(longitude))
+        observer.lat = ephem.degrees(float(latitude))
         observer.elevation = float(elevation)
         observer.temp = float(temp)
         return observer
+
+    def getStarPosition(self, ra, dec):
+        self.updateObserverTime()
+
+        star = ephem.FixedBody()
+        star._ra = ephem.hours(ra)
+        star._dec = ephem.degrees(dec)
+
+        star.compute(self.observer)
+#        print('ephem star alt', star.alt, star.az, 'ephem star', (star.ra, star.dec)) #,(star.a_ra, star.a_dec), (star.g_ra, star.g_dec))
+        return {'ra': star.ra, 'dec': star.dec, 'alt':star.alt}
 
     def getCurrentTimeDate(self):
         """ return tuple of LT, UTC, JD, LST """
@@ -69,7 +80,6 @@ class AstroMechanics(object):
         return:
            tuple(ephem,hours, ephem.degrees)
         """
-        ra = ephem.hours(ra)
         ra = ephem.hours(ra)
         dec = ephem.degrees(dec)
         return ra, dec

@@ -11,7 +11,8 @@ __author__ = 'kitru'
 class Controller(object):
     def __init__(self):
         self.__initLogger()
-        self.object = {}
+        self.object = {'name': '', 'ra': '', 'dec': ''}
+
 
 
     def __initLogger(self):
@@ -89,20 +90,26 @@ class Controller(object):
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def setObject(self, name):
-        """ Stores new object for observer and current position in the sky
+        """ Stores new object for observer
         Attr:
             name - star name
         """
-        star = self.getStarByName(name)
-        self.object['name'] = star['name']
-        self.object['orig'] = (star['ra'], star['dec'])
-        self.object['curr'] = self.getCurStarPosition(self.object['orig'])
+        star = self.dbManager.getStarByName(name)
+        self.object = {'name': star[0], 'ra': star[1], 'dec': star[2]}
 
     def getObject(self):
-        return self.object
+        name = self.object['name']
+        ra, dec = self.mechanics.convCoordRad2Str(self.object['ra'], self.object['dec'])
+        return {'name': name, 'ra': ra, 'dec': dec}
 
-    def getCurStarPosition(self, orig):
-        return '10', '10' #TODO
+    def getCurrentObjectPosition(self):
+        if self.object['name']:
+            position = self.mechanics.getStarPosition(self.object['ra'], self.object['dec'])
+            ra, dec = self.mechanics.convCoordRad2Str(position['ra'], position['dec'])
+            alt = str(position['alt'])
+        else:
+            ra,dec,alt ='','',''
+        return {'ra': ra, 'dec': dec, 'alt': alt}
 
     def getTelescopePosition(self):
         """ Return current and aim telescope position
