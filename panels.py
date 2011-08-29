@@ -72,19 +72,21 @@ class ObjectPanel(SimplePanel):
         else:
             return False
 
-    def update(self, object, currentPosition):
+    def update(self, controller):
         """Updates Objects name and coordinates
-        Attributes are tuple(RA,DEC) with string types
-            object - {'name','ra','dec'}
-            currebtPosition - Current coordinates for observer
         """
-        self.moveBut.Enable(self.isObjectCorrect(object))
+
+        self.moveBut.Enable(controller.isTelescopeReachable())
+
+        object = controller.getObject()
         self.objectName.SetLabel(object['name'])
         self.objectOrigRA.SetLabel(object['ra'])
         self.objectOrigDEC.SetLabel(object['dec'])
-        self.objectCurrRA.SetLabel(currentPosition['ra'])
-        self.objectCurrDEC.SetLabel(currentPosition['dec'])
-        self.objectCurrALT.SetLabel(currentPosition['alt'])
+
+        position = controller.getObjectPositionNow()
+        self.objectCurrRA.SetLabel(position['ra'])
+        self.objectCurrDEC.SetLabel(position['dec'])
+        self.objectCurrALT.SetLabel(position['alt'])
 
 
 class TimeDatePanel(SimplePanel):
@@ -116,11 +118,9 @@ class TimeDatePanel(SimplePanel):
         vert.Add(sizer, flag=wx.ALL, border=10)
         self.SetSizer(vert)
 
-    def update(self, times):
-        """Updates local time, sidereal time, julian day and UTC time
-        Attributes:
-            tuple(LT, UTC, JD, LST)
-        """
+    def update(self, controller):
+        """Updates local time, sidereal time, julian day and UTC time """
+        times = controller.mechanics.getTimeDateNow()
         self.LT.SetLabel(times[0])
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])
@@ -168,15 +168,18 @@ class PositioningPanel(SimplePanel):
 
         self.SetSizer(vert)
 
-    def update(self, curPos, curFocus, aimPos, aimFocus):
+    def update(self, controller):
 
-        self.curRA.SetLabel(curPos[0])
-        self.curDEC.SetLabel(curPos[1])
-        self.curFocus.SetLabel(curFocus)
+        position = controller.getTelescopePosition()
+        focus = controller.getTelescopeFocus()
 
-        self.taskRA.SetLabel(aimPos[0])
-        self.taskDEC.SetLabel(aimPos[1])
-        self.taskFocus.SetLabel(aimFocus)
+        self.curRA.SetLabel(position['cur'][0])
+        self.curDEC.SetLabel(position['cur'][1])
+        self.curFocus.SetLabel(focus['cur'])
+
+        self.taskRA.SetLabel(position['end'][0])
+        self.taskDEC.SetLabel(position['end'][1])
+        self.taskFocus.SetLabel(focus['end'])
 
 
 class TelescopePanel(SimplePanel):    #TODO decide, what to do with it, temp mock

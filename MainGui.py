@@ -57,25 +57,14 @@ class MainGui(wx.Frame):
         print('Settings')
 
     def update(self, event):
-        objectData = self.getSelectedStar(self.controller)
-        self.objectPanel.update(*objectData)
 
-        curDateTime = self.controller.mechanics.getTimeDateNow()
-        self.timeDatePanel.update(curDateTime)
-
-        position = self.controller.getTelescopePosition()
-        focus = self.controller.getTelescopeFocus()
-        self.positioningPanel.update(position['cur'], focus['cur'], position['end'], focus['end'])
+        self.objectPanel.update(self.controller)
+        self.timeDatePanel.update(self.controller)
+        self.positioningPanel.update(self.controller)
 
         self.Layout()
         self.Fit()
         self.Show()
-
-    def getSelectedStar(self, controller):
-        object = controller.getObject()
-        curPos = controller.getCurrentObjectPosition()
-        return (object, curPos)
-
 
 class AstroMenu(wx.MenuBar):
     def __init__(self, trans):
