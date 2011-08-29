@@ -6,6 +6,8 @@ __author__ = 'kitru'
 class AstroMechanics(object):
     def __init__(self, confDict):
         self.observer = self.getObserver(confDict)
+        self.objectName = ""
+        self.object = None
 
     def getObserver(self, confDict):
         """ Create observer based on configuration  """
@@ -22,16 +24,34 @@ class AstroMechanics(object):
         observer.temp = float(temp)
         return observer
 
-    def getStarPosition(self, ra, dec):
-        self.updateObserverTime()
+    def setObject(self, name, ra, dec):
+        """ Set new observation object
+        Attr:
+            name - name for object
+            ra - RA in radians
+            de - DEC in radians
+        """
+        self.objectName = name
+        self.object = ephem.FixedBody()
+        self.object._ra = ephem.hours(ra)
+        self.object._dec = ephem.degrees(dec)
 
-        star = ephem.FixedBody()
-        star._ra = ephem.hours(ra)
-        star._dec = ephem.degrees(dec)
-        star.compute(self.observer)
-        return {'ra': star.ra, 'dec': star.dec, 'alt':star.alt}
+    def getObject(self):
+        if self.object:
+            return {'name':self.objectName, 'ra': self.object._ra, 'dec': self.object._dec}
+        else:
+            return None
 
-    def getCurrentTimeDate(self):
+    def getObjectPositionNow(self):
+        """ return position in radians like {'name','ra','dec','alt'}  """
+        if self.object:
+            self.updateObserverTime()
+            self.object.compute(self.observer)
+            return {'name':self.objectName, 'ra': self.object.ra, 'dec': self.object.dec, 'alt':self.object.alt}
+        else:
+            return {'name':'', 'ra': '', 'dec': '', 'alt':''}
+
+    def getTimeDateNow(self):
         """ return tuple of LT, UTC, JD, LST """
         self.updateObserverTime()
         utc = str(self.observer.date)
@@ -57,7 +77,7 @@ class AstroMechanics(object):
     def updateObserverTime(self):
         self.observer.date = ephem.now()
 
-    def convCoordRad2Str(self, ra, dec):
+    def rad2str(self, ra, dec):
         """ Convert (ra,dec) in radians to more readable form
         Attr:
           ra - right ascension in radians
@@ -66,7 +86,7 @@ class AstroMechanics(object):
         ra, dec = self.getCoordinates(ra, dec)
         return str(ra), str(dec)
 
-    def convCoordStr2Rad(self, ra, dec):
+    def str2rad(self, ra, dec):
         ra, dec = self.getCoordinates(ra, dec)
         return ra.real, dec.real
 
@@ -76,7 +96,7 @@ class AstroMechanics(object):
            ra - radians or string (hour:min:sec)
            dec - radians or string (deg:min:sec)
         return:
-           tuple(ephem,hours, ephem.degrees)
+           tuple(ephem.hours, ephem.degrees)
         """
         ra = ephem.hours(ra)
         dec = ephem.degrees(dec)

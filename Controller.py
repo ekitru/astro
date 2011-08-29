@@ -11,9 +11,6 @@ __author__ = 'kitru'
 class Controller(object):
     def __init__(self):
         self.__initLogger()
-        self.object = {'name': '', 'ra': '', 'dec': ''}
-
-
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -65,7 +62,7 @@ class Controller(object):
             return None
 
     def saveStar(self, name, ra, dec):
-        ra, dec = self.mechanics.convCoordStr2Rad(str(ra), str(dec))
+        ra, dec = self.mechanics.str2rad(str(ra), str(dec))
         self.dbManager.saveStar(name, ra, dec)
 
     def getStars(self, name):
@@ -86,7 +83,7 @@ class Controller(object):
           star - one record fron DB
         """
         name = star[0]
-        ra, dec = self.mechanics.convCoordRad2Str(star[1], star[2])
+        ra, dec = self.mechanics.rad2str(star[1], star[2])
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def setObject(self, name):
@@ -95,20 +92,23 @@ class Controller(object):
             name - star name
         """
         star = self.dbManager.getStarByName(name)
-        self.object = {'name': star[0], 'ra': star[1], 'dec': star[2]}
+        if star:
+            self.mechanics.setObject(star[0], star[1], star[2])
 
     def getObject(self):
-        name = self.object['name']
-        ra, dec = self.mechanics.convCoordRad2Str(self.object['ra'], self.object['dec'])
+        object = self.mechanics.getObject()
+        if object:
+            ra, dec = self.mechanics.rad2str(object['ra'], object['dec'])
+            name = object['name']
+        else:
+            ra, dec = '', ''
+            name = ''
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def getCurrentObjectPosition(self):
-        if self.object['name']:
-            position = self.mechanics.getStarPosition(self.object['ra'], self.object['dec'])
-            ra, dec = self.mechanics.convCoordRad2Str(position['ra'], position['dec'])
-            alt = str(position['alt'])
-        else:
-            ra,dec,alt ='','',''
+        position = self.mechanics.getObjectPositionNow()
+        ra,dec = self.mechanics.rad2str(position['ra'], position['dec'])
+        alt = str(position['alt'])
         return {'ra': ra, 'dec': dec, 'alt': alt}
 
     def getTelescopePosition(self):
@@ -116,7 +116,7 @@ class Controller(object):
         {'current':(str,str) ,'end':(str,str)}
         """
         telescopePosition = self.commManager.getPosition()
-        position = {'cur': self.mechanics.convCoordRad2Str(*telescopePosition[0]), 'end': self.mechanics.convCoordRad2Str(*telescopePosition[1])}
+        position = {'cur': self.mechanics.rad2str(*telescopePosition[0]), 'end': self.mechanics.rad2str(*telescopePosition[1])}
         return position
 
 

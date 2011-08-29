@@ -60,7 +60,7 @@ class MainGui(wx.Frame):
         selStar = self.getSelectedStar(self.controller)
         self.objectPanel.update(*selStar)
 
-        curDateTime = self.controller.mechanics.getCurrentTimeDate()
+        curDateTime = self.controller.mechanics.getTimeDateNow()
         self.timeDatePanel.update(curDateTime)
 
         position = self.controller.getTelescopePosition()
