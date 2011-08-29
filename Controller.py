@@ -50,7 +50,6 @@ class Controller(object):
         else:
             return False
 
-
     def getStarByName(self, name):
         """ Take star from database by name
         Star name and position in suitable form for customer
@@ -105,7 +104,7 @@ class Controller(object):
             name = ''
         return {'name': name, 'ra': ra, 'dec': dec}
 
-    def getCurrentObjectPosition(self):
+    def getObjectPositionNow(self):
         return self.mechanics.getObjectPositionNow()
 
     def getTelescopePosition(self):
@@ -124,6 +123,9 @@ class Controller(object):
         telescopeFocus = self.commManager.getFocus()
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
+
+    def isTelescopeReachable(self):
+        return False #TODO
 
     def checkHours(self, hours):
         try:
