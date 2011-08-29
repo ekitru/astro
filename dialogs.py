@@ -12,6 +12,7 @@ class SelectObjectDiag(wx.Dialog):
 
         self.selectedStar = ""
         self.name = wx.TextCtrl(self, size=(120, -1))
+        self.name.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 

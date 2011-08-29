@@ -76,7 +76,7 @@ class ObjectPanel(SimplePanel):
         """Updates Objects name and coordinates
         """
 
-        self.moveBut.Enable(controller.isTelescopeReachable())
+        self.moveBut.Enable(controller.isTelescopeMoveable())
 
         object = controller.getObject()
         self.objectName.SetLabel(object['name'])
@@ -120,7 +120,7 @@ class TimeDatePanel(SimplePanel):
 
     def update(self, controller):
         """Updates local time, sidereal time, julian day and UTC time """
-        times = controller.mechanics.getTimeDateNow()
+        times = controller.observer.getTimeDateNow()
         self.LT.SetLabel(times[0])
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])

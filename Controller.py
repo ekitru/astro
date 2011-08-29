@@ -5,12 +5,15 @@ import re
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
 from Configs import ProgramConfig
+from astronomy import Object
+import astronomy
 
 __author__ = 'kitru'
 
 class Controller(object):
     def __init__(self):
         self.__initLogger()
+        self.object = None
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -28,7 +31,8 @@ class Controller(object):
         try:
             logging.info('======= Program initialization =======')
             config = ProgramConfig('default.conf')
-            self.mechanics = config.openAstroMechanics()
+            self.observer = config.getObserver()
+            self.object = Object(self.observer)
             self.dbManager = config.getDbManager()
             self.commManager = config.getPLCManager()
             self.trans = config.getTranslationConf()
@@ -61,7 +65,7 @@ class Controller(object):
             return None
 
     def saveStar(self, name, ra, dec):
-        ra, dec = self.mechanics.str2rad(str(ra), str(dec))
+        ra, dec = astronomy.str2rad(str(ra), str(dec))
         self.dbManager.saveStar(name, ra, dec)
 
     def getStars(self, name):
@@ -82,7 +86,7 @@ class Controller(object):
           star - one record fron DB
         """
         name = star[0]
-        ra, dec = self.mechanics.rad2str(star[1], star[2])
+        ra, dec = astronomy.rad2str(star[1], star[2])
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def setObject(self, name):
@@ -92,12 +96,12 @@ class Controller(object):
         """
         star = self.dbManager.getStarByName(name)
         if star:
-            self.mechanics.setObject(star[0], star[1], star[2])
+            self.object.setObject(star[0], star[1], star[2])
 
     def getObject(self):
-        object = self.mechanics.getObject()
+        object  = self.object.getObject()
         if object:
-            ra, dec = self.mechanics.rad2str(object['ra'], object['dec'])
+            ra, dec = astronomy.rad2str(object['ra'], object['dec'])
             name = object['name']
         else:
             ra, dec = '', ''
@@ -105,14 +109,14 @@ class Controller(object):
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def getObjectPositionNow(self):
-        return self.mechanics.getObjectPositionNow()
+        return self.object.getObjectPositionNow()
 
     def getTelescopePosition(self):
         """ Return current and aim telescope position
-        {'current':(str,str) ,'end':(str,str)}
+        {'cur':(str,str) ,'end':(str,str)}
         """
         telescopePosition = self.commManager.getPosition()
-        position = {'cur': self.mechanics.rad2str(*telescopePosition[0]), 'end': self.mechanics.rad2str(*telescopePosition[1])}
+        position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
 
@@ -124,8 +128,11 @@ class Controller(object):
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
-    def isTelescopeReachable(self):
-        return False #TODO
+    def isTelescopeMoveable(self):
+        isCanMove = True
+#        if not self.mechanics.getObject():
+#            isCanMove = False
+        return isCanMove
 
     def checkHours(self, hours):
         try:
