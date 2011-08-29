@@ -106,10 +106,7 @@ class Controller(object):
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def getCurrentObjectPosition(self):
-        position = self.mechanics.getObjectPositionNow()
-        ra,dec = self.mechanics.rad2str(position['ra'], position['dec'])
-        alt = str(position['alt'])
-        return {'ra': ra, 'dec': dec, 'alt': alt}
+        return self.mechanics.getObjectPositionNow()
 
     def getTelescopePosition(self):
         """ Return current and aim telescope position

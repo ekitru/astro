@@ -57,8 +57,8 @@ class MainGui(wx.Frame):
         print('Settings')
 
     def update(self, event):
-        selStar = self.getSelectedStar(self.controller)
-        self.objectPanel.update(*selStar)
+        objectData = self.getSelectedStar(self.controller)
+        self.objectPanel.update(*objectData)
 
         curDateTime = self.controller.mechanics.getTimeDateNow()
         self.timeDatePanel.update(curDateTime)

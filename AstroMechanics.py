@@ -37,19 +37,23 @@ class AstroMechanics(object):
         self.object._dec = ephem.degrees(dec)
 
     def getObject(self):
+        """ Object{'name','ra','dec'} or None if not """
         if self.object:
-            return {'name':self.objectName, 'ra': self.object._ra, 'dec': self.object._dec}
+            return {'name': self.objectName, 'ra': self.object._ra, 'dec': self.object._dec}
         else:
             return None
 
     def getObjectPositionNow(self):
-        """ return position in radians like {'name','ra','dec','alt'}  """
+        """ return position in radians like {'ra','dec','alt'}. If object is not degined return empty dictionary """
         if self.object:
             self.updateObserverTime()
             self.object.compute(self.observer)
-            return {'name':self.objectName, 'ra': self.object.ra, 'dec': self.object.dec, 'alt':self.object.alt}
+            ra, dec = self.rad2str(self.object.ra, self.object.dec)
+            alt = str(self.object.alt)
         else:
-            return {'name':'', 'ra': '', 'dec': '', 'alt':''}
+            ra,dec,alt = '','',''
+        return {'ra': ra, 'dec': dec, 'alt': alt}
+
 
     def getTimeDateNow(self):
         """ return tuple of LT, UTC, JD, LST """
@@ -60,22 +64,14 @@ class AstroMechanics(object):
         jd = str(ephem.julian_date())
         return localtime, utc, jd, lst
 
-    def getLT(self):
-        localtime = str(strftime("%Z %H:%M:%S"))
-        return localtime
-
-    def getYD(self):
-        return ephem.julian_date()
-
-    def getUTC(self):
-        self.updateObserverTime()
-        return self.observer.date
-
-    def getLST(self):
-        return self.observer.sidereal_time()
-
     def updateObserverTime(self):
         self.observer.date = ephem.now()
+
+    def updateObserverTemp(self, temp):
+        self.observer.temp = float(temp)
+
+    def updateObserverPressure(self, pressure):
+        pass  #TODO neet very needed, not will be good to add this functionality
 
     def rad2str(self, ra, dec):
         """ Convert (ra,dec) in radians to more readable form
