@@ -38,7 +38,10 @@ class ObjectPanel(SimplePanel):
         self.objectCurrRA = self.CreateField()
         self.objectOrigDEC = self.CreateField()
         self.objectCurrDEC = self.CreateField()
-        self.objectCurrALT = self.CreateField()
+        self.objAltitude = self.CreateField()
+        self.objHourAngle = self.CreateField()
+        self.objRisingTime = self.CreateField()
+        self.objSettingTime = self.CreateField()
         self.moveBut = wx.Button(self, wx.ID_ANY, codes.get('moveToObj'))
 
         sizer.Add(self.CreateCaption(codes.get('starName')), flag=wx.ALL | wx.ALIGN_RIGHT)
@@ -56,9 +59,22 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.CreateCaption(codes.get('objectDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectOrigDEC, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.objectCurrDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+
         sizer.Add(self.CreateCaption(codes.get('objectALT')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.CreateField())
-        sizer.Add(self.objectCurrALT, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.objAltitude, flag=wx.ALL | wx.ALIGN_CENTER)
+
+        sizer.Add(self.CreateCaption(codes.get('objectHA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateField())
+        sizer.Add(self.objHourAngle, flag=wx.ALL | wx.ALIGN_CENTER)
+
+        sizer.Add(self.CreateCaption(codes.get('objRising')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateField())
+        sizer.Add(self.objRisingTime, flag=wx.ALL | wx.ALIGN_CENTER)
+
+        sizer.Add(self.CreateCaption(codes.get('objSetting')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.CreateField())
+        sizer.Add(self.objSettingTime, flag=wx.ALL | wx.ALIGN_CENTER)
 
         vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("Object")), wx.VERTICAL)
         vert.Add(sizer, flag=wx.ALL, border=10)
@@ -82,7 +98,10 @@ class ObjectPanel(SimplePanel):
         position = object.getCurrentPosition()
         self.objectCurrRA.SetLabel(position['ra'])
         self.objectCurrDEC.SetLabel(position['dec'])
-        self.objectCurrALT.SetLabel(position['alt'])
+        self.objAltitude.SetLabel(position['alt'])
+        self.objHourAngle.SetLabel(position['ha'])
+        self.objRisingTime.SetLabel(position['rise'])
+        self.objSettingTime.SetLabel(position['set'])
 
 
 class TimeDatePanel(SimplePanel):

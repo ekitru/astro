@@ -32,7 +32,7 @@ class Object(object):
             ra, dec = rad2str(self.fixedBody._ra, self.fixedBody._dec)
             name = self.fixedBodyName
         else:
-            ra, dec, name = 'test', '111', '2222'
+            ra, dec, name = '', '', ''
 
         return {'name': name, 'ra': ra, 'dec': dec}
 
@@ -43,9 +43,20 @@ class Object(object):
             self.fixedBody.compute(self.observer.observer)
             ra, dec = rad2str(self.fixedBody.ra, self.fixedBody.dec)
             alt = str(self.fixedBody.alt)
+            ha = rad2str((self.observer.getLST()-self.fixedBody.ra), 0)
+            rise = self.getRisingTime()
+            set = self.getSettingTime()
         else:
-            ra, dec, alt = '', '', ''
-        return {'ra': ra, 'dec': dec, 'alt': alt}
+            ra, dec, alt, ha, rise, set  = '', '', '', ' ', '', ''
+        return {'ra': ra, 'dec': dec, 'alt': alt, 'ha':ha[0], 'rise':rise, 'set':set}
+
+    def getRisingTime(self):
+        time = self.observer.observer.next_rising(self.fixedBody)
+        return str(time)
+
+    def getSettingTime(self):
+        time = self.observer.observer.next_setting(self.fixedBody)
+        return str(time)
 
 
 class Observer(object):
@@ -77,6 +88,11 @@ class Observer(object):
         jd = str(ephem.julian_date())
         lst = str(self.observer.sidereal_time()) #observer local sidereal time
         return localtime, utc, jd, lst
+
+    def getLST(self):
+        self.updateToNow()
+        lst = self.observer.sidereal_time()
+        return lst
 
     def updateToNow(self):
         self.observer.date = ephem.now()
