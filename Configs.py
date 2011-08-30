@@ -8,7 +8,7 @@ from logger import  getLog
 
 from DbManager import DbManager
 from PLCManager import PLCManager
-from AstroMechanics import AstroMechanics
+from astronomy import Observer
 
 __author__ = 'kitru'
 
@@ -60,13 +60,13 @@ class ProgramConfig(SystemConf):
         dbConfig = self.getConfigBySection(self.config, "db configuration")
         return DbManager(dbConfig)
 
-    def openAstroMechanics(self):
+    def getObserver(self):
         """ get observer for telescope position """
         logging.info('=== Reading telescope configurations ===')
         configs = self.getConfigBySection(self.config, "observer")
-        return AstroMechanics(configs)
+        return Observer(configs)
 
-    def getTranslationConf(self):
+    def getTranslation(self):
         logging.info('=== Reading translation page  ===')   #Read selected language translation
         language = self.getDefaultLanguage()
         return TransConf(language)

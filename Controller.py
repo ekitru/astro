@@ -5,15 +5,15 @@ import re
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
 from Configs import ProgramConfig
+from astronomy import Object
+import astronomy
 
 __author__ = 'kitru'
 
 class Controller(object):
     def __init__(self):
         self.__initLogger()
-        self.object = {'name': '', 'ra': '', 'dec': ''}
-
-
+        self.object = None
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -26,15 +26,15 @@ class Controller(object):
 
     def initialization(self):
         """ Initialization for all components
-        Opens DB connection and connection with PLCm also reads translation codes
-        """
+        Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
             config = ProgramConfig('default.conf')
-            self.mechanics = config.openAstroMechanics()
+            self.observer = config.getObserver()
+            self.object = Object(self.observer)
             self.dbManager = config.getDbManager()
-            self.commManager = config.getPLCManager()
-            self.trans = config.getTranslationConf()
+            self.PLCManager = config.getPLCManager()
+            self.trans = config.getTranslation()
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
@@ -43,7 +43,7 @@ class Controller(object):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
             self.dbManager.close()
-            self.commManager.close()
+            self.PLCManager.close()
         except Exception as e:
             raise ClosingException(e)
 
@@ -52,7 +52,6 @@ class Controller(object):
             return True
         else:
             return False
-
 
     def getStarByName(self, name):
         """ Take star from database by name
@@ -65,7 +64,7 @@ class Controller(object):
             return None
 
     def saveStar(self, name, ra, dec):
-        ra, dec = self.mechanics.convCoordStr2Rad(str(ra), str(dec))
+        ra, dec = astronomy.str2rad(str(ra), str(dec))
         self.dbManager.saveStar(name, ra, dec)
 
     def getStars(self, name):
@@ -86,7 +85,7 @@ class Controller(object):
           star - one record fron DB
         """
         name = star[0]
-        ra, dec = self.mechanics.convCoordRad2Str(star[1], star[2])
+        ra, dec = astronomy.rad2str(star[1], star[2])
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def setObject(self, name):
@@ -95,28 +94,18 @@ class Controller(object):
             name - star name
         """
         star = self.dbManager.getStarByName(name)
-        self.object = {'name': star[0], 'ra': star[1], 'dec': star[2]}
+        if star:
+            self.object.init(star[0], star[1], star[2])
 
     def getObject(self):
-        name = self.object['name']
-        ra, dec = self.mechanics.convCoordRad2Str(self.object['ra'], self.object['dec'])
-        return {'name': name, 'ra': ra, 'dec': dec}
-
-    def getCurrentObjectPosition(self):
-        if self.object['name']:
-            position = self.mechanics.getStarPosition(self.object['ra'], self.object['dec'])
-            ra, dec = self.mechanics.convCoordRad2Str(position['ra'], position['dec'])
-            alt = str(position['alt'])
-        else:
-            ra,dec,alt ='','',''
-        return {'ra': ra, 'dec': dec, 'alt': alt}
+        return self.object
 
     def getTelescopePosition(self):
         """ Return current and aim telescope position
-        {'current':(str,str) ,'end':(str,str)}
+        {'cur':(str,str) ,'end':(str,str)}
         """
-        telescopePosition = self.commManager.getPosition()
-        position = {'cur': self.mechanics.convCoordRad2Str(*telescopePosition[0]), 'end': self.mechanics.convCoordRad2Str(*telescopePosition[1])}
+        telescopePosition = self.PLCManager.getPosition()
+        position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
 
@@ -124,9 +113,15 @@ class Controller(object):
         """ Return current and aim telescope focus
         {'current':str() ,'end':str()}
         """
-        telescopeFocus = self.commManager.getFocus()
+        telescopeFocus = self.PLCManager.getFocus()
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
+
+    def isTelescopeMoveable(self):
+        canMove = True
+        if not self.object.selected():
+            canMove = False
+        return canMove
 
     def checkHours(self, hours):
         try:

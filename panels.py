@@ -31,15 +31,26 @@ class ObjectPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(5, 3, 5, 10)
+        objCoord = self.CreateCoordinatesGrid(codes)
+        objPos = self.CreateObjectPosition(codes)
+
+        vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("Object")), wx.VERTICAL)
+        vert.Add(objCoord, flag=wx.ALL, border=10)
+        vert.Add(wx.StaticLine(self, wx.ID_ANY,style=wx.LI_HORIZONTAL), flag=wx.ALL | wx.EXPAND)
+        vert.Add(objPos, flag=wx.ALL, border=10)
+
+#        self.moveBut = wx.Button(self, wx.ID_ANY, codes.get('moveToObj'))
+
+        self.SetSizer(vert)
+
+    def CreateCoordinatesGrid(self, codes):
+        sizer = wx.GridSizer(4, 3, 5, 10)
 
         self.objectName = self.CreateField()
         self.objectOrigRA = self.CreateField()
         self.objectCurrRA = self.CreateField()
         self.objectOrigDEC = self.CreateField()
         self.objectCurrDEC = self.CreateField()
-        self.objectCurrALT = self.CreateField()
-        self.moveBut = wx.Button(self, wx.ID_ANY, codes.get('moveToObj'))
 
         sizer.Add(self.CreateCaption(codes.get('starName')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectName, flag=wx.ALL | wx.EXPAND | wx.CENTER)
@@ -48,7 +59,6 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.CreateField())
         sizer.Add(self.CreateCaption(codes.get('absoluteRADEC')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         sizer.Add(self.CreateCaption(codes.get('currentRADEC')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-
         sizer.Add(self.CreateCaption(codes.get('objectRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectOrigRA, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.objectCurrRA, flag=wx.ALL | wx.ALIGN_CENTER)
@@ -56,35 +66,46 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.CreateCaption(codes.get('objectDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectOrigDEC, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.objectCurrDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        return sizer
+
+    def CreateObjectPosition(self, codes):
+        sizer = wx.FlexGridSizer(3,2,5,10)
+
+        self.objAltitude = self.CreateField()
+        self.objHourAngle = self.CreateField()
+#        self.objRisingTime = self.CreateField()
+#        self.objSettingTime = self.CreateField()
+
         sizer.Add(self.CreateCaption(codes.get('objectALT')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateField())
-        sizer.Add(self.objectCurrALT, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.objAltitude, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('objectHA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objHourAngle, flag=wx.ALL | wx.ALIGN_CENTER)
+#        sizer.Add(self.CreateCaption(codes.get('objRising')), flag=wx.ALL | wx.ALIGN_RIGHT)
+#        sizer.Add(self.objRisingTime, flag=wx.ALL | wx.ALIGN_CENTER)
+#        sizer.Add(self.CreateCaption(codes.get('objSetting')), flag=wx.ALL | wx.ALIGN_RIGHT)
+#        sizer.Add(self.objSettingTime, flag=wx.ALL | wx.ALIGN_CENTER)
+        return sizer
 
-        vert = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("Object")), wx.VERTICAL)
-        vert.Add(sizer, flag=wx.ALL, border=10)
-        vert.Add(self.moveBut, flag=wx.ALIGN_RIGHT)
-
-        self.SetSizer(vert)
-
-    def isObjectCorrect(self, object):
-        if object['name']:
-            return True
-        else:
-            return False
-
-    def update(self, object, currentPosition):
+    def update(self, controller):
         """Updates Objects name and coordinates
-        Attributes are tuple(RA,DEC) with string types
-            object - {'name','ra','dec'}
-            currebtPosition - Current coordinates for observer
         """
-        self.moveBut.Enable(self.isObjectCorrect(object))
-        self.objectName.SetLabel(object['name'])
-        self.objectOrigRA.SetLabel(object['ra'])
-        self.objectOrigDEC.SetLabel(object['dec'])
-        self.objectCurrRA.SetLabel(currentPosition['ra'])
-        self.objectCurrDEC.SetLabel(currentPosition['dec'])
-        self.objectCurrALT.SetLabel(currentPosition['alt'])
+
+#        self.moveBut.Enable(controller.isTelescopeMoveable())
+
+        object = controller.getObject()
+        data = object.getData()
+
+        self.objectName.SetLabel(data['name'])
+        self.objectOrigRA.SetLabel(data['ra'])
+        self.objectOrigDEC.SetLabel(data['dec'])
+
+        position = object.getCurrentPosition()
+        self.objectCurrRA.SetLabel(position['ra'])
+        self.objectCurrDEC.SetLabel(position['dec'])
+        self.objAltitude.SetLabel(position['alt'])
+        self.objHourAngle.SetLabel(position['ha'])
+#        self.objRisingTime.SetLabel(position['rise'])
+#        self.objSettingTime.SetLabel(position['set'])
 
 
 class TimeDatePanel(SimplePanel):
@@ -116,11 +137,9 @@ class TimeDatePanel(SimplePanel):
         vert.Add(sizer, flag=wx.ALL, border=10)
         self.SetSizer(vert)
 
-    def update(self, times):
-        """Updates local time, sidereal time, julian day and UTC time
-        Attributes:
-            tuple(LT, UTC, JD, LST)
-        """
+    def update(self, controller):
+        """Updates local time, sidereal time, julian day and UTC time """
+        times = controller.observer.getCurrentTimes()
         self.LT.SetLabel(times[0])
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])
@@ -168,15 +187,18 @@ class PositioningPanel(SimplePanel):
 
         self.SetSizer(vert)
 
-    def update(self, curPos, curFocus, aimPos, aimFocus):
+    def update(self, controller):
 
-        self.curRA.SetLabel(curPos[0])
-        self.curDEC.SetLabel(curPos[1])
-        self.curFocus.SetLabel(curFocus)
+        position = controller.getTelescopePosition()
+        focus = controller.getTelescopeFocus()
 
-        self.taskRA.SetLabel(aimPos[0])
-        self.taskDEC.SetLabel(aimPos[1])
-        self.taskFocus.SetLabel(aimFocus)
+        self.curRA.SetLabel(position['cur'][0])
+        self.curDEC.SetLabel(position['cur'][1])
+        self.curFocus.SetLabel(focus['cur'])
+
+        self.taskRA.SetLabel(position['end'][0])
+        self.taskDEC.SetLabel(position['end'][1])
+        self.taskFocus.SetLabel(focus['end'])
 
 
 class TelescopePanel(SimplePanel):    #TODO decide, what to do with it, temp mock
