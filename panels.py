@@ -66,12 +66,6 @@ class ObjectPanel(SimplePanel):
 
         self.SetSizer(vert)
 
-    def isObjectCorrect(self, object):
-        if object['name']:
-            return True
-        else:
-            return False
-
     def update(self, controller):
         """Updates Objects name and coordinates
         """
@@ -79,11 +73,13 @@ class ObjectPanel(SimplePanel):
         self.moveBut.Enable(controller.isTelescopeMoveable())
 
         object = controller.getObject()
-        self.objectName.SetLabel(object['name'])
-        self.objectOrigRA.SetLabel(object['ra'])
-        self.objectOrigDEC.SetLabel(object['dec'])
+        data = object.getData()
 
-        position = controller.getObjectPositionNow()
+        self.objectName.SetLabel(data['name'])
+        self.objectOrigRA.SetLabel(data['ra'])
+        self.objectOrigDEC.SetLabel(data['dec'])
+
+        position = object.getCurrentPosition()
         self.objectCurrRA.SetLabel(position['ra'])
         self.objectCurrDEC.SetLabel(position['dec'])
         self.objectCurrALT.SetLabel(position['alt'])
@@ -120,7 +116,7 @@ class TimeDatePanel(SimplePanel):
 
     def update(self, controller):
         """Updates local time, sidereal time, julian day and UTC time """
-        times = controller.observer.getTimeDateNow()
+        times = controller.observer.getCurrentTimes()
         self.LT.SetLabel(times[0])
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])

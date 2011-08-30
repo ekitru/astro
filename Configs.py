@@ -66,7 +66,7 @@ class ProgramConfig(SystemConf):
         configs = self.getConfigBySection(self.config, "observer")
         return Observer(configs)
 
-    def getTranslationConf(self):
+    def getTranslation(self):
         logging.info('=== Reading translation page  ===')   #Read selected language translation
         language = self.getDefaultLanguage()
         return TransConf(language)
