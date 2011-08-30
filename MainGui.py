@@ -30,7 +30,7 @@ class MainGui(wx.Frame):
         self.positioningPanel = PositioningPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
 
-        grid = wx.GridSizer(2, 2, 10, 10)
+        grid = wx.FlexGridSizer(2, 2, 10, 10)
         grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
         grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
