@@ -117,7 +117,7 @@ class Controller(object):
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
-    def isTelescopeMoveable(self):
+    def scopeCanMove(self):
         canMove = True
         if not self.object.selected():
             canMove = False

@@ -55,11 +55,14 @@ class SelectObjectDiag(wx.Dialog):
 
     def CreateObjectPanel(self, trans):
         objProp = wx.FlexGridSizer(2, 2, 5, 5)
-        objProp.Add(wx.StaticText(self, wx.ID_ANY, trans.get('dSelObj_name')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        objProp.Add(wx.StaticText(self, wx.ID_ANY, trans.get('dSelObj_name')),
+                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         objProp.Add(self.name, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
-        objProp.Add(wx.StaticText(self, wx.ID_ANY, trans.get('dSelObj_RA')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        objProp.Add(wx.StaticText(self, wx.ID_ANY, trans.get('dSelObj_RA')),
+                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         objProp.Add(self.RA, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
-        objProp.Add(wx.StaticText(self, wx.ID_ANY, trans.get('dSelObj_DEC')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        objProp.Add(wx.StaticText(self, wx.ID_ANY, trans.get('dSelObj_DEC')),
+                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         objProp.Add(self.DEC, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         return objProp
 
@@ -113,7 +116,8 @@ class SelectObjectDiag(wx.Dialog):
             self.controller.setObject(self.selectedStar)
             self.EndModal(wx.ID_OK)
         else:
-            confirm = wx.MessageDialog(self, caption=self.selectedStar, message=self.trans.get('dSelObj_addQues'), style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
+            confirm = wx.MessageDialog(self, caption=self.selectedStar, message=self.trans.get('dSelObj_addQues'),
+                                       style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
             if confirm.ShowModal() == wx.ID_YES:
                 confirm.Destroy()
                 self.controller.saveStar(self.selectedStar, self.RA.GetValue(), self.DEC.GetValue())

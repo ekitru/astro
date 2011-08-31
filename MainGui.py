@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import wx
-from wx.lib.inspection import InspectionTool
 from dialogs import SelectObjectDiag
 from ids import *
 from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
@@ -10,7 +9,7 @@ class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
                                       size=(706, 388))
-#        InspectionTool().Show()
+        #        InspectionTool().Show()
         self.controller = controller
         self.trans = self.controller.trans
 
@@ -45,19 +44,22 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
+    #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
         selObj = SelectObjectDiag(None, wx.ID_ANY, self.controller)
         selObj.ShowModal()
         selObj.Destroy()
 
+    #noinspection PyUnusedLocal
     def OnEditObject(self, event):
         print('Edit object')
 
+    #noinspection PyUnusedLocal
     def OnSettings(self, event):
         print('Settings')
 
+    #noinspection PyUnusedLocal
     def update(self, event):
-
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)
         self.positioningPanel.update(self.controller)
@@ -65,6 +67,7 @@ class MainGui(wx.Frame):
         self.Layout()
         self.Fit()
         self.Show()
+
 
 class AstroMenu(wx.MenuBar):
     def __init__(self, trans):
@@ -78,14 +81,17 @@ class AstroMenu(wx.MenuBar):
 
     def CreateObjectMenu(self, trans):
         menu = wx.Menu()
-        self.selectObj = wx.MenuItem(menu, ID_SELOBJ, text=trans.get('smSelObj') + '\tctrl+o', help=trans.get('smSelObjHelp'))
-        self.editObj = wx.MenuItem(menu, ID_EDITOBJ, text=trans.get('smEditObj') + '\tctrl+e', help=trans.get('smEditObjHelp'))
+        self.selectObj = wx.MenuItem(menu, ID_SELOBJ, text=trans.get('smSelObj') + '\tctrl+o',
+                                     help=trans.get('smSelObjHelp'))
+        self.editObj = wx.MenuItem(menu, ID_EDITOBJ, text=trans.get('smEditObj') + '\tctrl+e',
+                                   help=trans.get('smEditObjHelp'))
         menu.AppendItem(self.selectObj)
         menu.AppendItem(self.editObj)
         return menu
 
     def CreateToolsMenu(self, trans):
         menu = wx.Menu()
-        self.settings = wx.MenuItem(menu, ID_SETTINGS, text=trans.get('smSettings') + '\tctrl+s', help=trans.get('smSettingsHelp'))
+        self.settings = wx.MenuItem(menu, ID_SETTINGS, text=trans.get('smSettings') + '\tctrl+s',
+                                    help=trans.get('smSettingsHelp'))
         menu.AppendItem(self.settings)
         return menu

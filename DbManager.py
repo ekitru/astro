@@ -22,7 +22,7 @@ class DbManager(object):
         try:
             self.logger.info('Establishing connection')
             db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
-                                 port=int(confDict['port']), charset = "utf8", use_unicode = True)
+                                 port=int(confDict['port']), charset="utf8", use_unicode=True)
             self.logger.info('Connection established')
             return db
         except Exception as error:
@@ -44,7 +44,7 @@ class DbManager(object):
 
     def saveStar(self, name, ra, dec):
         sql = "INSERT INTO `stars` (`id`,`name`,`ra`,`dec`) values (default, %(name)s,%(ra)s,%(dec)s)"
-        args = {'name': name, 'ra':ra,'dec':dec}
+        args = {'name': name, 'ra': ra, 'dec': dec}
 
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()
