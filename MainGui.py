@@ -10,7 +10,7 @@ class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
                                       size=(706, 388))
-        #        InspectionTool().Show()
+#        InspectionTool().Show()
         self.controller = controller
         self.trans = self.controller.trans
 
