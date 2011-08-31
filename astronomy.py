@@ -51,12 +51,22 @@ class Object(object):
         return {'ra': ra, 'dec': dec, 'alt': alt, 'ha':ha[0], 'rise':rise, 'set':set}
 
     def getRisingTime(self):
-        time = self.observer.observer.next_rising(self.fixedBody)
-        return str(time)
+        try:
+            time = self.observer.observer.next_rising(self.fixedBody)
+            return str(time).split(" ")[1]
+        except ephem.NeverUpError as error:
+            return 'never'
+        except ephem.AlwaysUpError as error:
+            return 'always'
 
     def getSettingTime(self):
-        time = self.observer.observer.next_setting(self.fixedBody)
-        return str(time)
+        try:
+            time = self.observer.observer.next_setting(self.fixedBody)
+            return str(time).split(" ")[1]
+        except ephem.NeverUpError as error:
+            return 'never'
+        except ephem.AlwaysUpError as error:
+            return 'always'
 
 
 class Observer(object):
