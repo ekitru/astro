@@ -32,8 +32,9 @@ class MainGui(wx.Frame):
 
         grid = wx.FlexGridSizer(2, 2, 10, 10)
         grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
-        grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
+        grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
+
         grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
         canvas = wx.BoxSizer(wx.VERTICAL)
