@@ -51,12 +51,22 @@ class Object(object):
         return {'ra': ra, 'dec': dec, 'alt': alt, 'ha':ha[0], 'rise':rise, 'set':set}
 
     def getRisingTime(self):
-        time = self.observer.observer.next_rising(self.fixedBody)
-        return str(time)
+        try:
+            time = self.observer.observer.next_rising(self.fixedBody)
+            return str(time).split(" ")[1]
+        except ephem.NeverUpError:
+            return 'never'
+        except ephem.AlwaysUpError:
+            return 'always'
 
     def getSettingTime(self):
-        time = self.observer.observer.next_setting(self.fixedBody)
-        return str(time)
+        try:
+            time = self.observer.observer.next_setting(self.fixedBody)
+            return str(time).split(" ")[1]
+        except ephem.NeverUpError:
+            return 'never'
+        except ephem.AlwaysUpError:
+            return 'always'
 
 
 class Observer(object):
@@ -70,7 +80,6 @@ class Observer(object):
         elevation = confDict['elevation']
         temp = confDict['temperature']
         return self.createObserver(elevation, latitude, longitude, temp)
-
 
     def createObserver(self, elevation, latitude, longitude, temp):
         observer = ephem.Observer()
@@ -101,8 +110,7 @@ class Observer(object):
         self.observer.temp = float(temp)
 
     def updatePressure(self, pressure):
-        pass  #TODO not very needed, not will be good to add this functionality
-
+        self.observer.pressure = pressure #TODO not very needed, not will be good to add this functionality
 
 def rad2str(ra, dec):
     """ Convert (ra,dec) in radians to more readable form """

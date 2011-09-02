@@ -27,12 +27,12 @@ class PLCManager(object):
 
     def getPosition(self):
         """ Return current and aim positions from PLC in radians """
-        return ((0.231, -0.0123), (0.231, -0.0123)) #TODO make real in future
+        return (0.231, -0.0123), (0.231, -0.0123) #TODO make real in future
 
     def getFocus(self):
         """ Return current and aim focus from PLC in radians
         """
-        return ((0.3), (0.1)) #TODO make real in future
+        return 0.3, 0.1 #TODO make real in future
 
     def close(self):
         self.logger.info("Close Communication connection")
