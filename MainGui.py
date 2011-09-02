@@ -4,6 +4,7 @@ import wx
 from dialogs import SelectObjectDiag
 from ids import *
 from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
+from PlcGui import PlcGui
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
@@ -44,6 +45,9 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
+        self.Bind(wx.EVT_BUTTON, self.OnTakeCtrlButton, self.positioningPanel.control)
+        self.Bind(wx.EVT_CLOSE, self.OnMainGuiClose)
+
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
         selObj = SelectObjectDiag(None, wx.ID_ANY, self.controller)
@@ -57,6 +61,38 @@ class MainGui(wx.Frame):
     #noinspection PyUnusedLocal
     def OnSettings(self, event):
         print('Settings')
+
+    def OnTakeCtrlButton(self,event):
+        takeCtrlButton = event.GetEventObject()
+        if not hasattr(self, "plcGui"):
+            self.plcGui = PlcGui(None,"PLC Control")
+        elif self.plcGui is None:
+            self.plcGui = PlcGui(None,"PLC Control")
+
+        if takeCtrlButton.GetLabel() == "Take Control":
+            takeCtrlButton.SetLabel("Release Control")
+            self.plcGui.Show()
+        else:
+            takeCtrlButton.SetLabel("Take Control")
+            self.plcGui.Hide()
+
+    def OnMainGuiClose(self,event):
+        if hasattr(self, "plcGui") and self.plcGui is not None:
+            self.plcGui.Destroy()
+        self.Destroy()
+
+    def resetStateOfPositioningPanel(self):
+        self.positioningPanel.control.SetLabel("Take Control")
+        self.plcGui = None
+
+    def update(self, event):
+        selStar = self.getSelectedStar(self.controller)
+        self.objectPanel.update(*selStar)
+        self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
+        self.positioningPanel.update()
+        self.Layout()
+        self.Fit()
+        self.Show()
 
     #noinspection PyUnusedLocal
     def update(self, event):

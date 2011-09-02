@@ -171,7 +171,7 @@ class PositioningPanel(SimplePanel):
         self.taskDEC = self.CreateField()
         self.curFocus = self.CreateField()
         self.taskFocus = self.CreateField()
-        self.control = wx.Button(self, wx.ID_ANY, codes.get('pPosCtrl'))
+        self.control = wx.Button(self, wx.ID_ANY, codes.get('pPosCtrl'),size=(90,23))
 
         sizer.Add(self.CreateField())
         sizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
