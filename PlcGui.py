@@ -4,9 +4,6 @@ __author__ = 'anisand'
 import wx
 
 class PlcGui(wx.MiniFrame):
-    """Comments go here"""
-    """
-    """
     def __init__(self,parent,title):
         super(PlcGui,self).__init__(parent,title=title)
         self.Bind(wx.EVT_CLOSE, self.OnPlcGuiClose)
@@ -15,4 +12,6 @@ class PlcGui(wx.MiniFrame):
         app = wx.GetApp()
         mainGui = app.GetTopWindow()
         mainGui.resetStateOfPositioningPanel()
+        self.Destroy()
+        self.Destroy()
         self.Destroy()
