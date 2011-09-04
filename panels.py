@@ -26,6 +26,9 @@ class SimplePanel(wx.Panel):
             element.SetFont(font)
         return element
 
+    def CreateInputField(self):
+        return wx.TextCtrl(self, id=wx.ID_ANY)
+
 
 class ObjectPanel(SimplePanel):
     """This panel represents selected object data (name and positions)
@@ -163,7 +166,7 @@ class PositioningPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        sizer = wx.GridSizer(4, 3, 5, 10)
+        posSizer = wx.GridSizer(4, 3, 5, 10)
 
         self.curRA = self.CreateField()
         self.taskRA = self.CreateField()
@@ -173,25 +176,49 @@ class PositioningPanel(SimplePanel):
         self.taskFocus = self.CreateField()
         self.control = wx.Button(self, wx.ID_ANY, codes.get('pPosCtrl'),size=(90,23))
 
-        sizer.Add(self.CreateField())
-        sizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-        sizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        posSizer.Add(self.CreateField())
+        posSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        posSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
 
-        sizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        posSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        posSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        posSizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        sizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        posSizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        posSizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        posSizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        sizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        posSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        posSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        posSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+
+
+        plcSizer = wx.FlexGridSizer(4, 7, 5, 5)
+        RAspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
+        DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.manRA = self.CreateInputField()
+        self.leftRA = wx.Button(self, wx.ID_ANY,codes.get('leftRA'), size=(50,23))
+        self.rightRA = wx.Button(self, wx.ID_ANY,codes.get('rightRA'), size=(50,23))
+        self.speed1RA = wx.Button(self, wx.ID_ANY, codes.get('speed1'), size=(30,23))
+        self.speed2RA = wx.Button(self, wx.ID_ANY, codes.get('speed2'), size=(30,23))
+        self.speed3RA = wx.Button(self, wx.ID_ANY, codes.get('speed3'), size=(30,23))
+
+        RAspeedSelSizer.Add(self.speed3RA)
+        RAspeedSelSizer.Add(self.speed2RA)
+        RAspeedSelSizer.Add(self.speed1RA)
+
+        plcSizer.Add(self.CreateCaption(codes.get('pPosRA')))
+        plcSizer.Add(self.manRA)
+        plcSizer.Add(self.leftRA)
+        plcSizer.Add(self.rightRA)
+        plcSizer.Add(RAspeedSelSizer)
+
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
-        comSizer.Add(sizer, flag=wx.ALL, border=10)
+        comSizer.Add(posSizer, flag=wx.ALL, border=10)
         comSizer.Add(self.control, flag=wx.ALIGN_RIGHT)
+        comSizer.Add(plcSizer, flag = wx.TOP, border=10)
 
         self.SetSizer(comSizer)
 
