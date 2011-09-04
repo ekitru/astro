@@ -1,48 +1,40 @@
 import wx
 import sys
+from panels import SimplePanel
 
 __author__ = 'kitru'
 
-class StarList(object):
-    def __init__(self, codes):
-        self.codes = codes
-        self.list = self.CreateListCtrl(codes)
+class StarList(wx.ListCtrl):
+    def __init__(self, parent, codes):
+        wx.ListCtrl.__init__(self, parent, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
+        self.AdjustListControl(codes)
 
-        self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListItemSelected)
-
-    def CreateListCtrl(self, codes):
-        list = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
-        list.SetMinSize((320, 200))
-        list.InsertColumn(col=0, heading=codes.get('dSelObj_listName'), format=wx.LIST_FORMAT_LEFT, width=90)
-        list.InsertColumn(col=1, heading=codes.get('dSelObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=110)
-        list.InsertColumn(col=2, heading=codes.get('dSelObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=110)
-        return list
+    def AdjustListControl(self, codes):
+        self.SetMinSize((320, 200))
+        self.InsertColumn(col=0, heading=codes.get('dSelObj_listName'), format=wx.LIST_FORMAT_LEFT, width=90)
+        self.InsertColumn(col=1, heading=codes.get('dSelObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=110)
+        self.InsertColumn(col=2, heading=codes.get('dSelObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=110)
 
     def FillList(self, stars):
         """ fill control list by stars with stars
          Attr:
             stars - dict('name','ra','dec') """
-        self.list.DeleteAllItems()
+        self.DeleteAllItems()
         for star in stars:
-            index = self.list.InsertStringItem(sys.maxint, star['name'])
-            self.list.SetStringItem(index, 1, star['ra'])
-            self.list.SetStringItem(index, 2, star['dec'])
+            index = self.InsertStringItem(sys.maxint, star['name'])
+            self.SetStringItem(index, 1, star['ra'])
+            self.SetStringItem(index, 2, star['dec'])
 
     def GetSelectedStarName(self):
-        curItemId = self.list.GetFirstSelected()
-        item = self.list.GetItem(curItemId, 0).GetText()
+        curItemId = self.GetFirstSelected()
+        item = self.GetItem(curItemId, 0).GetText()
         return item
 
-    def OnListItemSelected(self, event):
-        pass
 
-
-
-class SelectObjectDialog(wx.Dialog, StarList):
+class SelectObjectDialog(wx.Dialog):
 
     def __init__(self, parent, id, controller):
         wx.Dialog.__init__(self, parent, id, controller.trans.get('dSelObj_title'), style=wx.CAPTION)
-        StarList.__init__(self, controller.trans)
 
         self.controller = controller
         self.codes = controller.trans
@@ -54,17 +46,20 @@ class SelectObjectDialog(wx.Dialog, StarList):
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
         ctrlButtons = wx.BoxSizer(wx.HORIZONTAL)
+
         self.selectButton = wx.Button(self, wx.ID_OK, label=self.codes.get('dSelObj_select'))
         self.selectButton.Disable()
         ctrlButtons.Add(self.selectButton, flag=wx.ALIGN_BOTTOM)
         ctrlButtons.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dSelObj_cancel')), flag=wx.ALIGN_BOTTOM)
-
         vCtrl = wx.BoxSizer(wx.VERTICAL)
+
         objProp = self.CreateObjectPanel(self.codes)
         vCtrl.Add(objProp, flag=wx.ALL | wx.ALIGN_RIGHT, border=5)
         vCtrl.Add(ctrlButtons, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
 
-        self.FillList(self.controller.getStars(self.selectedStar))
+        self.list = StarList(self, self.codes)
+        stars = self.controller.getStars(self.selectedStar)
+        self.list.FillList(stars)
 
         hMain = wx.FlexGridSizer(1, 2)
         hMain.Add(vCtrl, flag=wx.ALL | wx.EXPAND)
@@ -75,6 +70,9 @@ class SelectObjectDialog(wx.Dialog, StarList):
 
         self.Bind(wx.EVT_BUTTON, self.OnSelectClicked, id=wx.ID_OK)
         self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
+
+        self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListItemSelected)
+
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
@@ -103,7 +101,7 @@ class SelectObjectDialog(wx.Dialog, StarList):
             self.RA.SetValue("")
             self.DEC.SetValue("")
             stars = self.controller.getStars(self.selectedStar)
-            self.FillList(stars)
+            self.list.FillList(stars)
 
     def isCorrectInput(self):
         """ Check correct values for RA and DEC """
@@ -112,7 +110,7 @@ class SelectObjectDialog(wx.Dialog, StarList):
         return self.controller.checkHours(ra) and self.controller.checkDegrees(dec)
 
     def OnListItemSelected(self, event):
-        name = self.GetSelectedStarName()
+        name = self.list.GetSelectedStarName()
         star = self.controller.getStarByName(name)
         self.SetNewStar(star)
 
@@ -142,17 +140,25 @@ class SelectObjectDialog(wx.Dialog, StarList):
 
 
 
-class EditObjectDialog(wx.Dialog, StarList):
+class EditObjectDialog(wx.Dialog, SimplePanel):
     def __init__(self, parent, id, controller):
         wx.Dialog.__init__(self, parent, id, controller.trans.get('dEditObj_title'), style=wx.CAPTION)
-        StarList.__init__(self, controller.trans)
 
         self.controller = controller
         self.codes = controller.trans
+        self.name=""
 
-        self.FillList(controller.getStars(""))
+        self.list = StarList(self, self.codes)
+        self.list.FillList(controller.getStars(""))
+
+        findBox = wx.BoxSizer(wx.HORIZONTAL)
+        findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_LEFT)
+        self.text = wx.TextCtrl(self, size=(120, -1))
+        self.text.SetFocus()
+        findBox.Add(self.text, flag = wx.ALL, border = 10)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(findBox)
         sizer.Add(self.list, flag = wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
         butSizer = wx.BoxSizer(wx.HORIZONTAL)
         butSizer.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')), flag = wx.EXPAND | wx.ALL | wx.ALIGN_RIGHT)
@@ -164,16 +170,20 @@ class EditObjectDialog(wx.Dialog, StarList):
         self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
 
         self.timer = wx.Timer(self)
-#        self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
+        self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
         self.timer.Start(500)
-
-    def CreateListCtrl(self, trans):
-        vList = wx.ListCtrl(self, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
-        vList.SetMinSize((370, 600))
-        vList.InsertColumn(col=0, heading=trans.get('dEditObj_listName'), format=wx.LIST_FORMAT_LEFT, width=110)
-        vList.InsertColumn(col=1, heading=trans.get('dEditObj_listRA'), format=wx.LIST_FORMAT_LEFT, width=130)
-        vList.InsertColumn(col=2, heading=trans.get('dEditObj_listDEC'), format=wx.LIST_FORMAT_LEFT, width=130)
-        return vList
 
     def OnCancelClicked(self, event):
         self.EndModal(wx.ID_CANCEL)
+
+    def OnListItemSelected(self, event):
+        name = self.list.GetSelectedStarName()
+        star = self.controller.getStarByName(name)
+        print('selected star', star)
+
+
+    def UpdateOnTimer(self, event):
+        starName = self.text.GetValue().strip()
+        stars = self.controller.getStars(starName)
+        self.list.FillList(stars)
+
