@@ -43,6 +43,9 @@ class SimpleObjectDialog(wx.Dialog):
         stars = self.controller.getStars(self.selectedStar)
         self.list.FillList(stars)
 
+        self.Bind(wx.EVT_BUTTON, self.OnSelectClicked, id=wx.ID_OK)
+        self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
+
         self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListItemSelected)
         self.list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnListItemActived)
 
@@ -56,11 +59,18 @@ class SimpleObjectDialog(wx.Dialog):
     def SetSelectedStarName(self, name):
         self.selectedStar = name.strip()
 
+    def OnSelectClicked(self, event):
+        self.EndModal(wx.ID_OK)
+
+    def OnCancelClicked(self, event):
+        self.EndModal(wx.ID_CANCEL)
+
     def OnListItemSelected(self, event):
         pass
 
     def OnListItemActived(self, event):
         pass
+
 
 
 class SelectObjectDialog(SimpleObjectDialog):
@@ -89,9 +99,6 @@ class SelectObjectDialog(SimpleObjectDialog):
 
         self.SetSizer(hMain)
         self.Fit()
-
-        self.Bind(wx.EVT_BUTTON, self.OnSelectClicked, id=wx.ID_OK)
-        self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
@@ -130,10 +137,6 @@ class SelectObjectDialog(SimpleObjectDialog):
     def OnSelectClicked(self, event):
         self.SetSelectedStar()
 
-    def OnCancelClicked(self, event):
-        self.EndModal(wx.ID_CANCEL)
-
-
     def OnListItemSelected(self, event):
         name = self.list.GetSelectedStarName()
         star = self.controller.getStarByName(name)
@@ -163,16 +166,9 @@ class SelectObjectDialog(SimpleObjectDialog):
                 self.EndModal(wx.ID_OK)
 
 
-class EditObjectDialog(wx.Dialog, SimplePanel):
+class EditObjectDialog(SimpleObjectDialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        wx.Dialog.__init__(self, parent, id, controller.trans.get('dEditObj_title'), style=wx.CAPTION)
-
-        self.controller = controller
-        self.codes = controller.trans
-        self.name = ""
-
-        self.list = StarList(self, self.codes)
-        self.list.FillList(controller.getStars(""))
+        SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
         findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_LEFT)
@@ -197,8 +193,6 @@ class EditObjectDialog(wx.Dialog, SimplePanel):
         self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
         self.timer.Start(500)
 
-    def OnCancelClicked(self, event):
-        self.EndModal(wx.ID_CANCEL)
 
     def OnListItemSelected(self, event):
         name = self.list.GetSelectedStarName()
@@ -207,7 +201,8 @@ class EditObjectDialog(wx.Dialog, SimplePanel):
 
 
     def UpdateOnTimer(self, event):
-        starName = self.text.GetValue().strip()
-        stars = self.controller.getStars(starName)
-        self.list.FillList(stars)
+        userInput = self.text.GetValue().strip()
+        if userInput != self.GetSelectedStarName():    #if new star name is entered update input fields and reread db
+            self.SetSelectedStarName(userInput)
+            self.ReloadList()
 
