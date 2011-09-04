@@ -26,6 +26,9 @@ class SimplePanel(wx.Panel):
             element.SetFont(font)
         return element
 
+    def CreateInputField(self):
+        return wx.TextCtrl(self, id=wx.ID_ANY)
+
 
 class ObjectPanel(SimplePanel):
     """This panel represents selected object data (name and positions)
@@ -189,9 +192,33 @@ class PositioningPanel(SimplePanel):
         sizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
+
+        plcSizer = wx.FlexGridSizer(4, 7, 5, 5)
+
+        self.manRA = self.CreateInputField()
+        self.leftRA = wx.Button(self, wx.ID_ANY,codes.get('leftRA'), size=(50,23))
+        self.rightRA = wx.Button(self, wx.ID_ANY,codes.get('rightRA'), size=(50,23))
+        self.speed1RA = wx.Button(self, wx.ID_ANY, codes.get('speed1'), size=(50,23))
+        self.speed2RA = wx.Button(self, wx.ID_ANY, codes.get('speed2'), size=(50,23))
+        self.speed3RA = wx.Button(self, wx.ID_ANY, codes.get('speed3'), size=(50,23))
+
+
+
+
+        plcSizer.Add(self.CreateCaption(codes.get('pPosRA')),flag=wx.ALL | wx.ALIGN_RIGHT)
+        plcSizer.Add(self.manRA, flag=wx.ALL | wx.ALIGN_LEFT)
+        plcSizer.Add(self.leftRA, flag=wx.ALL | wx.ALIGN_LEFT)
+        plcSizer.Add(self.rightRA, flag=wx.ALL | wx.ALIGN_LEFT)
+        plcSizer.Add(self.speed3RA, flag=wx.ALIGN_LEFT)
+        plcSizer.Add(self.speed2RA)
+        plcSizer.Add(self.speed1RA)
+
+
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
         comSizer.Add(sizer, flag=wx.ALL, border=10)
         comSizer.Add(self.control, flag=wx.ALIGN_RIGHT)
+        #comSizer.Add(wx.StaticLine(self, wx.ID_ANY, style=wx.LI_HORIZONTAL), flag=wx.ALL | wx.EXPAND))
+        comSizer.Add(plcSizer, flag = wx.TOP, border=10)
 
         self.SetSizer(comSizer)
 

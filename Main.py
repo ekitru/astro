@@ -14,7 +14,7 @@ if __name__ == '__main__':
         controller = Controller()
         controller.initialization()
         check(controller)
-        app = wx.App()
+        app = wx.App(False)
         MainGui(None, 'AstroLab', controller)
         app.MainLoop()
 
