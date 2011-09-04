@@ -47,7 +47,6 @@ class MainGui(wx.Frame):
         self.timer.Start(500)
 
         self.Bind(wx.EVT_BUTTON, self.OnTakeCtrlButton, self.positioningPanel.control)
-        self.Bind(wx.EVT_CLOSE, self.OnMainGuiClose)
 
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
@@ -67,22 +66,11 @@ class MainGui(wx.Frame):
 
     def OnTakeCtrlButton(self,event):
         takeCtrlButton = event.GetEventObject()
-        if not hasattr(self, "plcGui"):
-            self.plcGui = PlcGui(None,"PLC Control")
-        elif self.plcGui is None:
-            self.plcGui = PlcGui(None,"PLC Control")
-
         if takeCtrlButton.GetLabel() == "Take Control":
             takeCtrlButton.SetLabel("Release Control")
-            self.plcGui.Show()
         else:
             takeCtrlButton.SetLabel("Take Control")
-            self.plcGui.Hide()
 
-    def OnMainGuiClose(self,event):
-        if hasattr(self, "plcGui") and self.plcGui is not None:
-            self.plcGui.Destroy()
-        self.Destroy()
 
     def resetStateOfPositioningPanel(self):
         self.positioningPanel.control.SetLabel("Take Control")
