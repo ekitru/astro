@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import wx
-from dialogs import SelectObjectDiag
+from dialogs import EditObjectDialog, SelectObjectDialog
 from ids import *
 from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
 from PlcGui import PlcGui
@@ -51,13 +51,15 @@ class MainGui(wx.Frame):
 
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
-        selObj = SelectObjectDiag(None, wx.ID_ANY, self.controller)
+        selObj = SelectObjectDialog(self, wx.ID_ANY, self.controller)
         selObj.ShowModal()
         selObj.Destroy()
 
     #noinspection PyUnusedLocal
     def OnEditObject(self, event):
-        print('Edit object')
+        editObj = EditObjectDialog(self, wx.ID_ANY, self.controller)
+        editObj.ShowModal()
+        editObj.Destroy()
 
     #noinspection PyUnusedLocal
     def OnSettings(self, event):

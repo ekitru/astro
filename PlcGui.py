@@ -13,5 +13,3 @@ class PlcGui(wx.MiniFrame):
         mainGui = app.GetTopWindow()
         mainGui.resetStateOfPositioningPanel()
         self.Destroy()
-        self.Destroy()
-        self.Destroy()
