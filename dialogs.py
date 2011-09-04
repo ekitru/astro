@@ -31,35 +31,57 @@ class StarList(wx.ListCtrl):
         return item
 
 
-class SelectObjectDialog(wx.Dialog):
-
-    def __init__(self, parent, id, controller):
-        wx.Dialog.__init__(self, parent, id, controller.trans.get('dSelObj_title'), style=wx.CAPTION)
-
+class SimpleObjectDialog(wx.Dialog):
+    def __init__(self, parent, id, title, controller):
+        wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
         self.controller = controller
         self.codes = controller.trans
 
         self.selectedStar = ""
+        self.list = StarList(self, self.codes)
+
+        stars = self.controller.getStars(self.selectedStar)
+        self.list.FillList(stars)
+
+        self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListItemSelected)
+        self.list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnListItemActived)
+
+    def ReloadList(self):
+        stars = self.controller.getStars(self.GetSelectedStarName())
+        self.list.FillList(stars)
+
+    def GetSelectedStarName(self):
+        return self.selectedStar.strip()
+
+    def SetSelectedStarName(self, name):
+        self.selectedStar = name.strip()
+
+    def OnListItemSelected(self, event):
+        pass
+
+    def OnListItemActived(self, event):
+        pass
+
+
+class SelectObjectDialog(SimpleObjectDialog):
+    def __init__(self, parent, id, controller):
+        SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dSelObj_title'), controller)
+
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.name.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
-        ctrlButtons = wx.BoxSizer(wx.HORIZONTAL)
+        vCtrl = wx.BoxSizer(wx.VERTICAL)
+        objProp = self.CreateObjectPanel(self.codes)
+        vCtrl.Add(objProp, flag=wx.ALL | wx.ALIGN_RIGHT, border=5)
 
+        ctrlButtons = wx.BoxSizer(wx.HORIZONTAL)
         self.selectButton = wx.Button(self, wx.ID_OK, label=self.codes.get('dSelObj_select'))
         self.selectButton.Disable()
         ctrlButtons.Add(self.selectButton, flag=wx.ALIGN_BOTTOM)
         ctrlButtons.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dSelObj_cancel')), flag=wx.ALIGN_BOTTOM)
-        vCtrl = wx.BoxSizer(wx.VERTICAL)
-
-        objProp = self.CreateObjectPanel(self.codes)
-        vCtrl.Add(objProp, flag=wx.ALL | wx.ALIGN_RIGHT, border=5)
         vCtrl.Add(ctrlButtons, proportion=1, flag=wx.ALL | wx.EXPAND, border=5)
-
-        self.list = StarList(self, self.codes)
-        stars = self.controller.getStars(self.selectedStar)
-        self.list.FillList(stars)
 
         hMain = wx.FlexGridSizer(1, 2)
         hMain.Add(vCtrl, flag=wx.ALL | wx.EXPAND)
@@ -70,9 +92,6 @@ class SelectObjectDialog(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.OnSelectClicked, id=wx.ID_OK)
         self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
-
-        self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListItemSelected)
-
 
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
@@ -96,12 +115,11 @@ class SelectObjectDialog(wx.Dialog):
         self.selectButton.Enable(self.isCorrectInput())
 
         userInput = self.name.GetValue().strip()
-        if userInput != self.selectedStar:    #if new star name is entered update input fields and reread db
-            self.selectedStar = userInput
+        if userInput != self.GetSelectedStarName():    #if new star name is entered update input fields and reread db
+            self.SetSelectedStarName(userInput)
             self.RA.SetValue("")
             self.DEC.SetValue("")
-            stars = self.controller.getStars(self.selectedStar)
-            self.list.FillList(stars)
+            self.ReloadList()
 
     def isCorrectInput(self):
         """ Check correct values for RA and DEC """
@@ -109,11 +127,17 @@ class SelectObjectDialog(wx.Dialog):
         dec = self.DEC.GetValue()
         return self.controller.checkHours(ra) and self.controller.checkDegrees(dec)
 
+    def OnSelectClicked(self, event):
+        self.SetSelectedStar()
+
+    def OnCancelClicked(self, event):
+        self.EndModal(wx.ID_CANCEL)
+
+
     def OnListItemSelected(self, event):
         name = self.list.GetSelectedStarName()
         star = self.controller.getStarByName(name)
         self.SetNewStar(star)
-
 
     def SetNewStar(self, star):
         inName = star['name'].strip()
@@ -122,7 +146,10 @@ class SelectObjectDialog(wx.Dialog):
         self.RA.SetValue(star['ra'])
         self.DEC.SetValue(star['dec'])
 
-    def OnSelectClicked(self, event):
+    def OnListItemActived(self, event):
+        self.SetSelectedStar()
+
+    def SetSelectedStar(self):
         if self.controller.isStarExist(self.selectedStar):
             self.controller.setObject(self.selectedStar)
             self.EndModal(wx.ID_OK)
@@ -135,10 +162,6 @@ class SelectObjectDialog(wx.Dialog):
                 self.controller.setObject(self.selectedStar)
                 self.EndModal(wx.ID_OK)
 
-    def OnCancelClicked(self, event):
-        self.EndModal(wx.ID_CANCEL)
-
-
 
 class EditObjectDialog(wx.Dialog, SimplePanel):
     def __init__(self, parent, id, controller):
@@ -146,7 +169,7 @@ class EditObjectDialog(wx.Dialog, SimplePanel):
 
         self.controller = controller
         self.codes = controller.trans
-        self.name=""
+        self.name = ""
 
         self.list = StarList(self, self.codes)
         self.list.FillList(controller.getStars(""))
@@ -155,13 +178,14 @@ class EditObjectDialog(wx.Dialog, SimplePanel):
         findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_LEFT)
         self.text = wx.TextCtrl(self, size=(120, -1))
         self.text.SetFocus()
-        findBox.Add(self.text, flag = wx.ALL, border = 10)
+        findBox.Add(self.text, flag=wx.ALL, border=10)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(findBox)
-        sizer.Add(self.list, flag = wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
+        sizer.Add(self.list, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
         butSizer = wx.BoxSizer(wx.HORIZONTAL)
-        butSizer.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')), flag = wx.EXPAND | wx.ALL | wx.ALIGN_RIGHT)
+        butSizer.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')),
+                     flag=wx.EXPAND | wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(butSizer, flag=wx.ALIGN_BOTTOM | wx.EXPAND)
 
         self.SetSizer(sizer)
