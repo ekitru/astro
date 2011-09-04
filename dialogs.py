@@ -49,6 +49,13 @@ class SimpleObjectDialog(wx.Dialog):
         self.list.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListItemSelected)
         self.list.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnListItemActived)
 
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
+        self.timer.Start(500)
+
+    def UpdateOnTimer(self, event):
+        self.ReloadList()
+
     def ReloadList(self):
         stars = self.controller.getStars(self.GetSelectedStarName())
         self.list.FillList(stars)
@@ -126,7 +133,7 @@ class SelectObjectDialog(SimpleObjectDialog):
             self.SetSelectedStarName(userInput)
             self.RA.SetValue("")
             self.DEC.SetValue("")
-            self.ReloadList()
+            SimpleObjectDialog.UpdateOnTimer(self, event)
 
     def isCorrectInput(self):
         """ Check correct values for RA and DEC """
@@ -171,13 +178,13 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
-        findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_LEFT)
-        self.text = wx.TextCtrl(self, size=(120, -1))
+        findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_LEFT| wx.ALIGN_CENTER)
+        self.text = wx.TextCtrl(self, size=(180, -1))
         self.text.SetFocus()
-        findBox.Add(self.text, flag=wx.ALL, border=10)
+        findBox.Add(self.text, flag=wx.ALL | wx.EXPAND, border=10)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(findBox)
+        sizer.Add(findBox, flag=wx.LEFT, border=10)
         sizer.Add(self.list, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
         butSizer = wx.BoxSizer(wx.HORIZONTAL)
         butSizer.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')),
@@ -187,11 +194,7 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         self.SetSizer(sizer)
         self.Fit()
 
-        self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
-
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.UpdateOnTimer, self.timer)
-        self.timer.Start(500)
+        self.list.Bind(wx.EVT_KEY_DOWN, self.OnListCharacter)
 
 
     def OnListItemSelected(self, event):
@@ -204,5 +207,19 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         userInput = self.text.GetValue().strip()
         if userInput != self.GetSelectedStarName():    #if new star name is entered update input fields and reread db
             self.SetSelectedStarName(userInput)
-            self.ReloadList()
+            SimpleObjectDialog.UpdateOnTimer(self, event)
+
+
+
+    def OnListCharacter (self, event):
+        print "list character"
+        if event.GetKeyCode() == wx.WXK_DELETE:
+            print 'DELETE'
+            event.Skip()
+            index = self.list.GetNextItem(-1, state = wx.LIST_STATE_SELECTED )
+            if index!=-1:
+                self.list.DeleteItem ( index)
+        else:
+            print 'something'
+            event.Skip()
 
