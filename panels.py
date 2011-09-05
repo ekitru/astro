@@ -30,17 +30,21 @@ class SimplePanel(wx.Panel):
     def CreateInputField(self):
         return wx.TextCtrl(self, id=wx.ID_ANY)
 
-    def CreateButton(self, label="",font=None, size=wx.DefaultSize):#Rename to CreateButton
+    def CreateButton(self, label="",font=None, size=wx.DefaultSize):
         speedSelButton = wx.Button(self, wx.ID_ANY, label=label, size=size)
         if font:
             speedSelButton.SetFont(font)
         return speedSelButton
 
     def CreateBitmapButton(self, rel_path, file_type, size=wx.DefaultSize):
-        bitmap = self.__bitmapWhiteBGToTransparent(rel_path, file_type)
+        bitmap = self.__gifBitmapWhiteBGToTransparent(rel_path, file_type)
         return wx.BitmapButton(self, id=wx.ID_ANY, bitmap=bitmap,size=size)
 
-    def __bitmapWhiteBGToTransparent(self,path,type):
+    def __gifBitmapWhiteBGToTransparent(self,path,type):
+        """Turns bitmap with white backgrount into
+        bitmap with transparent background.
+        path - relative path to bitmap file.
+        type - type of bitmap file (.gif)"""
         absPath = os.path.abspath(path)
         bitmap = wx.Bitmap(absPath, type=type)
         mask = wx.MaskColour(bitmap, wx.WHITE)
