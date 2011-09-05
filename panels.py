@@ -183,7 +183,7 @@ class PositioningPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        bitmapButtonSize = (50,23)
+        bitmapButtonSize = (30,23)
         speedButtonSize = (30,23)
         speedButtonFont = wx.Font(18, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         speedHourButtonFont = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
@@ -221,11 +221,11 @@ class PositioningPanel(SimplePanel):
         DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.manSetPointRA = self.CreateInputField()
-        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.gif', wx.BITMAP_TYPE_GIF, size=(50,23))
-        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.gif', wx.BITMAP_TYPE_GIF, size=(50,23))
-        self.speedSecRA = self.CreateButton(label=codes.get('pPosSpeedSec'), font=speedButtonFont, size=(30,23))
-        self.speedMinRA = self.CreateButton(label=codes.get('pPosSpeedMin'), font=speedButtonFont, size=(30,23))
-        self.speedHourRA = self.CreateButton(label=codes.get('pPosSpeedHour'),size=(30,23),
+        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
+        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
+        self.speedSecRA = self.CreateButton(label=codes.get('pPosSpeedSec'), font=speedButtonFont, size=speedButtonSize)
+        self.speedMinRA = self.CreateButton(label=codes.get('pPosSpeedMin'), font=speedButtonFont, size=speedButtonSize)
+        self.speedHourRA = self.CreateButton(label=codes.get('pPosSpeedHour'),size=speedButtonSize,
                                              font=speedHourButtonFont)
 
         RAspeedSelSizer.Add(self.speedHourRA)
