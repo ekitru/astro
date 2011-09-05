@@ -29,6 +29,15 @@ class SimplePanel(wx.Panel):
     def CreateInputField(self):
         return wx.TextCtrl(self, id=wx.ID_ANY)
 
+    def CreateSpeedSelButton(self, label="",font=None, size=(30,23)):
+        speedSelButton = wx.Button(self, wx.ID_ANY, label=label, size=size)
+        if font:
+            speedSelButton.SetFont(font)
+        else:
+            __font = wx.Font(18, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.wx.FONTWEIGHT_BOLD)
+            speedSelButton.SetFont(__font)
+        return speedSelButton
+
 
 class ObjectPanel(SimplePanel):
     """This panel represents selected object data (name and positions)
@@ -193,23 +202,24 @@ class PositioningPanel(SimplePanel):
         posSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
 
-        plcSizer = wx.FlexGridSizer(4, 7, 5, 5)
+        plcSizer = wx.FlexGridSizer(4, 5, 5, 5)
         RAspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
         DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.manSetPointRA = self.CreateInputField()
-        self.movLeftRA = wx.Button(self, wx.ID_ANY,codes.get('leftRA'), size=(50,23))
-        self.movRightRA = wx.Button(self, wx.ID_ANY,codes.get('rightRA'), size=(50,23))
-        self.speedSecRA = wx.Button(self, wx.ID_ANY, codes.get('speedSec'), size=(30,23))
-        self.speedMinRA = wx.Button(self, wx.ID_ANY, codes.get('speedMin'), size=(30,23))
-        self.speedHourRA = wx.Button(self, wx.ID_ANY, codes.get('speedHour'), size=(30,23))
+        self.movLeftRA = wx.Button(self, wx.ID_ANY,codes.get('pPosLeftRA'), size=(50,23))
+        self.movRightRA = wx.Button(self, wx.ID_ANY,codes.get('pPosRightRA'), size=(50,23))
+        self.speedSecRA = self.CreateSpeedSelButton(label=codes.get('pPosSpeedSec'))
+        self.speedMinRA = self.CreateSpeedSelButton(label=codes.get('pPosSpeedMin'))
+        self.speedHourRA = self.CreateSpeedSelButton(label=codes.get('pPosSpeedHour'),
+                                                     font=wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
 
         RAspeedSelSizer.Add(self.speedHourRA)
         RAspeedSelSizer.Add(self.speedMinRA)
         RAspeedSelSizer.Add(self.speedSecRA)
 
-        plcSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL)
-        plcSizer.Add(self.manSetPointRA)
+        plcSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        plcSizer.Add(self.manSetPointRA, border= 10)
         plcSizer.Add(self.movLeftRA)
         plcSizer.Add(self.movRightRA)
         plcSizer.Add(RAspeedSelSizer)

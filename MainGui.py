@@ -4,7 +4,6 @@ import wx
 from dialogs import EditObjectDialog, SelectObjectDialog
 from ids import *
 from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
-from PlcGui import PlcGui
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
@@ -66,15 +65,11 @@ class MainGui(wx.Frame):
 
     def OnTakeCtrlButton(self,event):
         takeCtrlButton = event.GetEventObject()
-        if takeCtrlButton.GetLabel() == "Take Control":
-            takeCtrlButton.SetLabel("Release Control")
+        if takeCtrlButton.GetLabel() == self.trans.get('pPosCtrl'):
+            takeCtrlButton.SetLabel(self.trans.get('pPosRelCtrl'))
         else:
-            takeCtrlButton.SetLabel("Take Control")
+            takeCtrlButton.SetLabel(self.trans.get('pPosCtrl'))
 
-
-    def resetStateOfPositioningPanel(self):
-        self.positioningPanel.control.SetLabel("Take Control")
-        self.plcGui = None
 
     def update(self, event):
         selStar = self.getSelectedStar(self.controller)
