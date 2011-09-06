@@ -225,8 +225,10 @@ class PositioningPanel(SimplePanel):
         DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.manSetPointRA = self.CreateInputField()
-        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
-        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
+#        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
+        self.movLeftRA = wx.Button(self)
+#        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
+        self.movRightRA = wx.Button(self)
         self.speedSecRA = self.CreateButton(label=codes.get('pPosSpeedSec'), font=speedButtonFont, size=speedButtonSize)
         self.speedMinRA = self.CreateButton(label=codes.get('pPosSpeedMin'), font=speedButtonFont, size=speedButtonSize)
         self.speedHourRA = self.CreateButton(label=codes.get('pPosSpeedHour'),size=speedButtonSize,
