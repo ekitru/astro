@@ -123,6 +123,9 @@ class Controller(object):
             canMove = False
         return canMove
 
+    def checkCoordinates(self, dec, ra):
+        return self.checkHours(ra) and self.checkDegrees(dec)
+
     def checkHours(self, hours):
         try:
             h, m, s = re.split(':', hours)
