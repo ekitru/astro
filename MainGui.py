@@ -3,7 +3,7 @@
 import wx
 from dialogs import EditObjectDialog, SelectObjectDialog
 from ids import *
-from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel
+from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel, ControlPanel
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
@@ -28,13 +28,27 @@ class MainGui(wx.Frame):
         self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
         self.positioningPanel = PositioningPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
+        self.controlPanel = ControlPanel(ID=ID_CONTROLPANEL, **panelArgs)
 
-        grid = wx.FlexGridSizer(2, 2, 10, 10)
-        grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
-        grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
-        grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
+        grid = wx.FlexGridSizer(1, 2, 10, 10)   #3,2,10,10
+        gridColumn1 = wx.BoxSizer(wx.VERTICAL)
+        gridColumn2 = wx.BoxSizer(wx.VERTICAL)
 
-        grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
+        #grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
+        #grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
+        #grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
+        #grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
+        #grid.Add(self.controlPanel, flag=wx.ALL | wx.EXPAND)
+
+        gridColumn1.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
+        gridColumn1.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
+        gridColumn1.Add(self.controlPanel, flag=wx.ALL | wx.EXPAND)
+
+        gridColumn2.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
+        gridColumn2.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
+
+        grid.Add(gridColumn1)
+        grid.Add(gridColumn2)
 
         canvas = wx.BoxSizer(wx.VERTICAL)
         canvas.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
@@ -45,7 +59,7 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
-        self.Bind(wx.EVT_BUTTON, self.OnTakeCtrlButton, self.positioningPanel.control)
+        self.Bind(wx.EVT_BUTTON, self.OnAutoManButton, self.controlPanel.autoManBut)
 
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
@@ -63,12 +77,13 @@ class MainGui(wx.Frame):
     def OnSettings(self, event):
         print('Settings')
 
-    def OnTakeCtrlButton(self,event):
-        takeCtrlButton = event.GetEventObject()
-        if takeCtrlButton.GetLabel() == self.trans.get('pPosCtrl'):
-            takeCtrlButton.SetLabel(self.trans.get('pPosRelCtrl'))
+    def OnAutoManButton(self,event):
+        autoManBut = event.GetEventObject()
+        pPosSizer = autoManBut.GetParent()
+        if autoManBut.GetLabel() == self.trans.get('pCtrlMan'):
+            autoManBut.SetLabel(self.trans.get('pCtrlAuto'))
         else:
-            takeCtrlButton.SetLabel(self.trans.get('pPosCtrl'))
+            autoManBut.SetLabel(self.trans.get('pCtrlMan'))
 
 
     def update(self, event):
