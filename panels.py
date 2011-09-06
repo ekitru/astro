@@ -26,8 +26,8 @@ class SimplePanel(wx.Panel):
             element.SetFont(font)
         return element
 
-    def CreateInputField(self):
-        return wx.TextCtrl(self, id=wx.ID_ANY)
+    def CreateInputField(self, size=wx.DefaultSize):
+        return wx.TextCtrl(self, id=wx.ID_ANY, size=size)
 
     def CreateButton(self, label="",font=None, size=wx.DefaultSize):
         speedSelButton = wx.Button(self, id=wx.ID_ANY, label=label, size=size)
@@ -182,12 +182,13 @@ class PositioningPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        buttonSize = (30,23)
+        buttonSize = (30,25)
         buttonFontBold = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         buttonFontNormal = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        inputFieldSize = (85,27)
 
 
-        posSizer = wx.GridSizer(4, 3, 5, 10)
+        pPosViewSizer = wx.GridSizer(4, 3, 5, 10)
 
         self.curRA = self.CreateField()
         self.taskRA = self.CreateField()
@@ -197,52 +198,101 @@ class PositioningPanel(SimplePanel):
         self.taskFocus = self.CreateField()
         self.control = self.CreateButton(codes.get('pPosCtrl'),font=buttonFontNormal,size=(120,23))
 
-        posSizer.Add(self.CreateField())
-        posSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-        posSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        pPosViewSizer.Add(self.CreateField())
+        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
 
-        posSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        posSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
-        posSizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosViewSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosViewSizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        posSizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        posSizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
-        posSizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosViewSizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosViewSizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        posSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        posSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
-        posSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
-
-
-        plcSizer = wx.FlexGridSizer(4, 5, 5, 5)
-        RAspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
-        DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        self.manSetPointRA = self.CreateInputField()
-        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
-        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
-        self.speedSecRA = self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize)
-        self.speedMinRA = self.CreateToggleButton(label=codes.get('pPosSpeedMin'), font=buttonFontBold, size=buttonSize)
-        self.speedHourRA = self.CreateToggleButton(label=codes.get('pPosSpeedHour'),size=buttonSize,
-                                             font=buttonFontBold)
-
-        RAspeedSelSizer.Add(self.speedHourRA)
-        RAspeedSelSizer.Add(self.speedMinRA)
-        RAspeedSelSizer.Add(self.speedSecRA)
-
-        plcSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
-        plcSizer.Add(self.manSetPointRA, border= 10)
-        plcSizer.Add(self.movLeftRA)
-        plcSizer.Add(self.movRightRA)
-        plcSizer.Add(RAspeedSelSizer)
+        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosViewSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosViewSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
 
-        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
-        comSizer.Add(posSizer, flag=wx.ALL, border=10)
-        comSizer.Add(self.control, flag=wx.ALIGN_RIGHT)
-        comSizer.Add(plcSizer, flag = wx.TOP, border=10)
+        pPosCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)#wx.FlexGridSizer(4, 5, 5, 5)
+        pPosCtrlCol1 = wx.BoxSizer(wx.VERTICAL)
+        pPosCtrlCol2 = wx.BoxSizer(wx.VERTICAL)
+        pPosCtrlCol3 = wx.GridSizer(4,3,5,5)
+        pPosCtrlFoc = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.SetSizer(comSizer)
+
+        pPosCtrlCol1.AddSpacer(5)
+        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        pPosCtrlCol1.AddSpacer(11)
+        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        pPosCtrlCol1.AddSpacer(12)
+        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        pPosCtrlCol1.AddSpacer(12)
+        pPosCtrlCol1.Add(pPosCtrlFoc)
+
+        pPosCtrlFoc.Add(self.CreateButton(label="-", size=buttonSize))
+        pPosCtrlFoc.Add(self.CreateButton(label="+", size=buttonSize))
+
+
+        pPosCtrlCol2.Add(self.CreateInputField(size=inputFieldSize))
+        pPosCtrlCol2.AddSpacer(1)
+        pPosCtrlCol2.Add(self.CreateInputField(size=inputFieldSize))
+        pPosCtrlCol2.AddSpacer(2)
+        pPosCtrlCol2.Add(self.CreateInputField(size=inputFieldSize))
+        pPosCtrlCol2.AddSpacer(4)
+        pPosCtrlCol2.Add(self.CreateButton(label="Move"))
+
+        pPosCtrlCol3.AddSpacer(5)
+        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_up.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.AddSpacer(5)
+        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_left.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.AddSpacer(5)
+        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_right.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.AddSpacer(5)
+        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_down.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.AddSpacer(5)
+        pPosCtrlCol3.Add(self.CreateToggleButton(label=codes.get('pPosSpeedHour'),font=buttonFontBold, size=buttonSize))
+        pPosCtrlCol3.Add(self.CreateToggleButton(label=codes.get('pPosSpeedMin'),font=buttonFontBold, size=buttonSize))
+        pPosCtrlCol3.Add(self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize))
+
+
+        pPosCtrlSizer.Add(pPosCtrlCol1)
+        pPosCtrlSizer.AddSpacer(25)
+        pPosCtrlSizer.Add(pPosCtrlCol2)
+        pPosCtrlSizer.AddSpacer(20)
+        pPosCtrlSizer.Add(pPosCtrlCol3)
+
+
+
+       # RAspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
+       # DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+       # self.manSetPointRA = self.CreateInputField()
+       # self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
+       # self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
+       # self.speedSecRA = self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize)
+       # self.speedMinRA = self.CreateToggleButton(label=codes.get('pPosSpeedMin'), font=buttonFontBold, size=buttonSize)
+       # self.speedHourRA = self.CreateToggleButton(label=codes.get('pPosSpeedHour'),size=buttonSize,
+       #                                      font=buttonFontBold)
+
+       # RAspeedSelSizer.Add(self.speedHourRA)
+       # RAspeedSelSizer.Add(self.speedMinRA)
+       # RAspeedSelSizer.Add(self.speedSecRA)
+
+       # pPosCtrlSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+       # pPosCtrlSizer.Add(self.manSetPointRA, border= 10)
+       # pPosCtrlSizer.Add(self.movLeftRA)
+       # pPosCtrlSizer.Add(self.movRightRA)
+       # pPosCtrlSizer.Add(RAspeedSelSizer)
+
+
+        pPosSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
+        pPosSizer.Add(pPosViewSizer, flag=wx.ALL, border=10)
+        pPosSizer.Add(self.control, flag=wx.ALIGN_RIGHT)
+        pPosSizer.Add(pPosCtrlSizer, flag = wx.TOP, border=10)
+
+        self.SetSizer(pPosSizer)
 
     def update(self, controller):
         position = controller.getTelescopePosition()
