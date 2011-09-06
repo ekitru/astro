@@ -182,12 +182,14 @@ class PositioningPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
+        #Sizes and Fonts
         buttonSize = (30,25)
         buttonFontBold = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         buttonFontNormal = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         inputFieldSize = (85,27)
 
 
+        #Positioning panel view sizer
         pPosViewSizer = wx.GridSizer(4, 3, 5, 10)
 
         self.curRA = self.CreateField()
@@ -196,7 +198,7 @@ class PositioningPanel(SimplePanel):
         self.taskDEC = self.CreateField()
         self.curFocus = self.CreateField()
         self.taskFocus = self.CreateField()
-        self.control = self.CreateButton(codes.get('pPosCtrl'),font=buttonFontNormal,size=(120,23))
+        self.autoManBut = self.CreateButton(codes.get('pPosCtrlMan'),font=buttonFontNormal,size=(85,27))
 
         pPosViewSizer.Add(self.CreateField())
         pPosViewSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
@@ -215,48 +217,57 @@ class PositioningPanel(SimplePanel):
         pPosViewSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
 
-        pPosCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)#wx.FlexGridSizer(4, 5, 5, 5)
+        #Positioning panel control sizer
+        pPosCtrlSizer = wx.BoxSizer(wx.HORIZONTAL)
         pPosCtrlCol1 = wx.BoxSizer(wx.VERTICAL)
         pPosCtrlCol2 = wx.BoxSizer(wx.VERTICAL)
         pPosCtrlCol3 = wx.GridSizer(4,3,5,5)
         pPosCtrlFoc = wx.BoxSizer(wx.HORIZONTAL)
 
+        self.inFieldRA = self.CreateInputField(size=inputFieldSize)
+        self.inFieldDEC = self.CreateInputField(size=inputFieldSize)
+        self.inFieldFoc = self.CreateInputField(size=inputFieldSize)
+        self.butManMove = self.CreateButton(label="Move")
+        self.butMovUpRA = self.CreateBitmapButton("bitmaps/arrow_up.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize)
+        self.butMovLftDEC = self.CreateBitmapButton("bitmaps/arrow_left.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize)
+        self.butMovRhtDEC = self.CreateBitmapButton("bitmaps/arrow_right.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize)
+        self.butMovDwnRA =  self.CreateBitmapButton("bitmaps/arrow_down.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize)
+        self.butSelHour = self.CreateToggleButton(label=codes.get('pPosSpeedHour'),font=buttonFontBold, size=buttonSize)
+        self.butSelMin = self.CreateToggleButton(label=codes.get('pPosSpeedMin'),font=buttonFontBold, size=buttonSize)
+        self.butSelSec = self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize)
+
+        self.inFieldRA.Disable()
 
         pPosCtrlCol1.AddSpacer(5)
-        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_RIGHT)
         pPosCtrlCol1.AddSpacer(11)
-        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALIGN_RIGHT)
         pPosCtrlCol1.AddSpacer(12)
-        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
+        pPosCtrlCol1.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALIGN_RIGHT)
         pPosCtrlCol1.AddSpacer(12)
-        pPosCtrlCol1.Add(pPosCtrlFoc)
 
-        pPosCtrlFoc.Add(self.CreateButton(label="-", size=buttonSize))
-        pPosCtrlFoc.Add(self.CreateButton(label="+", size=buttonSize))
-
-
-        pPosCtrlCol2.Add(self.CreateInputField(size=inputFieldSize))
+        pPosCtrlCol2.Add(self.inFieldRA)
         pPosCtrlCol2.AddSpacer(1)
-        pPosCtrlCol2.Add(self.CreateInputField(size=inputFieldSize))
+        pPosCtrlCol2.Add(self.inFieldDEC)
         pPosCtrlCol2.AddSpacer(2)
-        pPosCtrlCol2.Add(self.CreateInputField(size=inputFieldSize))
+        pPosCtrlCol2.Add(self.inFieldFoc)
         pPosCtrlCol2.AddSpacer(4)
-        pPosCtrlCol2.Add(self.CreateButton(label="Move"))
+        pPosCtrlCol2.Add(self.butManMove)
 
         pPosCtrlCol3.AddSpacer(5)
-        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_up.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.Add(self.butMovUpRA)
         pPosCtrlCol3.AddSpacer(5)
-        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_left.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.Add(self.butMovLftDEC)
         pPosCtrlCol3.AddSpacer(5)
-        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_right.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.Add(self.butMovRhtDEC)
         pPosCtrlCol3.AddSpacer(5)
-        pPosCtrlCol3.Add(self.CreateBitmapButton("bitmaps/arrow_down.ico", file_type=wx.BITMAP_TYPE_ICO, size = buttonSize))
+        pPosCtrlCol3.Add(self.butMovDwnRA)
         pPosCtrlCol3.AddSpacer(5)
-        pPosCtrlCol3.Add(self.CreateToggleButton(label=codes.get('pPosSpeedHour'),font=buttonFontBold, size=buttonSize))
-        pPosCtrlCol3.Add(self.CreateToggleButton(label=codes.get('pPosSpeedMin'),font=buttonFontBold, size=buttonSize))
-        pPosCtrlCol3.Add(self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize))
+        pPosCtrlCol3.Add(self.butSelHour)
+        pPosCtrlCol3.Add(self.butSelMin)
+        pPosCtrlCol3.Add(self.butSelSec)
 
-
+        pPosCtrlSizer.AddSpacer(10)
         pPosCtrlSizer.Add(pPosCtrlCol1)
         pPosCtrlSizer.AddSpacer(25)
         pPosCtrlSizer.Add(pPosCtrlCol2)
@@ -264,32 +275,10 @@ class PositioningPanel(SimplePanel):
         pPosCtrlSizer.Add(pPosCtrlCol3)
 
 
-
-       # RAspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
-       # DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
-
-       # self.manSetPointRA = self.CreateInputField()
-       # self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
-       # self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
-       # self.speedSecRA = self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize)
-       # self.speedMinRA = self.CreateToggleButton(label=codes.get('pPosSpeedMin'), font=buttonFontBold, size=buttonSize)
-       # self.speedHourRA = self.CreateToggleButton(label=codes.get('pPosSpeedHour'),size=buttonSize,
-       #                                      font=buttonFontBold)
-
-       # RAspeedSelSizer.Add(self.speedHourRA)
-       # RAspeedSelSizer.Add(self.speedMinRA)
-       # RAspeedSelSizer.Add(self.speedSecRA)
-
-       # pPosCtrlSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALIGN_CENTER_VERTICAL | wx.LEFT, border=10)
-       # pPosCtrlSizer.Add(self.manSetPointRA, border= 10)
-       # pPosCtrlSizer.Add(self.movLeftRA)
-       # pPosCtrlSizer.Add(self.movRightRA)
-       # pPosCtrlSizer.Add(RAspeedSelSizer)
-
-
+        #Positioning panel sizer
         pPosSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
         pPosSizer.Add(pPosViewSizer, flag=wx.ALL, border=10)
-        pPosSizer.Add(self.control, flag=wx.ALIGN_RIGHT)
+        pPosSizer.Add(self.autoManBut, flag=wx.ALIGN_RIGHT)
         pPosSizer.Add(pPosCtrlSizer, flag = wx.TOP, border=10)
 
         self.SetSizer(pPosSizer)

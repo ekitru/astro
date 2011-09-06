@@ -45,7 +45,7 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
-        self.Bind(wx.EVT_BUTTON, self.OnTakeCtrlButton, self.positioningPanel.control)
+        self.Bind(wx.EVT_BUTTON, self.OnAutoManButton, self.positioningPanel.autoManBut)
 
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
@@ -63,12 +63,13 @@ class MainGui(wx.Frame):
     def OnSettings(self, event):
         print('Settings')
 
-    def OnTakeCtrlButton(self,event):
-        takeCtrlButton = event.GetEventObject()
-        if takeCtrlButton.GetLabel() == self.trans.get('pPosCtrl'):
-            takeCtrlButton.SetLabel(self.trans.get('pPosRelCtrl'))
+    def OnAutoManButton(self,event):
+        autoManBut = event.GetEventObject()
+        pPosSizer = autoManBut.GetParent()
+        if autoManBut.GetLabel() == self.trans.get('pPosCtrlMan'):
+            autoManBut.SetLabel(self.trans.get('pPosCtrlAuto'))
         else:
-            takeCtrlButton.SetLabel(self.trans.get('pPosCtrl'))
+            autoManBut.SetLabel(self.trans.get('pPosCtrlMan'))
 
 
     def update(self, event):
