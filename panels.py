@@ -8,10 +8,10 @@ class SimplePanel(wx.Panel):
 
         #Sizes and Fonts
         self.BUTTON_SIZE_SMALL = (30,25)
-        self.BUTTON_FONT_BOLD = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         self.IN_FIELD_SIZE_NORMAL = (85,27)
         self.BUTTON_SIZE_LARGE = (85,27)
         self.BUTTON_FONT_NORMAL = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.BUTTON_FONT_BOLD = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 
     def CreateHeader(self, name):
         return self.CreateElement(name, wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
@@ -185,7 +185,7 @@ class PositioningPanel(SimplePanel):
         SimplePanel.__init__(self, parent, ID)
 
         #Positioning panel view sizer
-        pPosViewSizer = wx.GridSizer(4, 3, 5, 10)
+        pPosSizer = wx.GridSizer(4, 3, 5, 10)
 
         self.curRA = self.CreateField()
         self.taskRA = self.CreateField()
@@ -194,27 +194,27 @@ class PositioningPanel(SimplePanel):
         self.curFocus = self.CreateField()
         self.taskFocus = self.CreateField()
 
-        pPosViewSizer.Add(self.CreateField())
-        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        pPosSizer.Add(self.CreateField())
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
 
-        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        pPosViewSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
-        pPosViewSizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        pPosViewSizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
-        pPosViewSizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosSizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
 
-        pPosViewSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        pPosViewSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
-        pPosViewSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
 
         #Positioning panel sizer
-        pPosSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
-        pPosSizer.Add(pPosViewSizer, flag=wx.ALL, border=10)
+        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
+        comSizer.Add(pPosSizer, flag=wx.ALL, border=10)
 
-        self.SetSizer(pPosSizer)
+        self.SetSizer(comSizer)
 
     def update(self, controller):
         position = controller.getTelescopePosition()
@@ -258,7 +258,7 @@ class ControlPanel(SimplePanel):
         self.butDecFoc = self.CreateButton(label="-", size=self.BUTTON_SIZE_SMALL)
 
         pControlCol1.AddSpacer(5)
-        pControlCol1.Add(self.CreateCaption(codes.get('pCtrlRA')), flag=wx.ALIGN_RIGHT)
+        pControlCol1.Add(self.CreateCaption(codes.get('pCtrlRA')), flag= wx.ALIGN_RIGHT)
         pControlCol1.AddSpacer(11)
         pControlCol1.Add(self.CreateCaption(codes.get('pCtrlDEC')), flag=wx.ALIGN_RIGHT)
         pControlCol1.AddSpacer(12)
