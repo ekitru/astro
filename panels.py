@@ -1,5 +1,4 @@
 import wx
-import os
 
 __author__ = 'kitru'
 
@@ -37,19 +36,9 @@ class SimplePanel(wx.Panel):
         return speedSelButton
 
     def CreateBitmapButton(self, rel_path, file_type, size=wx.DefaultSize):
-        bitmap = self.__gifBitmapWhiteBGToTransparent(rel_path, file_type)
+        bitmap = wx.Bitmap(rel_path, file_type)
         return wx.BitmapButton(self, id=wx.ID_ANY, bitmap=bitmap,size=size)
 
-    def __gifBitmapWhiteBGToTransparent(self,path,type):
-        """Turns bitmap with white backgrount into
-        bitmap with transparent background.
-        path - relative path to bitmap file.
-        type - type of bitmap file (.gif)"""
-        absPath = os.path.abspath(path)
-        bitmap = wx.Bitmap(absPath, type=type)
-        mask = wx.MaskColour(bitmap, wx.WHITE)
-        bitmap.SetMask(mask)
-        return bitmap
 
 class ObjectPanel(SimplePanel):
     """This panel represents selected object data (name and positions)
@@ -191,7 +180,6 @@ class PositioningPanel(SimplePanel):
         speedButtonSize = (30,23)
         speedButtonFont = wx.Font(18, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         speedHourButtonFont = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        bitmapType = wx.BITMAP_TYPE_GIF
 
         posSizer = wx.GridSizer(4, 3, 5, 10)
 
@@ -225,8 +213,8 @@ class PositioningPanel(SimplePanel):
         DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.manSetPointRA = self.CreateInputField()
-        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
-        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.gif', wx.BITMAP_TYPE_GIF, size=bitmapButtonSize)
+        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.ico', wx.BITMAP_TYPE_ICO, size=bitmapButtonSize)
+        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.ico', wx.BITMAP_TYPE_ICO, size=bitmapButtonSize)
         self.speedSecRA = self.CreateButton(label=codes.get('pPosSpeedSec'), font=speedButtonFont, size=speedButtonSize)
         self.speedMinRA = self.CreateButton(label=codes.get('pPosSpeedMin'), font=speedButtonFont, size=speedButtonSize)
         self.speedHourRA = self.CreateButton(label=codes.get('pPosSpeedHour'),size=speedButtonSize,
