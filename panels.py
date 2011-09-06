@@ -182,10 +182,10 @@ class PositioningPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        bitmapButtonSize = (30,23)
-        speedButtonSize = (30,23)
-        speedButtonFont = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        speedHourButtonFont = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        buttonSize = (30,23)
+        buttonFontBold = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        buttonFontNormal = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+
 
         posSizer = wx.GridSizer(4, 3, 5, 10)
 
@@ -195,7 +195,7 @@ class PositioningPanel(SimplePanel):
         self.taskDEC = self.CreateField()
         self.curFocus = self.CreateField()
         self.taskFocus = self.CreateField()
-        self.control = wx.Button(self, wx.ID_ANY, codes.get('pPosCtrl'),size=(120,23))
+        self.control = self.CreateButton(codes.get('pPosCtrl'),font=buttonFontNormal,size=(120,23))
 
         posSizer.Add(self.CreateField())
         posSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
@@ -219,12 +219,12 @@ class PositioningPanel(SimplePanel):
         DECspeedSelSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.manSetPointRA = self.CreateInputField()
-        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.ico', wx.BITMAP_TYPE_ICO, size=bitmapButtonSize)
-        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.ico', wx.BITMAP_TYPE_ICO, size=bitmapButtonSize)
-        self.speedSecRA = self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=speedButtonFont, size=speedButtonSize)
-        self.speedMinRA = self.CreateToggleButton(label=codes.get('pPosSpeedMin'), font=speedButtonFont, size=speedButtonSize)
-        self.speedHourRA = self.CreateToggleButton(label=codes.get('pPosSpeedHour'),size=speedButtonSize,
-                                             font=speedHourButtonFont)
+        self.movLeftRA = self.CreateBitmapButton('bitmaps/arrow_left.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
+        self.movRightRA = self.CreateBitmapButton('bitmaps/arrow_right.ico', wx.BITMAP_TYPE_ICO, size=buttonSize)
+        self.speedSecRA = self.CreateToggleButton(label=codes.get('pPosSpeedSec'),font=buttonFontBold, size=buttonSize)
+        self.speedMinRA = self.CreateToggleButton(label=codes.get('pPosSpeedMin'), font=buttonFontBold, size=buttonSize)
+        self.speedHourRA = self.CreateToggleButton(label=codes.get('pPosSpeedHour'),size=buttonSize,
+                                             font=buttonFontBold)
 
         RAspeedSelSizer.Add(self.speedHourRA)
         RAspeedSelSizer.Add(self.speedMinRA)
