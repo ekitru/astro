@@ -30,12 +30,6 @@ class StarList(wx.ListCtrl):
         item = self.GetItem(curItemId, 0).GetText()
         return item
 
-    def GetSelectedStar(self):
-        name = self.list.GetSelectedStarName()
-        return self.controller.getStarByName(name)
-
-
-
 class SimpleObjectDialog(wx.Dialog):
     def __init__(self, parent, id, title, controller):
         wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
@@ -65,6 +59,10 @@ class SimpleObjectDialog(wx.Dialog):
     def ReloadList(self):
         stars = self.controller.getStars(self.GetStarName())
         self.list.FillList(stars)
+
+    def GetSelectedStar(self):
+        name = self.list.GetSelectedStarName()
+        return self.controller.getStarByName(name)
 
     def GetStarName(self):
         return self.starName.strip()
@@ -146,7 +144,7 @@ class SelectObjectDialog(SimpleObjectDialog):
         self.SelectStar()
 
     def OnListItemSelected(self, event):
-        star = self.list.GetSelectedStar()
+        star = self.GetSelectedStar()
         self.SetNewStar(star)
 
     def OnListItemActivated(self, event):
@@ -205,7 +203,7 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
 
 
     def OnListItemSelected(self, event):
-        star = self.list.GetSelectedStar()
+        star = self.GetSelectedStar()
         print('selected star', star)
 
     def OnListItemActivated(self, event):
