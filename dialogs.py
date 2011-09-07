@@ -70,7 +70,7 @@ class SimpleObjectDialog(wx.Dialog):
     def SetStarName(self, name):
         self.starName = name.strip()
 
-    """ standard events """
+    # standard events
     def OnSelectClicked(self, event):
         self.EndModal(wx.ID_OK)
 
@@ -112,17 +112,17 @@ class SelectObjectDialog(SimpleObjectDialog):
         self.Fit()
 
     def CreateObjectPanel(self, codes):
-        objProp = wx.FlexGridSizer(2, 2, 5, 5)
-        objProp.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_name')),
+        grid = wx.FlexGridSizer(2, 2, 5, 5)
+        grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_name')),
                     flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
-        objProp.Add(self.name, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
-        objProp.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_RA')),
+        grid.Add(self.name, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+        grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_RA')),
                     flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
-        objProp.Add(self.RA, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
-        objProp.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_DEC')),
+        grid.Add(self.RA, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+        grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_DEC')),
                     flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
-        objProp.Add(self.DEC, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
-        return objProp
+        grid.Add(self.DEC, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+        return grid
 
     def UpdateOnTimer(self, event):
         self.selectButton.Enable(self.isCorrectInput())
@@ -184,15 +184,19 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(findBox, flag=wx.LEFT, border=10)
         sizer.Add(self.list, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
-        butSizer = wx.BoxSizer(wx.HORIZONTAL)
+        butSizer = wx.BoxSizer(wx.VERTICAL)
+        butSizer.Add(wx.Button(self, wx.ID_ADD, label=self.codes.get('dEditObj_add')),
+                     flag=wx.EXPAND | wx.ALL | wx.ALIGN_LEFT)
         butSizer.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')),
                      flag=wx.EXPAND | wx.ALL | wx.ALIGN_RIGHT)
+
         sizer.Add(butSizer, flag=wx.ALIGN_BOTTOM | wx.EXPAND)
 
         self.SetSizer(sizer)
         self.Fit()
 
         self.list.Bind(wx.EVT_KEY_DOWN, self.OnListCharacter)
+        self.Bind(wx.EVT_BUTTON, self.OnAddClicked, id=wx.ID_ADD)
 
 
     def UpdateOnTimer(self, event):
@@ -201,14 +205,9 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             self.SetStarName(userInput)
             SimpleObjectDialog.UpdateOnTimer(self, event)
 
-
-    def OnListItemSelected(self, event):
-        star = self.GetSelectedStar()
-        print('selected star', star)
-
     def OnListItemActivated(self, event):
-        super(EditObjectDialog, self).OnListItemActivated(event)
-
+        #TODO
+        pass
 
     def OnListCharacter (self, event):
         print "list character"
@@ -219,6 +218,77 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             if index != -1:
                 self.list.DeleteItem(index)
         else:
-            print 'something'
             event.Skip()
 
+    def OnAddClicked(self, event):
+        diag = AddStarDialog(self, self.controller)
+        diag.ShowModal()
+        diag.Destroy()
+
+
+
+
+class AddStarDialog(wx.Dialog):
+    def __init__(self, parent, controller):
+        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
+        self.controller = controller
+        self.codes = controller.trans
+        self.name = wx.TextCtrl(self, size=(120, -1))
+        self.name.SetFocus()
+        self.RA = wx.TextCtrl(self, size=(120, -1))
+        self.DEC = wx.TextCtrl(self, size=(120, -1))
+
+        self.saveButton = wx.Button(self, id=wx.ID_OK,label=self.codes.get("dAddObj_save"))
+        self.cancelButton = wx.Button(self, id=wx.ID_CANCEL,label=self.codes.get("dAddObj_cancel"))
+        buttons = wx.BoxSizer(wx.HORIZONTAL)
+        buttons.Add(self.saveButton, flag=wx.ALL | wx.ALIGN_LEFT)
+        buttons.Add(self.cancelButton, flag=wx.ALL | wx.ALIGN_RIGHT)
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.CreateObjectPanel(self.codes), flag=wx.ALL | wx.EXPAND | wx.ALIGN_TOP, border=10)
+        sizer.Add(buttons, flag=wx.LEFT | wx.RIGHT |wx.BOTTOM | wx.ALIGN_BOTTOM, border=10)
+        self.SetSizer(sizer)
+        self.Fit()
+
+        self.Bind(wx.EVT_BUTTON, self.OnSaveClicked, id=wx.ID_OK)
+        self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
+
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.CheckField, self.timer)
+        self.timer.Start(500)
+
+    def CreateObjectPanel(self, codes):
+        grid = wx.FlexGridSizer(2, 2, 5, 5)
+        grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dAddObj_name')),
+                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        grid.Add(self.name, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+        grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dAddObj_ra')),
+                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        grid.Add(self.RA, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+        grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dAddObj_dec')),
+                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        grid.Add(self.DEC, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+        return grid
+
+    def isCorrectInput(self):
+        """ Check correct values for RA and DEC """
+        name = self.name.GetValue()
+        ra = self.RA.GetValue()
+        dec = self.DEC.GetValue()
+        return self.controller.checkCoordinates(dec, ra) & (not self.controller.starExists(name))
+
+    def CheckField(self, event):
+        if self.isCorrectInput():
+            self.saveButton.Enable()
+        else:
+            self.saveButton.Disable()
+
+
+    def OnSaveClicked(self, event):
+        name = self.name.GetValue()
+        ra = self.RA.GetValue()
+        dec = self.DEC.GetValue()
+        star = self.controller.saveStar(name,ra,dec)
+        self.EndModal(wx.ID_OK)
+    def OnCancelClicked(self, event):
+        self.EndModal(wx.ID_CANCEL)

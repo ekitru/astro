@@ -28,6 +28,13 @@ class DbManager(object):
         except Exception as error:
             raise ConfigurationException(error.args, self.logger)
 
+    def starExists(self, name):
+        star = self.getStarByName(name)
+        if star:
+            return True
+        else:
+            return False
+
     def getStarById(self, id):
         sql = "SELECT `name`,`ra`,`dec` FROM stars where id=%(id)s"
         args = {'id': id}
@@ -44,7 +51,7 @@ class DbManager(object):
 
     def saveStar(self, name, ra, dec):
         sql = "INSERT INTO `stars` (`id`,`name`,`ra`,`dec`) values (default, %(name)s,%(ra)s,%(dec)s)"
-        args = {'name': name, 'ra': ra, 'dec': dec}
+        args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
 
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()

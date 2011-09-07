@@ -47,11 +47,8 @@ class Controller(object):
         except Exception as e:
             raise ClosingException(e)
 
-    def isStarExist(self, name):
-        if self.getStarByName(name):
-            return True
-        else:
-            return False
+    def starExists(self, name):
+        return self.dbManager.starExists(name)
 
     def getStarByName(self, name):
         """ Take star from database by name
@@ -122,6 +119,14 @@ class Controller(object):
         if not self.object.selected():
             canMove = False
         return canMove
+
+    def checkName(self, name):
+        star = self.dbManager.getStarByName(name)
+        print(star)
+        if star:
+            return True
+        else:
+            return False
 
     def checkCoordinates(self, dec, ra):
         return self.checkHours(ra) and self.checkDegrees(dec)
