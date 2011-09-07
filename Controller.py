@@ -64,6 +64,10 @@ class Controller(object):
         ra, dec = astronomy.str2rad(str(ra), str(dec))
         self.dbManager.saveStar(name, ra, dec)
 
+    def deleteStar(self, star):
+        name = star['name']
+        self.dbManager.deleteStar(name)
+
     def getStars(self, name):
         """ Returns list of star objects(name,ra,dec)
         Fetchs all rows with similar star name like name%

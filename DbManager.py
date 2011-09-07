@@ -56,6 +56,11 @@ class DbManager(object):
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()
 
+    def deleteStar(self,name):
+        sql = "delete from stars where `name`=%(name)s"
+        args = {'name':name}
+        self.cursor.execute(sql, args)
+
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
