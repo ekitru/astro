@@ -220,7 +220,7 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             SimpleObjectDialog.UpdateOnTimer(self, event)
 
     def OnListItemActivated(self, event):
-        #TODO
+        #TODO edit object
         pass
 
     def OnListCharacter (self, event):
@@ -230,6 +230,8 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             event.Skip()
             index = self.list.GetNextItem(-1, state=wx.LIST_STATE_SELECTED)
             if index != -1:
+                name = self.GetSelectedStar()
+                self.controller.deleteStar(name)
                 self.list.DeleteItem(index)
         else:
             event.Skip()
