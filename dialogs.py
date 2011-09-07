@@ -220,19 +220,21 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             SimpleObjectDialog.UpdateOnTimer(self, event)
 
     def OnListItemActivated(self, event):
-        #TODO edit object
-        pass
+        name = self.GetStarName()
+        dialog = AddStarDialog(self, self.controller, starName=name)
+        dialog.ShowModal()
+        dialog.Destroy()
 
     def OnListCharacter (self, event):
-        print "list character"
         if event.GetKeyCode() == wx.WXK_DELETE:
-            print 'DELETE'
             event.Skip()
             index = self.list.GetNextItem(-1, state=wx.LIST_STATE_SELECTED)
             if index != -1:
-                name = self.GetSelectedStar()
-                self.controller.deleteStar(name)
-                self.list.DeleteItem(index)
+                star = self.GetSelectedStar()
+                response = self.askConfirmation(star)
+                if response == wx.ID_YES:
+                    self.controller.deleteStar(star)
+                    self.list.DeleteItem(index)
         else:
             event.Skip()
 
@@ -241,13 +243,20 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         dialog.ShowModal()
         dialog.Destroy()
 
+    def askConfirmation(self, star):
+        confirm = wx.MessageDialog(self, caption=star['name'], message=self.codes.get('dEditObj_deleteConfirm'),
+                                       style=wx.YES_NO | wx.NO_DEFAULT | wx.CENTER)
+        response = confirm.ShowModal()
+        confirm.Destroy()
+        return response
+
 
 class AddStarDialog(wx.Dialog):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, starName=""):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
         self.controller = controller
         self.codes = controller.trans
-        self.name = wx.TextCtrl(self, size=(120, -1))
+        self.name = wx.TextCtrl(self, size=(120, -1), value=starName)
         self.name.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
