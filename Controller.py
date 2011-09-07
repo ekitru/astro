@@ -64,6 +64,10 @@ class Controller(object):
         ra, dec = astronomy.str2rad(str(ra), str(dec))
         self.dbManager.saveStar(name, ra, dec)
 
+    def updateStar(self, name, ra, dec):
+        ra, dec = astronomy.str2rad(str(ra), str(dec))
+        self.dbManager.updateStar(name, ra, dec)
+
     def deleteStar(self, star):
         name = star['name']
         self.dbManager.deleteStar(name)

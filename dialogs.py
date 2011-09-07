@@ -85,7 +85,7 @@ class SimpleObjectDialog(wx.Dialog):
         pass
 
     def OnListItemActivated(self, event): #double click or enter pressed
-        pass
+        self.ReloadList()
 
     def GetSelectedStar(self):
         name = self.list.GetSelectedStarName()
@@ -220,10 +220,12 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             SimpleObjectDialog.UpdateOnTimer(self, event)
 
     def OnListItemActivated(self, event):
-        name = self.GetStarName()
-        dialog = AddStarDialog(self, self.controller, starName=name)
+        star = self.GetSelectedStar()
+        dialog = UpdateStarDialog(self, self.controller, star)
         dialog.ShowModal()
         dialog.Destroy()
+        SimpleObjectDialog.OnListItemActivated(self, event)
+
 
     def OnListCharacter (self, event):
         if event.GetKeyCode() == wx.WXK_DELETE:
@@ -242,9 +244,10 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         dialog = AddStarDialog(self, self.controller)
         dialog.ShowModal()
         dialog.Destroy()
+        SimpleObjectDialog.OnListItemActivated(self, event)
 
     def askConfirmation(self, star):
-        confirm = wx.MessageDialog(self, caption=star['name'], message=self.codes.get('dEditObj_deleteConfirm'),
+        confirm = wx.MessageDialog(self, caption=star['name'], message=self.codes.get('dEditObj_confirm'),
                                        style=wx.YES_NO | wx.NO_DEFAULT | wx.CENTER)
         response = confirm.ShowModal()
         confirm.Destroy()
@@ -252,11 +255,11 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
 
 
 class AddStarDialog(wx.Dialog):
-    def __init__(self, parent, controller, starName=""):
+    def __init__(self, parent, controller):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
         self.controller = controller
         self.codes = controller.trans
-        self.name = wx.TextCtrl(self, size=(120, -1), value=starName)
+        self.name = wx.TextCtrl(self, size=(120, -1))
         self.name.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
@@ -316,3 +319,26 @@ class AddStarDialog(wx.Dialog):
 
     def OnCancelClicked(self, event):
         self.EndModal(wx.ID_CANCEL)
+
+class UpdateStarDialog(AddStarDialog):
+    def __init__(self, parent, controller, star):
+        AddStarDialog.__init__(self, parent, controller)
+        self.name.SetValue(star['name'])
+        self.name.Disable()
+        self.RA.SetValue(star['ra'])
+        self.DEC.SetValue(star['dec'])
+        self.saveButton.SetLabel(self.codes.get('dUpdateObj_update'))
+
+    def isCorrectInput(self):
+        """ Check correct values for RA and DEC """
+        name = self.name.GetValue()
+        ra = self.RA.GetValue()
+        dec = self.DEC.GetValue()
+        return self.controller.checkCoordinates(dec, ra)
+
+    def OnSaveClicked(self, event):
+        name = self.name.GetValue()
+        ra = self.RA.GetValue()
+        dec = self.DEC.GetValue()
+        star = self.controller.updateStar(name, ra, dec)
+        self.EndModal(wx.ID_OK)

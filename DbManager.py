@@ -56,6 +56,11 @@ class DbManager(object):
         self.cursor.execute(sql, args)
         return self.cursor.fetchone()
 
+    def updateStar(self, name, ra, dec):
+        sql = "update stars set`ra`=%(ra)s, `dec`=%(dec)s where `name`=%(name)s"
+        args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
+        self.cursor.execute(sql, args)
+
     def deleteStar(self,name):
         sql = "delete from stars where `name`=%(name)s"
         args = {'name':name}
@@ -64,7 +69,7 @@ class DbManager(object):
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
-        sql = "select `name`,`ra`,`dec` from stars where name like %(name)s  limit 20"
+        sql = "select `name`,`ra`,`dec` from stars where name like %(name)s order by `name`  limit 20"
         args = {'name': (name + '%')}
 
         self.cursor.execute(sql, args)
