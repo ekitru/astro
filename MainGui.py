@@ -77,7 +77,7 @@ class MainGui(wx.Frame):
     def OnSettings(self, event):
         print('Settings')
 
-    def OnAutoManButton(self,event):
+    def OnAutoManButton(self, event):
         autoManBut = event.GetEventObject()
         pPosSizer = autoManBut.GetParent()
         if autoManBut.GetLabel() == self.trans.get('pCtrlMan'):
@@ -85,17 +85,8 @@ class MainGui(wx.Frame):
         else:
             autoManBut.SetLabel(self.trans.get('pCtrlMan'))
 
+            #noinspection PyUnusedLocal
 
-    def update(self, event):
-        selStar = self.getSelectedStar(self.controller)
-        self.objectPanel.update(*selStar)
-        self.timeDatePanel.update(self.controller.mechanics.getCurrentTimeDate())
-        self.positioningPanel.update()
-        self.Layout()
-        self.Fit()
-        self.Show()
-
-    #noinspection PyUnusedLocal
     def update(self, event):
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)

@@ -235,9 +235,9 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
             event.Skip()
 
     def OnAddClicked(self, event):
-        diag = AddStarDialog(self, self.controller)
-        diag.ShowModal()
-        diag.Destroy()
+        dialog = AddStarDialog(self, self.controller)
+        dialog.ShowModal()
+        dialog.Destroy()
 
 
 class AddStarDialog(wx.Dialog):
