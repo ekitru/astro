@@ -30,6 +30,7 @@ class StarList(wx.ListCtrl):
         item = self.GetItem(curItemId, 0).GetText()
         return item
 
+
 class SimpleObjectDialog(wx.Dialog):
     def __init__(self, parent, id, title, controller):
         wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
@@ -114,13 +115,13 @@ class SelectObjectDialog(SimpleObjectDialog):
     def CreateObjectPanel(self, codes):
         grid = wx.FlexGridSizer(2, 2, 5, 5)
         grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_name')),
-                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+                 flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         grid.Add(self.name, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_RA')),
-                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+                 flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         grid.Add(self.RA, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dSelObj_DEC')),
-                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+                 flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         grid.Add(self.DEC, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         return grid
 
@@ -176,21 +177,25 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
-        findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_LEFT | wx.ALIGN_CENTER)
+        findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag= wx.ALIGN_CENTER)
         self.text = wx.TextCtrl(self, size=(180, -1))
         self.text.SetFocus()
         findBox.Add(self.text, flag=wx.ALL | wx.EXPAND, border=10)
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(findBox, flag=wx.LEFT, border=10)
-        sizer.Add(self.list, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
-        butSizer = wx.BoxSizer(wx.VERTICAL)
-        butSizer.Add(wx.Button(self, wx.ID_ADD, label=self.codes.get('dEditObj_add')),
-                     flag=wx.EXPAND | wx.ALL | wx.ALIGN_LEFT)
-        butSizer.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')),
-                     flag=wx.EXPAND | wx.ALL | wx.ALIGN_RIGHT)
 
-        sizer.Add(butSizer, flag=wx.ALIGN_BOTTOM | wx.EXPAND)
+        addButton = wx.BoxSizer(wx.VERTICAL)
+        addButton.Add(wx.Button(self, wx.ID_ADD, label=self.codes.get('dEditObj_add')), flag=wx.ALL | wx.EXPAND | wx.ALIGN_LEFT)
+        cancelButton = wx.BoxSizer(wx.VERTICAL)
+        cancelButton.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dEditObj_cancel')), flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
+
+        butSizer = wx.BoxSizer(wx.HORIZONTAL)
+        butSizer.Add(addButton, flag=wx.EXPAND)
+        butSizer.Add(cancelButton, flag=wx.EXPAND)
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(findBox, flag=wx.LEFT| wx.ALIGN_TOP, border=10)
+        sizer.Add(self.list, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
+        sizer.Add(butSizer, flag=wx.ALIGN_BOTTOM | wx.EXPAND | wx.ALL, border=10)
 
         self.SetSizer(sizer)
         self.Fit()
@@ -226,8 +231,6 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         diag.Destroy()
 
 
-
-
 class AddStarDialog(wx.Dialog):
     def __init__(self, parent, controller):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
@@ -238,15 +241,15 @@ class AddStarDialog(wx.Dialog):
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
-        self.saveButton = wx.Button(self, id=wx.ID_OK,label=self.codes.get("dAddObj_save"))
-        self.cancelButton = wx.Button(self, id=wx.ID_CANCEL,label=self.codes.get("dAddObj_cancel"))
+        self.saveButton = wx.Button(self, id=wx.ID_OK, label=self.codes.get("dAddObj_add"))
+        self.cancelButton = wx.Button(self, id=wx.ID_CANCEL, label=self.codes.get("dAddObj_cancel"))
         buttons = wx.BoxSizer(wx.HORIZONTAL)
         buttons.Add(self.saveButton, flag=wx.ALL | wx.ALIGN_LEFT)
         buttons.Add(self.cancelButton, flag=wx.ALL | wx.ALIGN_RIGHT)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.CreateObjectPanel(self.codes), flag=wx.ALL | wx.EXPAND | wx.ALIGN_TOP, border=10)
-        sizer.Add(buttons, flag=wx.LEFT | wx.RIGHT |wx.BOTTOM | wx.ALIGN_BOTTOM, border=10)
+        sizer.Add(buttons, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.ALIGN_BOTTOM, border=10)
         self.SetSizer(sizer)
         self.Fit()
 
@@ -260,13 +263,13 @@ class AddStarDialog(wx.Dialog):
     def CreateObjectPanel(self, codes):
         grid = wx.FlexGridSizer(2, 2, 5, 5)
         grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dAddObj_name')),
-                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+                 flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         grid.Add(self.name, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dAddObj_ra')),
-                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+                 flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         grid.Add(self.RA, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         grid.Add(wx.StaticText(self, wx.ID_ANY, codes.get('dAddObj_dec')),
-                    flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+                 flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         grid.Add(self.DEC, flag=wx.ALL | wx.EXPAND | wx.ALIGN_RIGHT)
         return grid
 
@@ -288,7 +291,8 @@ class AddStarDialog(wx.Dialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.controller.saveStar(name,ra,dec)
+        star = self.controller.saveStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
+
     def OnCancelClicked(self, event):
         self.EndModal(wx.ID_CANCEL)
