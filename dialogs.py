@@ -182,7 +182,7 @@ class SelectObjectDialog(SimpleObjectDialog):
                 self.EndModal(wx.ID_OK)
 
 
-class EditObjectDialog(SimpleObjectDialog, SimplePanel):
+class EditObjectDialog(SimpleObjectDialog, SimplePanel.SimplePanel):
     def __init__(self, parent, id, controller):
         SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
 

@@ -3,7 +3,7 @@
 import wx
 from dialogs import EditObjectDialog, SelectObjectDialog
 from ids import *
-from panels import TimeDatePanel, ObjectPanel, PositioningPanel, TelescopePanel, ControlPanel
+from panels import *
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
@@ -26,7 +26,7 @@ class MainGui(wx.Frame):
 
         self.objectPanel = ObjectPanel(ID=ID_OBJPANEL, **panelArgs)
         self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
-        self.positioningPanel = PositioningPanel(ID=ID_POSITIONING, **panelArgs)
+        self.positioningPanel = PositionPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
         self.controlPanel = ControlPanel(ID=ID_CONTROLPANEL, **panelArgs)
 
