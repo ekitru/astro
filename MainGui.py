@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import wx
-from dialogs import EditObjectDialog, SelectObjectDialog
-from ids import *
 from panels import *
+from dialogs import *
+from ids import *
 
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
