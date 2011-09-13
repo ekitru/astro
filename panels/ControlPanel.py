@@ -21,8 +21,8 @@ class ControlPanel(SimplePanel):
         self.inFieldRA = self.CreateInputField(size=self.sizeLarge())
         self.inFieldDEC = self.CreateInputField(size=self.sizeLarge())
         self.inFieldFoc = self.CreateInputField(size=self.sizeLarge())
-        self.autoManBut = self.CreateButton(codes.get('pCtrlMan'),font=self.fontNorm(),size=self.sizeLarge())
-        self.butManMove = self.CreateButton(label=codes.get('pCtrlMov'))
+        self.butAutoManual = self.CreateButton(codes.get('pCtrlMan'),font=self.fontNorm(),size=self.sizeLarge())
+        self.butMove = self.CreateButton(label=codes.get('pCtrlMov'))
         self.butMovUpRA = self.CreateBitmapButton("bitmaps/arrow_up.ico", file_type=self.bitmapType(), size = self.sizeSmall())
         self.butMovLftDEC = self.CreateBitmapButton("bitmaps/arrow_left.ico", file_type=self.bitmapType(), size = self.sizeSmall())
         self.butMovRhtDEC = self.CreateBitmapButton("bitmaps/arrow_right.ico", file_type=self.bitmapType(), size = self.sizeSmall())
@@ -40,7 +40,7 @@ class ControlPanel(SimplePanel):
         pControlCol1.AddSpacer(12)
         pControlCol1.Add(self.CreateCaption(codes.get('pCtrlFoc')), flag=wx.ALIGN_RIGHT)
         pControlCol1.AddSpacer(12)
-        pControlCol1.Add(self.autoManBut, flag=wx.ALIGN_RIGHT)
+        pControlCol1.Add(self.butAutoManual, flag=wx.ALIGN_RIGHT)
 
         pControlCol2.Add(self.inFieldRA)
         pControlCol2.AddSpacer(1)
@@ -48,7 +48,7 @@ class ControlPanel(SimplePanel):
         pControlCol2.AddSpacer(2)
         pControlCol2.Add(self.inFieldFoc)
         pControlCol2.AddSpacer(4)
-        pControlCol2.Add(self.butManMove)
+        pControlCol2.Add(self.butMove)
         #self.moveBut.Enable(controller.scopeCanMove())
 
         pControlCol3.AddSpacer(5)

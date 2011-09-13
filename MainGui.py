@@ -53,7 +53,18 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
-        self.Bind(wx.EVT_BUTTON, self.OnAutoManButton, self.controlPanel.autoManBut)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonAutoManual, self.controlPanel.butAutoManual)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.controlPanel.butMove)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonUp, self.controlPanel.butMovUpRA)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonDown, self.controlPanel.butMovDwnRA)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonLeft, self.controlPanel.butMovLftDEC)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonRight, self.controlPanel.butMovRhtDEC)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelHour, self.controlPanel.butSelHour)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelMin, self.controlPanel.butSelMin)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelSec, self.controlPanel.butSelSec)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonIncFoc, self.controlPanel.butIncFoc)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonDecFoc, self.controlPanel.butDecFoc)
+
 
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
@@ -71,7 +82,7 @@ class MainGui(wx.Frame):
     def OnSettings(self, event):
         print('Settings')
 
-    def OnAutoManButton(self, event):
+    def OnButtonAutoManual(self, event):
         button = event.GetEventObject()
         if self.controller.autoControlSelected():
             self.controller.selectManualControl()
@@ -79,6 +90,37 @@ class MainGui(wx.Frame):
         else:
             self.controller.selectAutoControl()
             button.SetLabel(self.trans.get('pCtrlAuto'))
+
+    def OnButtonMove(self, event):
+        print('butMove')
+
+    def OnButtonUp(self, event):
+        print('butMovUpRA')
+
+    def OnButtonDown(self, event):
+        print('butMovDwnRA')
+
+    def OnButtonLeft(self, event):
+        print('butMovLftDEC')
+
+    def OnButtonRight(self, event):
+        print('butMovRhtDEC')
+
+    def OnButtonSelHour(self, event):
+        print('butSelHour')
+
+    def OnButtonSelMin(self, event):
+        print('butSelMin')
+
+    def OnButtonSelSec(self, event):
+        print('butSelSec')
+
+    def OnButtonIncFoc(self, event):
+        print('butIncFoc')
+
+    def OnButtonDecFoc(self, event):
+        print('butDecFoc')
+
 
     def update(self, event):
         self.objectPanel.update(self.controller)
