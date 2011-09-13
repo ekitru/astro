@@ -77,7 +77,7 @@ class ControlPanel(SimplePanel):
         self.SetSizer(comSizer)
 
     def update(self, controller):
-        pcControl = controller.isPCControlSelected()
+        pcControl = controller.pcControlSelected()
         if pcControl:
             self.Enable()
         else:

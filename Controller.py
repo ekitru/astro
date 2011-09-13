@@ -35,6 +35,7 @@ class Controller(object):
             self.dbManager = config.getDbManager()
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
+            self.controlMode = False
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
@@ -122,10 +123,22 @@ class Controller(object):
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
-    def isPCControlSelected(self):
-        """  Returns True if status flag read from PLC equals "1" (PC CONTROL selected)
-             Returns False if status flag read from PLC equals "0" (REMOTE CONTROL selected)"""
+    def pcControlSelected(self):
+        """  Returns True if status flag read from PLC equals "1" (PC control selected)
+             Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
         return self.PLCManager.isPCControl()
+
+    def autoControlSelected(self):
+        """ Returns True if AUTO control selected
+            Returns False if MANUAL control selected
+        """
+        return self.controlMode
+
+    def selectAutoControl(self):
+        self.controlMode = True
+
+    def selectManualControl(self):
+        self.controlMode = False
 
     def scopeCanMove(self):
         canMove = True

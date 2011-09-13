@@ -72,14 +72,13 @@ class MainGui(wx.Frame):
         print('Settings')
 
     def OnAutoManButton(self, event):
-        autoManBut = event.GetEventObject()
-        pPosSizer = autoManBut.GetParent()
-        if autoManBut.GetLabel() == self.trans.get('pCtrlMan'):
-            autoManBut.SetLabel(self.trans.get('pCtrlAuto'))
+        button = event.GetEventObject()
+        if self.controller.autoControlSelected():
+            self.controller.selectManualControl()
+            button.SetLabel(self.trans.get('pCtrlMan'))
         else:
-            autoManBut.SetLabel(self.trans.get('pCtrlMan'))
-
-            #noinspection PyUnusedLocal
+            self.controller.selectAutoControl()
+            button.SetLabel(self.trans.get('pCtrlAuto'))
 
     def update(self, event):
         self.objectPanel.update(self.controller)
