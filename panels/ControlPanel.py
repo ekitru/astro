@@ -8,6 +8,7 @@ class ControlPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
+
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self,parent,ID)
 
@@ -17,20 +18,20 @@ class ControlPanel(SimplePanel):
         pControlCol2 = wx.BoxSizer(wx.VERTICAL)
         pControlCol3 = wx.GridSizer(4,3,5,5)
 
-        self.inFieldRA = self.CreateInputField(size=self.IN_FIELD_SIZE_NORMAL)
-        self.inFieldDEC = self.CreateInputField(size=self.IN_FIELD_SIZE_NORMAL)
-        self.inFieldFoc = self.CreateInputField(size=self.IN_FIELD_SIZE_NORMAL)
-        self.autoManBut = self.CreateButton(codes.get('pCtrlMan'),font=self.BUTTON_FONT_NORMAL,size=self.BUTTON_SIZE_LARGE)
+        self.inFieldRA = self.CreateInputField(size=self.sizeLarge())
+        self.inFieldDEC = self.CreateInputField(size=self.sizeLarge())
+        self.inFieldFoc = self.CreateInputField(size=self.sizeLarge())
+        self.autoManBut = self.CreateButton(codes.get('pCtrlMan'),font=self.fontNorm(),size=self.sizeLarge())
         self.butManMove = self.CreateButton(label=codes.get('pCtrlMov'))
-        self.butMovUpRA = self.CreateBitmapButton("bitmaps/arrow_up.ico", file_type=wx.BITMAP_TYPE_ICO, size = self.BUTTON_SIZE_SMALL)
-        self.butMovLftDEC = self.CreateBitmapButton("bitmaps/arrow_left.ico", file_type=wx.BITMAP_TYPE_ICO, size = self.BUTTON_SIZE_SMALL)
-        self.butMovRhtDEC = self.CreateBitmapButton("bitmaps/arrow_right.ico", file_type=wx.BITMAP_TYPE_ICO, size = self.BUTTON_SIZE_SMALL)
-        self.butMovDwnRA =  self.CreateBitmapButton("bitmaps/arrow_down.ico", file_type=wx.BITMAP_TYPE_ICO, size = self.BUTTON_SIZE_SMALL)
-        self.butSelHour = self.CreateToggleButton(label=codes.get('pCtrlHour'),font=self.BUTTON_FONT_BOLD, size=self.BUTTON_SIZE_SMALL)
-        self.butSelMin = self.CreateToggleButton(label=codes.get('pCtrlMin'),font=self.BUTTON_FONT_BOLD, size=self.BUTTON_SIZE_SMALL)
-        self.butSelSec = self.CreateToggleButton(label=codes.get('pCtrlSec'),font=self.BUTTON_FONT_BOLD, size=self.BUTTON_SIZE_SMALL)
-        self.butIncFoc = self.CreateButton(label="+", size=self.BUTTON_SIZE_SMALL)
-        self.butDecFoc = self.CreateButton(label="-", size=self.BUTTON_SIZE_SMALL)
+        self.butMovUpRA = self.CreateBitmapButton("bitmaps/arrow_up.ico", file_type=self.bitmapType(), size = self.sizeSmall())
+        self.butMovLftDEC = self.CreateBitmapButton("bitmaps/arrow_left.ico", file_type=self.bitmapType(), size = self.sizeSmall())
+        self.butMovRhtDEC = self.CreateBitmapButton("bitmaps/arrow_right.ico", file_type=self.bitmapType(), size = self.sizeSmall())
+        self.butMovDwnRA =  self.CreateBitmapButton("bitmaps/arrow_down.ico", file_type=self.bitmapType(), size = self.sizeSmall())
+        self.butSelHour = self.CreateToggleButton(label=codes.get('pCtrlHour'),font=self.fontBold(), size=self.sizeSmall())
+        self.butSelMin = self.CreateToggleButton(label=codes.get('pCtrlMin'),font=self.fontBold(), size=self.sizeSmall())
+        self.butSelSec = self.CreateToggleButton(label=codes.get('pCtrlSec'),font=self.fontBold(), size=self.sizeSmall())
+        self.butIncFoc = self.CreateButton(label="+", size=self.sizeSmall())
+        self.butDecFoc = self.CreateButton(label="-", size=self.sizeSmall())
 
         pControlCol1.AddSpacer(5)
         pControlCol1.Add(self.CreateCaption(codes.get('pCtrlRA')), flag= wx.ALIGN_RIGHT)
@@ -74,4 +75,20 @@ class ControlPanel(SimplePanel):
         comSizer.Add(pControlSizer, flag=wx.ALL, border=10)
 
         self.SetSizer(comSizer)
-  
+
+
+    #Sizes and Fonts
+    def sizeSmall(self):
+        return 30,25
+
+    def sizeLarge(self):
+        return 85,27
+
+    def fontNorm(self):
+        return wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+
+    def fontBold(self):
+        return wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+
+    def bitmapType(self):
+        return wx.BITMAP_TYPE_ICO

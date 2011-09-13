@@ -6,13 +6,6 @@ class SimplePanel(wx.Panel):
     def __init__(self, parent=None, ID=wx.ID_ANY):
         wx.Panel.__init__(self, parent, ID)
 
-        #Sizes and Fonts
-        self.BUTTON_SIZE_SMALL = (30,25)
-        self.IN_FIELD_SIZE_NORMAL = (85,27)
-        self.BUTTON_SIZE_LARGE = (85,27)
-        self.BUTTON_FONT_NORMAL = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        self.BUTTON_FONT_BOLD = wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-
     def CreateHeader(self, name):
         return self.CreateElement(name, wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD))
 
