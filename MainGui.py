@@ -101,7 +101,7 @@ class MainGui(wx.Frame):
         spSpeed = self.controller.getSetpointSpeed()
         ra = self.controller.getTelescopePosition()['end'][0]
         dec = self.controller.getTelescopePosition()['end'][1]
-        ra = self.controller.incrementPosition(ra,spSpeed,incStep)
+        ra = self.controller.incrementPosition(ra,spSpeed,incStep,'ra')
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonDown(self, event):
@@ -109,7 +109,7 @@ class MainGui(wx.Frame):
         spSpeed = self.controller.getSetpointSpeed()
         ra = self.controller.getTelescopePosition()['end'][0]
         dec = self.controller.getTelescopePosition()['end'][1]
-        ra = self.controller.incrementPosition(ra,spSpeed,incStep)
+        ra = self.controller.incrementPosition(ra,spSpeed,incStep,'ra')
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonLeft(self, event):
@@ -117,7 +117,7 @@ class MainGui(wx.Frame):
         spSpeed = self.controller.getSetpointSpeed()
         ra = self.controller.getTelescopePosition()['end'][0]
         dec = self.controller.getTelescopePosition()['end'][1]
-        dec = self.controller.incrementPosition(dec,spSpeed,incStep)
+        dec = self.controller.incrementPosition(dec,spSpeed,incStep,'deg')
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonRight(self, event):
@@ -125,7 +125,7 @@ class MainGui(wx.Frame):
         spSpeed = self.controller.getSetpointSpeed()
         ra = self.controller.getTelescopePosition()['end'][0]
         dec = self.controller.getTelescopePosition()['end'][1]
-        dec = self.controller.incrementPosition(dec,spSpeed,incStep)
+        dec = self.controller.incrementPosition(dec,spSpeed,incStep,'deg')
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonIncFoc(self, event):

@@ -191,19 +191,41 @@ class Controller(object):
         return 0 <= float(sec) < 60
 
 
-
-
-
-
-    def incrementPosition(self, pos, spSpeed, step):
+    def incrementPosition(self, pos, spSpeed, step, posName):
         h,m,s = re.split(":", pos)
         if spSpeed == 1:
-             s = float(s) + step
+            s = float(s) + step
+            if s < 0:
+                s = 0.0
+            if s > 59:
+                s = 59.0
         if spSpeed == 2:
             m = int(m) + step
+            if m < 0:
+                m = 0
+            if m > 59:
+                m = 59
         if spSpeed == 3:
             h = int(h) + step
+            if posName == 'ra' and h < 0:
+                h = 0
+            if posName == 'ra' and h > 23:
+                h = 23
+            if posName == 'deg' and h < -89:
+                h = -89
+            if posName == 'deg' and h > 89:
+                h = 89
         return str(h) + ':' + str(m) + ':' + str(s)
+
+    def incrementFocus(self, foc, step):
+        min = 0.0
+        max = 2.0
+        f = float(foc) + step
+        if f < min:
+            f = 0.0
+        elif f > max:
+            f = max
+        return str(f)
 
     def getSetpointSpeed(self):
         return self.setpointSpeed
@@ -211,7 +233,3 @@ class Controller(object):
     def setSetpointSpeed(self, spSpeed):
         self.setpointSpeed = spSpeed
 
-
-    def incrementFocus(self, foc, step):
-        f = float(foc) + step
-        return str(f)
