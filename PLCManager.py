@@ -37,3 +37,10 @@ class PLCManager(object):
     def close(self):
         self.logger.info("Close Communication connection")
         self.master.close()
+
+
+    def isPCControl(self):
+        """  Returns True if status flag read from PLC equals "1" (PC CONTROL selected)
+             Returns False if status flag read from PLC equals "0" (REMOTE CONTROL selected)"""
+        return True #TODO real implementation
+

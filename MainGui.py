@@ -34,12 +34,6 @@ class MainGui(wx.Frame):
         gridColumn1 = wx.BoxSizer(wx.VERTICAL)
         gridColumn2 = wx.BoxSizer(wx.VERTICAL)
 
-        #grid.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
-        #grid.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
-        #grid.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
-        #grid.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
-        #grid.Add(self.controlPanel, flag=wx.ALL | wx.EXPAND)
-
         gridColumn1.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
         gridColumn1.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
         gridColumn1.Add(self.controlPanel, flag=wx.ALL | wx.EXPAND)
@@ -91,6 +85,7 @@ class MainGui(wx.Frame):
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)
         self.positioningPanel.update(self.controller)
+        self.controlPanel.update(self.controller)
 
         self.Layout()
         self.Fit()

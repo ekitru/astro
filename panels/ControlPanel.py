@@ -76,6 +76,12 @@ class ControlPanel(SimplePanel):
 
         self.SetSizer(comSizer)
 
+    def update(self, controller):
+        pcControl = controller.isPCControlSelected()
+        if pcControl:
+            self.Enable()
+        else:
+            self.Disable()
 
     #Sizes and Fonts
     def sizeSmall(self):

@@ -122,6 +122,11 @@ class Controller(object):
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
+    def isPCControlSelected(self):
+        """  Returns True if status flag read from PLC equals "1" (PC CONTROL selected)
+             Returns False if status flag read from PLC equals "0" (REMOTE CONTROL selected)"""
+        return self.PLCManager.isPCControl()
+
     def scopeCanMove(self):
         canMove = True
         if not self.object.selected():
