@@ -53,6 +53,8 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
 
+        self.controlPanel.butSelSec.SetValue(True)
+
         self.Bind(wx.EVT_BUTTON, self.OnButtonAutoManual, self.controlPanel.butAutoManual)
         self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.controlPanel.butMove)
         self.Bind(wx.EVT_BUTTON, self.OnButtonUp, self.controlPanel.butMovUpRA)
@@ -110,24 +112,26 @@ class MainGui(wx.Frame):
         butSelHour = self.controlPanel.butSelHour
         butSelMin = self.controlPanel.butSelMin
         butSelSec = self.controlPanel.butSelSec
-        self.__releaseUnusedToggleButtons(butSelHour, butSelMin, butSelSec)
+        self.__handleToggleLogic(butSelHour, butSelMin, butSelSec)
 
     def OnButtonSelMin(self, event):
         butSelHour = self.controlPanel.butSelHour
         butSelMin = self.controlPanel.butSelMin
         butSelSec = self.controlPanel.butSelSec
-        self.__releaseUnusedToggleButtons(butSelMin, butSelHour, butSelSec)
+        self.__handleToggleLogic(butSelMin, butSelHour, butSelSec)
 
     def OnButtonSelSec(self, event):
         butSelHour = self.controlPanel.butSelHour
         butSelMin = self.controlPanel.butSelMin
         butSelSec = self.controlPanel.butSelSec
-        self.__releaseUnusedToggleButtons(butSelSec, butSelHour, butSelMin)
+        self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
 
-    def __releaseUnusedToggleButtons(self,but1,but2,but3):
+    def __handleToggleLogic(self,but1,but2,but3):
         if but1.GetValue():
             but2.SetValue(False)
             but3.SetValue(False)
+        else:
+            but1.SetValue(True)
 
     def OnButtonIncFoc(self, event):
         print('butIncFoc')
