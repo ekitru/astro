@@ -36,6 +36,7 @@ class Controller(object):
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
             self.controlMode = False
+            self.setpointSpeed = 1
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
@@ -114,6 +115,8 @@ class Controller(object):
         position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
+    def setTelescopePosition(self,(ra,dec)):
+        self.PLCManager.setPosition((ra,dec))
 
     def getTelescopeFocus(self):
         """ Return current and aim telescope focus
@@ -122,6 +125,9 @@ class Controller(object):
         telescopeFocus = self.PLCManager.getFocus()
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
+
+    def setTelescopeFocus(self, focus):
+        self.PLCManager.setFocus(focus)
 
     def pcControlSelected(self):
         """  Returns True if status flag read from PLC equals "1" (PC control selected)
@@ -183,3 +189,47 @@ class Controller(object):
 
     def _checkSec(self, sec):
         return 0 <= float(sec) < 60
+
+
+    def incrementPosition(self, pos, spSpeed, step, posName):
+        h,m,s = re.split(":", pos)
+        if spSpeed == 1:
+            s = float(s) + step
+            if s < 0:
+                s = 0.0
+            if s > 59:
+                s = 59.0
+        if spSpeed == 2:
+            m = int(m) + step
+            if m < 0:
+                m = 0
+            if m > 59:
+                m = 59
+        if spSpeed == 3:
+            h = int(h) + step
+            if posName == 'ra' and h < 0:
+                h = 0
+            if posName == 'ra' and h > 23:
+                h = 23
+            if posName == 'deg' and h < -89:
+                h = -89
+            if posName == 'deg' and h > 89:
+                h = 89
+        return str(h) + ':' + str(m) + ':' + str(s)
+
+    def incrementFocus(self, foc, step):
+        min = 0.0
+        max = 2.0
+        f = float(foc) + step
+        if f < min:
+            f = 0.0
+        elif f > max:
+            f = max
+        return str(f)
+
+    def getSetpointSpeed(self):
+        return self.setpointSpeed
+
+    def setSetpointSpeed(self, spSpeed):
+        self.setpointSpeed = spSpeed
+
