@@ -97,34 +97,70 @@ class MainGui(wx.Frame):
         print('butMove')
 
     def OnButtonUp(self, event):
-        print('butMovUpRA')
+        incStep = 1
+        spSpeed = self.controller.getSetpointSpeed()
+        ra = self.controller.getTelescopePosition()['end'][0]
+        dec = self.controller.getTelescopePosition()['end'][1]
+        ra = self.controller.incrementPosition(ra,spSpeed,incStep)
+        self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonDown(self, event):
-        print('butMovDwnRA')
+        incStep = -1
+        spSpeed = self.controller.getSetpointSpeed()
+        ra = self.controller.getTelescopePosition()['end'][0]
+        dec = self.controller.getTelescopePosition()['end'][1]
+        ra = self.controller.incrementPosition(ra,spSpeed,incStep)
+        self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonLeft(self, event):
-        print('butMovLftDEC')
+        incStep = -1
+        spSpeed = self.controller.getSetpointSpeed()
+        ra = self.controller.getTelescopePosition()['end'][0]
+        dec = self.controller.getTelescopePosition()['end'][1]
+        dec = self.controller.incrementPosition(dec,spSpeed,incStep)
+        self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonRight(self, event):
-        print('butMovRhtDEC')
+        incStep = 1
+        spSpeed = self.controller.getSetpointSpeed()
+        ra = self.controller.getTelescopePosition()['end'][0]
+        dec = self.controller.getTelescopePosition()['end'][1]
+        dec = self.controller.incrementPosition(dec,spSpeed,incStep)
+        self.controller.setTelescopePosition((ra,dec))
+
+    def OnButtonIncFoc(self, event):
+        incStep = 0.1
+        focus = self.controller.getTelescopeFocus()['end']
+        focus = self.controller.incrementFocus(focus,incStep)
+        self.controller.setTelescopeFocus(focus)
+
+    def OnButtonDecFoc(self, event):
+        incStep = -0.1
+        focus = self.controller.getTelescopeFocus()['end']
+        focus = self.controller.incrementFocus(focus,incStep)
+        self.controller.setTelescopeFocus(focus)
+
 
     def OnButtonSelHour(self, event):
         butSelHour = self.controlPanel.butSelHour
         butSelMin = self.controlPanel.butSelMin
         butSelSec = self.controlPanel.butSelSec
         self.__handleToggleLogic(butSelHour, butSelMin, butSelSec)
+        self.controller.setSetpointSpeed(3)
 
     def OnButtonSelMin(self, event):
         butSelHour = self.controlPanel.butSelHour
         butSelMin = self.controlPanel.butSelMin
         butSelSec = self.controlPanel.butSelSec
         self.__handleToggleLogic(butSelMin, butSelHour, butSelSec)
+        self.controller.setSetpointSpeed(2)
 
     def OnButtonSelSec(self, event):
         butSelHour = self.controlPanel.butSelHour
         butSelMin = self.controlPanel.butSelMin
         butSelSec = self.controlPanel.butSelSec
         self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
+        self.controller.setSetpointSpeed(1)
 
     def __handleToggleLogic(self,but1,but2,but3):
         if but1.GetValue():
@@ -132,12 +168,6 @@ class MainGui(wx.Frame):
             but3.SetValue(False)
         else:
             but1.SetValue(True)
-
-    def OnButtonIncFoc(self, event):
-        print('butIncFoc')
-
-    def OnButtonDecFoc(self, event):
-        print('butDecFoc')
 
 
     def update(self, event):

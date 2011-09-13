@@ -18,6 +18,14 @@ class PLCManager(object):
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self.logger)
 
+        self.mockCurRA = 0.231
+        self.mockCurDEC = -0.0123
+        self.mockCurFoc = 0.3
+        self.mockTaskRA = 0.301
+        self.mockTaskDEC = -0.0102
+        self.mockTaskFoc = 0.1
+        self.mockPCMode = True
+
     def test(self):
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 100, output_value=xrange(12))
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 100, 12)
@@ -27,12 +35,20 @@ class PLCManager(object):
 
     def getPosition(self):
         """ Return current and aim positions from PLC in radians """
-        return (0.231, -0.0123), (0.231, -0.0123) #TODO make real in future
+        return (self.mockCurRA, self.mockCurDEC), (self.mockTaskRA, self.mockTaskDEC) #TODO make real in future
 
     def getFocus(self):
         """ Return current and aim focus from PLC in radians
         """
-        return 0.3, 0.1 #TODO make real in future
+        return self.mockCurFoc, self.mockTaskFoc #TODO make real in future
+
+    def setPosition(self, (ra,dec)):
+        self.mockTaskRA = ra
+        self.mockTaskDEC = dec
+
+    def setFocus(self, focus):
+        self.mockTaskFoc = focus
+
 
     def close(self):
         self.logger.info("Close Communication connection")
@@ -42,5 +58,5 @@ class PLCManager(object):
     def isPCControl(self):
         """  Returns True if status flag read from PLC equals "1" (PC CONTROL selected)
              Returns False if status flag read from PLC equals "0" (REMOTE CONTROL selected)"""
-        return True #TODO real implementation
+        return self.mockPCMode #TODO real implementation
 
