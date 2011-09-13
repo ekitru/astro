@@ -107,13 +107,27 @@ class MainGui(wx.Frame):
         print('butMovRhtDEC')
 
     def OnButtonSelHour(self, event):
-        print('butSelHour')
+        butSelHour = self.controlPanel.butSelHour
+        butSelMin = self.controlPanel.butSelMin
+        butSelSec = self.controlPanel.butSelSec
+        self.__releaseUnusedToggleButtons(butSelHour, butSelMin, butSelSec)
 
     def OnButtonSelMin(self, event):
-        print('butSelMin')
+        butSelHour = self.controlPanel.butSelHour
+        butSelMin = self.controlPanel.butSelMin
+        butSelSec = self.controlPanel.butSelSec
+        self.__releaseUnusedToggleButtons(butSelMin, butSelHour, butSelSec)
 
     def OnButtonSelSec(self, event):
-        print('butSelSec')
+        butSelHour = self.controlPanel.butSelHour
+        butSelMin = self.controlPanel.butSelMin
+        butSelSec = self.controlPanel.butSelSec
+        self.__releaseUnusedToggleButtons(butSelSec, butSelHour, butSelMin)
+
+    def __releaseUnusedToggleButtons(self,but1,but2,but3):
+        if but1.GetValue():
+            but2.SetValue(False)
+            but3.SetValue(False)
 
     def OnButtonIncFoc(self, event):
         print('butIncFoc')
