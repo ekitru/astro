@@ -65,7 +65,6 @@ class Controller(object):
             self.object.init(star['name'], star['ra'], star['dec'])
 
     def getObject(self):
-        self.updateSetPoint() #TODO temporaly place for continues update
         return self.object
 
     def updateSetPoint(self):

@@ -5,6 +5,9 @@ from panels import *
 from dialogs import *
 from ids import *
 
+
+
+
 class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title,
@@ -20,6 +23,7 @@ class MainGui(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnMessage, id=ID_MESSAGE)
         self.Bind(wx.EVT_MENU, self.OnSettings, id=ID_SETTINGS)
+
 
         self.CreateStatusBar()
         self.SetStatusText('Program starts')
@@ -37,6 +41,8 @@ class MainGui(wx.Frame):
         gridColumn2 = wx.BoxSizer(wx.VERTICAL)
 
         gridColumn1.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
+        gridColumn1.Add(self.positioningPanel, flag=wx.EXPAND | wx.TOP , border = 10)
+        gridColumn1.Add(wx.Button(self))
         gridColumn1.Add(self.controlPanel, flag=wx.ALL | wx.EXPAND)
 
         gridColumn2.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
@@ -177,6 +183,7 @@ class MainGui(wx.Frame):
 
 
     def update(self, event):
+        self.controller.updateSetPoint()
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)
         self.positioningPanel.update(self.controller)
