@@ -113,38 +113,7 @@ class Observer(object):
     def updatePressure(self, pressure):
         self.observer.pressure = pressure #TODO not very needed, not will be good to add this functionality
 
-def rad2str(ra, dec):
-    """ Convert (ra,dec) in radians to more readable form """
-    ra, dec = getCoordinates(ra, dec)
-    return str(ra), str(dec)
 
-
-def str2rad(ra, dec):
-    """ Convert (ra,dec) strings to radians  """
-    ra, dec = getCoordinates(ra, dec)
-    return ra.real, dec.real
-
-
-def getCoordinates(ra, dec):
-    """ Return angles RA,DEC (topocentric position)
-    Attr:
-       ra - radians or string (getHour:min:sec)
-       dec - radians or string (deg:min:sec)
-    return:
-       tuple(ephem.hours, ephem.degrees)
-    """
-    ra = ephem.hours(ra)
-    dec = ephem.degrees(dec)
-    return ra, dec
-
-def normCoord(ra, dec):
-    return ra.norm(), dec.znorm()
-
-def normRa(ra):
-    return ra.norm()
-
-def normDec(dec):
-    return dec.znorm()
 
 def getHour():
     """Returns radians (float) that corresponds to one getHour
@@ -161,6 +130,40 @@ def RA_235959():
     """
     return ephem.hours('23:59:59')
 
+
+# working with coordinates
+def getCoordinates(ra, dec):
+    """ Return angles RA,DEC (topocentric position)
+    Attr:
+       ra - radians or string (getHour:min:sec)
+       dec - radians or string (deg:min:sec)
+    return:
+       tuple(ephem.hours, ephem.degrees)
+    """
+    ra = ephem.hours(ra)
+    dec = ephem.degrees(dec)
+    return ra, dec
+
+def rad2str(ra, dec):
+    """ Convert (ra,dec) in radians to more readable form """
+    ra, dec = getCoordinates(ra, dec)
+    return str(ra), str(dec)
+
+def str2rad(ra, dec):
+    """ Convert (ra,dec) strings to radians  """
+    ra, dec = getCoordinates(ra, dec)
+    return ra.real, dec.real
+
+def normCoordinates(ra, dec):
+    return normRa(ra), normDec(dec)
+
+def normRa(ra):
+    return ra.norm
+
+def normDec(dec):
+    dec = ephem.degrees(2*dec)
+    dec =  dec.znorm
+    return ephem.degrees(dec/2)
 
 def checkCoordinates(dec, ra):
         return checkHours(ra) and checkDegrees(dec)

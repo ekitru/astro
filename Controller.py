@@ -204,13 +204,15 @@ class Controller(object):
         self.setpointSpeed = spSpeed
 
 
+
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
         self.setCoordinated(ra, dec)
 
     def setCoordinated(self, ra, dec):
+        """ can take coordinates in RAD or string (HH:MIN:SEC) """
         ra, dec = astronomy.getCoordinates(ra, dec)
-        self.ra, self.dec = ra, dec #astronomy.normCoord(ra, dec)
+        self.ra, self.dec = astronomy.normCoordinates(ra, dec)
 
     def getCoordinates(self):
         return self.ra, self.dec
