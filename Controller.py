@@ -14,6 +14,7 @@ class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.object = None
+        self.setPoint = SetPoint()
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -105,7 +106,18 @@ class Controller(object):
             self.object.init(star[0], star[1], star[2])
 
     def getObject(self):
+        self.updateSetPoint() #TODO temporaly place for continues update
         return self.object
+
+    def updateSetPoint(self):
+        #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
+        #source selection
+        position = self.object.getCurrentPosition()
+        ra, dec = position['ra'], position['dec']
+        self.setPoint.setCoordinated(ra, dec)
+
+    def getSetPointCoordinates(self):
+        return self.setPoint.getCoordinatesAsString()
 
     def getTelescopePosition(self):
         """ Return current and target telescope position
@@ -256,4 +268,23 @@ class Controller(object):
 
     def setSetpointSpeed(self, spSpeed):
         self.setpointSpeed = spSpeed
+
+
+class SetPoint(object):
+    def __init__(self, ra=0, dec=0):
+        self.setCoordinated(ra, dec)
+
+    def setCoordinated(self, ra, dec):
+        ra, dec = astronomy.getCoordinates(ra, dec)
+        self.ra, self.dec = ra, dec #astronomy.normCoord(ra, dec)
+
+    def getCoordinates(self):
+        return self.ra, self.dec
+
+    def getCoordinatesAsString(self):
+        return astronomy.rad2str(self.ra, self.dec)
+
+
+
+
 

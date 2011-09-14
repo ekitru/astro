@@ -51,7 +51,9 @@ class PositionPanel(SimplePanel):
         self.curDEC.SetLabel(position['cur'][1])
         self.curFocus.SetLabel(focus['cur'])
 
-        self.taskRA.SetLabel(position['end'][0])
-        self.taskDEC.SetLabel(position['end'][1])
+#        self.taskRA.SetLabel(position['end'][0])
+#        self.taskDEC.SetLabel(position['end'][1])
+        self.taskRA.SetLabel(controller.getSetPointCoordinates()[0])
+        self.taskDEC.SetLabel(controller.getSetPointCoordinates()[1])
         self.taskFocus.SetLabel(focus['end'])
   

@@ -136,6 +136,15 @@ def getCoordinates(ra, dec):
     dec = ephem.degrees(dec)
     return ra, dec
 
+def normCoord(ra, dec):
+    return ra.norm(), dec.znorm()
+
+def normRa(ra):
+    return ra.norm()
+
+def normDec(dec):
+    return dec.znorm()
+
 def getHour():
     """Returns radians (float) that corresponds to one getHour
     """
@@ -144,7 +153,7 @@ def getHour():
 def getDegree():
     """Returns radians (float) that correspond to one getDegree
     """
-    return ephem.pi/180
+    return ephem.degree
 
 def RA_235959():
     """Returns radians that correspond to 23:59:59
