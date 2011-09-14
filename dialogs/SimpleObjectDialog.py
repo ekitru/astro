@@ -41,12 +41,13 @@ class SimpleObjectDialog(wx.Dialog):
     def __init__(self, parent, id, title, controller):
         wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
         self.controller = controller
+        self.starManager = controller.starManager
         self.codes = controller.trans
 
         self.starName = ""
         self.list = StarList(self, self.codes)
 
-        stars = self.controller.getStars(self.starName)
+        stars = self.starManager.getStars(self.starName)
         self.list.FillList(stars)
 
         self.Bind(wx.EVT_BUTTON, self.OnOkClicked, id=wx.ID_OK)
@@ -64,7 +65,7 @@ class SimpleObjectDialog(wx.Dialog):
         self.ReloadList()
 
     def ReloadList(self):
-        stars = self.controller.getStars(self.GetStarName())
+        stars = self.starManager.getStars(self.GetStarName())
         self.list.FillList(stars)
 
     def GetStarName(self):
@@ -87,5 +88,5 @@ class SimpleObjectDialog(wx.Dialog):
 
     def GetSelectedStar(self):
         name = self.list.GetSelectedStarName()
-        return self.controller.getStarByName(name)
+        return self.starManager.getStarByName(name)
   

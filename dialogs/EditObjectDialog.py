@@ -1,4 +1,5 @@
 import wx
+import astronomy
 
 from dialogs.SimpleObjectDialog import SimpleObjectDialog
 from panels.SimplePanel import SimplePanel
@@ -58,7 +59,7 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
                 star = self.GetSelectedStar()
                 response = self.askConfirmation(star)
                 if response == wx.ID_YES:
-                    self.controller.deleteStar(star)
+                    self.starManager.deleteStar(star)
                     self.list.DeleteItem(index)
         else:
             event.Skip()
@@ -81,6 +82,7 @@ class AddStarDialog(wx.Dialog):
     def __init__(self, parent, controller):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
         self.controller = controller
+        self.starManager = controller.starManager
         self.codes = controller.trans
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.name.SetFocus()
@@ -124,7 +126,7 @@ class AddStarDialog(wx.Dialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        return self.controller.checkCoordinates(dec, ra) & (not self.controller.starExists(name))
+        return astronomy.checkCoordinates(dec, ra) & (not self.starManager.starExists(name))
 
     def CheckField(self, event):
         if self.isCorrectInput():
@@ -137,7 +139,7 @@ class AddStarDialog(wx.Dialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.controller.saveStar(name, ra, dec)
+        star = self.starManager.saveStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
 
     def OnCancelClicked(self, event):
@@ -157,12 +159,12 @@ class UpdateStarDialog(AddStarDialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        return self.controller.checkCoordinates(dec, ra)
+        return astronomy.checkCoordinates(dec, ra)
 
     def OnSaveClicked(self, event):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.controller.updateStar(name, ra, dec)
+        star = self.starManager.updateStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
   

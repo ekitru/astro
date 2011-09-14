@@ -1,4 +1,5 @@
 import wx
+import astronomy
 
 from dialogs.SimpleObjectDialog import SimpleObjectDialog
 
@@ -58,7 +59,7 @@ class SelectObjectDialog(SimpleObjectDialog):
         """ Check correct values for RA and DEC """
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        return self.controller.checkCoordinates(dec, ra)
+        return astronomy.checkCoordinates(dec, ra)
 
     def OnOkClicked(self, event):
         self.SelectStar()
@@ -81,7 +82,7 @@ class SelectObjectDialog(SimpleObjectDialog):
         if not self.isCorrectCoordinates():
             return
 
-        if self.controller.starExists(self.starName):
+        if self.starManager.starExists(self.starName):
             self.controller.setObject(self.starName)
             self.EndModal(wx.ID_OK)
         else:
@@ -89,7 +90,7 @@ class SelectObjectDialog(SimpleObjectDialog):
                                        style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
             if confirm.ShowModal() == wx.ID_YES:
                 confirm.Destroy()
-                self.controller.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
-                self.controller.setObject(self.starName)
+                self.starManager.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
+                self.starManager.setObject(self.starName)
                 self.EndModal(wx.ID_OK)
   

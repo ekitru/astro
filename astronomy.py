@@ -1,3 +1,4 @@
+import re
 from time import strftime
 import ephem
 
@@ -159,5 +160,37 @@ def RA_235959():
     """Returns radians that correspond to 23:59:59
     """
     return ephem.hours('23:59:59')
+
+
+def checkCoordinates(dec, ra):
+        return checkHours(ra) and checkDegrees(dec)
+
+def checkHours( hours):
+    try:
+        h, m, s = re.split(':', hours)
+        return _checkHour(h) and _checkMin(m) and _checkSec(s)
+    except Exception:
+        return False
+
+def checkDegrees(degrees):
+    try:
+        deg, m, s = re.split(':', degrees)
+        return _checkDegree(deg) and _checkMin(m) and _checkSec(s)
+    except Exception:
+        return False
+
+
+def _checkDegree(deg):
+    return -90 < int(deg) < 90
+
+def _checkHour(hour):
+    return 0 <= int(hour) < 24
+
+def _checkMin(min):
+    return 0 <= int(min) < 60
+
+def _checkSec(sec):
+    return 0 <= float(sec) < 60
+
 
 
