@@ -108,25 +108,47 @@ class Controller(object):
         return self.object
 
     def getTelescopePosition(self):
-        """ Return current and aim telescope position
+        """ Return current and target telescope position
         {'cur':(str,str) ,'end':(str,str)}
         """
         telescopePosition = self.PLCManager.getPosition()
         position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
+    def getTelescopePositionInRad(self):
+        """ Return current and target telescope position
+        {'cur':(rad,rad) ,'end':(rad,rad)}
+        """
+        telescopePosition = self.PLCManager.getPosition()
+        position = {'cur': telescopePosition[0], 'end': telescopePosition[1]}
+        return position
+
     def setTelescopePosition(self,(ra,dec)):
+        """Sets telescope position in radians
+        (float, float)
+        """
         self.PLCManager.setPosition((ra,dec))
 
     def getTelescopeFocus(self):
-        """ Return current and aim telescope focus
+        """ Return current and target telescope focus
         {'current':str() ,'end':str()}
         """
         telescopeFocus = self.PLCManager.getFocus()
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
+    def getTelescopeFocusAsFloat(self):
+        """ Return current and target telescope focus
+        {'current':float ,'end':float}
+        """
+        telescopeFocus = self.PLCManager.getFocus()
+        focus = {'cur': telescopeFocus[0], 'end': telescopeFocus[1]}
+        return focus
+
     def setTelescopeFocus(self, focus):
+        """Sets the telescope focus.
+        (float)
+        """
         self.PLCManager.setFocus(focus)
 
     def pcControlSelected(self):
@@ -191,41 +213,43 @@ class Controller(object):
         return 0 <= float(sec) < 60
 
 
-    def incrementPosition(self, pos, spSpeed, step, posName):
-        h,m,s = re.split(":", pos)
+    def incRAPosition(self, ra, spSpeed, step):
         if spSpeed == 1:
-            s = float(s) + step
-            if s < 0:
-                s = 0.0
-            if s > 59:
-                s = 59.0
+            ra += astronomy.getHour()/60/60*step
         if spSpeed == 2:
-            m = int(m) + step
-            if m < 0:
-                m = 0
-            if m > 59:
-                m = 59
+            ra += astronomy.getHour()/60*step
         if spSpeed == 3:
-            h = int(h) + step
-            if posName == 'ra' and h < 0:
-                h = 0
-            if posName == 'ra' and h > 23:
-                h = 23
-            if posName == 'deg' and h < -89:
-                h = -89
-            if posName == 'deg' and h > 89:
-                h = 89
-        return str(h) + ':' + str(m) + ':' + str(s)
+            ra += astronomy.getHour()*step
+            if ra > astronomy.getHour()*24:
+                ra -= astronomy.getHour()*step
+        if ra >= astronomy.RA_235959():
+            ra = astronomy.RA_235959()
+        if ra < 0.0:
+            ra = 0.0
+        return ra
 
-    def incrementFocus(self, foc, step):
+    def incDECPosition(self, dec, spSpeed, step):
+        if spSpeed == 1:
+            dec += astronomy.getDegree()/60/60*step
+        if spSpeed == 2:
+            dec += astronomy.getDegree()/60*step
+        if spSpeed == 3:
+            dec += astronomy.getDegree()*step
+        if dec > astronomy.getDegree()*90:
+            dec = astronomy.getDegree()*90
+        if dec < -astronomy.getDegree()*90:
+            dec = -astronomy.getDegree()*90
+        return dec
+
+    def incFocus(self, foc, step):
         min = 0.0
         max = 2.0
-        f = float(foc) + step
+        f = foc + step
         if f < min:
             f = 0.0
         elif f > max:
             f = max
-        return str(f)
+        return f
 
     def getSetpointSpeed(self):
         return self.setpointSpeed

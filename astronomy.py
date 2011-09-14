@@ -127,7 +127,7 @@ def str2rad(ra, dec):
 def getCoordinates(ra, dec):
     """ Return angles RA,DEC (topocentric position)
     Attr:
-       ra - radians or string (hour:min:sec)
+       ra - radians or string (getHour:min:sec)
        dec - radians or string (deg:min:sec)
     return:
        tuple(ephem.hours, ephem.degrees)
@@ -135,3 +135,20 @@ def getCoordinates(ra, dec):
     ra = ephem.hours(ra)
     dec = ephem.degrees(dec)
     return ra, dec
+
+def getHour():
+    """Returns radians (float) that corresponds to one getHour
+    """
+    return ephem.pi/12
+
+def getDegree():
+    """Returns radians (float) that correspond to one getDegree
+    """
+    return ephem.pi/180
+
+def RA_235959():
+    """Returns radians that correspond to 23:59:59
+    """
+    return ephem.hours('23:59:59')
+
+

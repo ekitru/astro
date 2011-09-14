@@ -99,45 +99,45 @@ class MainGui(wx.Frame):
     def OnButtonUp(self, event):
         incStep = 1
         spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePosition()['end'][0]
-        dec = self.controller.getTelescopePosition()['end'][1]
-        ra = self.controller.incrementPosition(ra,spSpeed,incStep,'ra')
+        ra = self.controller.getTelescopePositionInRad()['end'][0]
+        dec = self.controller.getTelescopePositionInRad()['end'][1]
+        ra = self.controller.incRAPosition(ra,spSpeed,incStep)
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonDown(self, event):
         incStep = -1
         spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePosition()['end'][0]
-        dec = self.controller.getTelescopePosition()['end'][1]
-        ra = self.controller.incrementPosition(ra,spSpeed,incStep,'ra')
+        ra = self.controller.getTelescopePositionInRad()['end'][0]
+        dec = self.controller.getTelescopePositionInRad()['end'][1]
+        ra = self.controller.incRAPosition(ra,spSpeed,incStep)
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonLeft(self, event):
         incStep = -1
         spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePosition()['end'][0]
-        dec = self.controller.getTelescopePosition()['end'][1]
-        dec = self.controller.incrementPosition(dec,spSpeed,incStep,'deg')
+        ra = self.controller.getTelescopePositionInRad()['end'][0]
+        dec = self.controller.getTelescopePositionInRad()['end'][1]
+        dec = self.controller.incDECPosition(dec,spSpeed,incStep)
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonRight(self, event):
         incStep = 1
         spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePosition()['end'][0]
-        dec = self.controller.getTelescopePosition()['end'][1]
-        dec = self.controller.incrementPosition(dec,spSpeed,incStep,'deg')
+        ra = self.controller.getTelescopePositionInRad()['end'][0]
+        dec = self.controller.getTelescopePositionInRad()['end'][1]
+        dec = self.controller.incDECPosition(dec,spSpeed,incStep)
         self.controller.setTelescopePosition((ra,dec))
 
     def OnButtonIncFoc(self, event):
         incStep = 0.1
-        focus = self.controller.getTelescopeFocus()['end']
-        focus = self.controller.incrementFocus(focus,incStep)
+        focus = self.controller.getTelescopeFocusAsFloat()['end']
+        focus = self.controller.incFocus(focus,incStep)
         self.controller.setTelescopeFocus(focus)
 
     def OnButtonDecFoc(self, event):
         incStep = -0.1
-        focus = self.controller.getTelescopeFocus()['end']
-        focus = self.controller.incrementFocus(focus,incStep)
+        focus = self.controller.getTelescopeFocusAsFloat()['end']
+        focus = self.controller.incFocus(focus,incStep)
         self.controller.setTelescopeFocus(focus)
 
 
