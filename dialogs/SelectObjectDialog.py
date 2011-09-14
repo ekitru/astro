@@ -91,6 +91,6 @@ class SelectObjectListDialog(ObjectListDialog):
             if confirm.ShowModal() == wx.ID_YES:
                 confirm.Destroy()
                 self.starManager.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
-                self.starManager.setObject(self.starName)
+                self.controller.setObject(self.starName)
                 self.EndModal(wx.ID_OK)
   
