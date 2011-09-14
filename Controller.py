@@ -204,6 +204,10 @@ class Controller(object):
         self.setpointSpeed = spSpeed
 
 
+    def saveMessage(self, text):
+        print(text)
+
+
 
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
