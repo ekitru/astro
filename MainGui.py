@@ -70,13 +70,13 @@ class MainGui(wx.Frame):
 
     #noinspection PyUnusedLocal
     def OnSelectObject(self, event):
-        selObj = SelectObjectDialog(self, wx.ID_ANY, self.controller)
+        selObj = SelectObjectListDialog(self, wx.ID_ANY, self.controller)
         selObj.ShowModal()
         selObj.Destroy()
 
     #noinspection PyUnusedLocal
     def OnEditObject(self, event):
-        editObj = EditObjectDialog(self, wx.ID_ANY, self.controller)
+        editObj = EditObjectListDialog(self, wx.ID_ANY, self.controller)
         editObj.ShowModal()
         editObj.Destroy()
 

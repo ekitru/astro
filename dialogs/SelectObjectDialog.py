@@ -1,13 +1,13 @@
 import wx
 import astronomy
 
-from dialogs.SimpleObjectDialog import SimpleObjectDialog
+from dialogs.ObjectListDialog import ObjectListDialog
 
 __author__ = 'kitru'
 
-class SelectObjectDialog(SimpleObjectDialog):
+class SelectObjectListDialog(ObjectListDialog):
     def __init__(self, parent, id, controller):
-        SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dSelObj_title'), controller)
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dSelObj_title'), controller)
 
         self.text = wx.TextCtrl(self, size=(120, -1))
         self.text.SetFocus()
@@ -53,7 +53,7 @@ class SelectObjectDialog(SimpleObjectDialog):
             self.SetStarName(userInput)
             self.RA.Clear()
             self.DEC.Clear()
-            SimpleObjectDialog.UpdateOnTimer(self, event)
+            ObjectListDialog.UpdateOnTimer(self, event)
 
     def isCorrectCoordinates(self):
         """ Check correct values for RA and DEC """

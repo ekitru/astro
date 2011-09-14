@@ -31,7 +31,7 @@ class StarList(wx.ListCtrl):
         return item
 
 
-class SimpleObjectDialog(wx.Dialog):
+class ObjectListDialog(wx.Dialog):
     """ implements simple dialog with star field and star list
     periodically list is updating by stars with similar names
     it also holds controlles and tranlastion instances and Bind some common events:

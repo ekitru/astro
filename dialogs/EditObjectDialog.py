@@ -1,14 +1,14 @@
 import wx
 import astronomy
 
-from dialogs.SimpleObjectDialog import SimpleObjectDialog
+from dialogs.ObjectListDialog import ObjectListDialog
 from panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
 
-class EditObjectDialog(SimpleObjectDialog, SimplePanel):
+class EditObjectListDialog(ObjectListDialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        SimpleObjectDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
         findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_CENTER)
@@ -41,14 +41,14 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         userInput = self.text.GetValue().strip()
         if userInput != self.GetStarName():    #if new star name is entered update input fields and reread db
             self.SetStarName(userInput)
-            SimpleObjectDialog.UpdateOnTimer(self, event)
+            ObjectListDialog.UpdateOnTimer(self, event)
 
     def OnListItemActivated(self, event):
         star = self.GetSelectedStar()
         dialog = UpdateStarDialog(self, self.controller, star)
         dialog.ShowModal()
         dialog.Destroy()
-        SimpleObjectDialog.OnListItemActivated(self, event)
+        ObjectListDialog.OnListItemActivated(self, event)
 
 
     def OnListCharacter (self, event):
@@ -68,7 +68,7 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
         dialog = AddStarDialog(self, self.controller)
         dialog.ShowModal()
         dialog.Destroy()
-        SimpleObjectDialog.OnListItemActivated(self, event)
+        ObjectListDialog.OnListItemActivated(self, event)
 
     def askConfirmation(self, star):
         confirm = wx.MessageDialog(self, caption=star['name'], message=self.codes.get('dEditObj_confirm'),
@@ -81,7 +81,6 @@ class EditObjectDialog(SimpleObjectDialog, SimplePanel):
 class AddStarDialog(wx.Dialog):
     def __init__(self, parent, controller):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
-        self.controller = controller
         self.starManager = controller.starManager
         self.codes = controller.trans
         self.name = wx.TextCtrl(self, size=(120, -1))
