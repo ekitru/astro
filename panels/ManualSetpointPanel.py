@@ -71,11 +71,11 @@ class ManualSetpointPanel(SimplePanel):
         pControlCol3.Add(self.butSelMin)
         pControlCol3.Add(self.butSelSec)
 
-        pControlSizer.AddSpacer(10)
+        pControlSizer.AddSpacer(4)
         pControlSizer.Add(pControlCol1)
-        pControlSizer.AddSpacer(25)
+        pControlSizer.AddSpacer(18)
         pControlSizer.Add(pControlCol2)
-        pControlSizer.AddSpacer(20)
+        pControlSizer.AddSpacer(18)
         pControlSizer.Add(pControlCol3)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pCtrl')), wx.VERTICAL)
