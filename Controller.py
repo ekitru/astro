@@ -91,12 +91,6 @@ class Controller(object):
         return position
 
 
-    def setTelescopePosition(self, (ra, dec)):
-        """Sets telescope position in radians
-        (float, float)
-        """
-        self.PLCManager.setPosition((ra, dec))
-
     def getTelescopeFocus(self):
         """ Return current and target telescope focus
         {'current':str() ,'end':str()}
@@ -105,12 +99,6 @@ class Controller(object):
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
-
-    def setTelescopeFocus(self, focus):
-        """Sets the telescope focus.
-        (float)
-        """
-        self.PLCManager.setFocus(focus)
 
     def pcControlSelected(self):
         """  Returns True if status flag read from PLC equals "1" (PC control selected)
