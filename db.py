@@ -42,15 +42,25 @@ class DbManager(object):
 class DBQuery(object):
     def __init__(self, db, logger):
         self.db = db
+        self.cursor = db.cursor()
         self.logger = logger
 
-    def select(self, sql, args):
+    def selectOne(self, sql, args):
         try:
-            cursor = self.db.cursor()
-            cursor.execute(sql, args)
+            self.cursor.execute(sql, args)
             return self.cursor.fetchone()
         except Exception as error:
             raise DbException(error.args, self.logger)
+
+    def selectAll(self, sql, args):
+        try:
+            self.cursor.execute(sql, args)
+            return self.cursor.fetchall()
+        except Exception as error:
+            raise DbException(error.args, self.logger)
+
+    def close(self):
+        self.cursor.close()
 
 
 class Star(DBQuery):
@@ -76,10 +86,7 @@ class Star(DBQuery):
         sql = "SELECT `name`,`ra`,`dec` FROM `stars` where name=%(name)s"
         args = {'name': name}
 
-        self.cursor.execute(sql, args)
-        star = self.cursor.fetchone()
-        ret = self.select(sql, args)
-        print('find star', ret)
+        star = self.selectOne(sql, args)
         if star:
             return self.parseStar(star)
         else:
@@ -119,14 +126,12 @@ class Star(DBQuery):
         name = name.encode('utf-8')
         sql = "select `name`,`ra`,`dec` from `stars` where name like %(name)s order by `name`  limit 20"
         args = {'name': (name + '%')}
-
-        self.cursor.execute(sql, args)
-        return self.cursor.fetchall()
+        return self.selectAll(sql, args)
 
     def parseStar(self, star):
-        """ Convert database resultset into dictionary(id,name,ra,dec)
+        """ Convert database resultset into dictionary (name,ra,dec)
         Attr:
-          star - one record fron DB
+          star - one record from DB
         """
         name = star[0]
         ra, dec = astronomy.rad2str(star[1], star[2])
