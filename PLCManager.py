@@ -2,13 +2,13 @@ import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 from Exceptions import ConfigurationException
-from logger import getLog
+from logger import getLog, closeLog
 
 __author__ = 'kitru'
 
 class PLCManager(object):
     def __init__(self, confDict):
-        self.logger = getLog('comm')
+        self.logger = getLog('plc_comm')
         self.logger.info('Establishing connection')
         try:
             #Connect to the slave
@@ -25,6 +25,9 @@ class PLCManager(object):
         self.mockTaskDEC = -0.0102
         self.mockTaskFoc = 0.1
         self.mockPCMode = True
+
+    def __del__(self):
+        closeLog(self.logger)
 
     def test(self):
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 100, output_value=xrange(12))

@@ -4,7 +4,7 @@ import logging
 from os.path import join
 
 from Exceptions import ConfigurationException
-from logger import  getLog
+from logger import  getLog, closeLog
 
 from db import DbManager
 from PLCManager import PLCManager
@@ -15,6 +15,10 @@ __author__ = 'kitru'
 class SystemConf(object):
     def __init__(self, loggerName):
         self.logger = getLog(loggerName)
+
+    def __del__(self):
+        closeLog(self.logger)
+
 
     def getConfigFromFile(self, fileName):
         """ Opens configuration file. If file is missing or could not be read, new ConfigurationException will be raised    """

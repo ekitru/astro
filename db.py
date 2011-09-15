@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb
-from Exceptions import ConfigurationException, DbException
 import astronomy
-from logger import getLog
+
+from Exceptions import ConfigurationException, DbException
+from logger import getLog, closeLog
 
 
 __author__ = 'kitru'
 
 class DbManager(object):
     def __init__(self, confDict):
-        self.logger = getLog('database')
-        self.database = confDict['database']
-        self.db = self.__getDbConnection(confDict)
+        self.__logger = getLog('database')
+        self.__dbName = confDict['database']
+        self.__db = self.__getDbConnection(confDict)
+
+    def __del__(self):
+        self.close()
+        closeLog(self.__logger)
 
     def __getDbConnection(self, confDict):
         """ Get db connection dased on config file
@@ -20,35 +25,38 @@ class DbManager(object):
             config - SafeConfigParser object
         """
         try:
-            self.logger.info('Establishing connection')
+            self.__logger.info('Establishing connection')
             db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
                                  port=int(confDict['port']), charset="utf8", use_unicode=True)
-            self.logger.info('Connection established')
+            self.__logger.info('Connection established')
             return db
         except Exception as error:
-            raise ConfigurationException(error.args, self.logger)
+            raise ConfigurationException(error.args, self.__logger)
 
     def getDb(self):
-        return self.db
+        return self.__db
 
     def getLog(self):
-        return self.logger
+        return self.__logger
 
     def close(self):
-        self.logger.info("Close DB connection")
-        self.db.close()
+        if self.__db:
+            self.__logger.debug("Close DB connection")
+            self.__db.close()
+        else:
+            self.__logger.debug("DB connection already closed")
 
 
 class DBQuery(object):
-    __db = None
-    __cursor = None
-    __logger = None
-
+    """ Simple db helper, makes easier data manipulations  """
     def __init__(self, db, logger):
         super(DBQuery, self).__init__()
         self.__db = db
         self.__cursor = db.cursor()
         self.__logger = logger
+
+    def __del__(self):
+        self.close()
 
     def selectOne(self, sql, args):
         try:
@@ -93,7 +101,12 @@ class DBQuery(object):
 
 
     def close(self):
-        self.__cursor.close()
+        if self.__db:
+            self.__logger.debug("Close cursor")
+            self.__cursor.close()
+        else:
+            self.__logger.debug("Cursor already closed")
+
 
 
 class Star(DBQuery):
@@ -167,6 +180,7 @@ class Star(DBQuery):
         name = star[0]
         ra, dec = astronomy.rad2str(star[1], star[2])
         return {'name': name, 'ra': ra, 'dec': dec}
+
 
 class Message(DBQuery):
     """ manage operations with messages in DB """

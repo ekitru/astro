@@ -10,4 +10,11 @@ def getLog(name):
     logger.addHandler(fileHandler)
     return logger
 
+def closeLog(log):
+    log.debug("close "+log.name+" log")
+    x = list(log.handlers)
+    for i in x:
+        log.removeHandler(i)
+        i.flush()
+        i.close()
   

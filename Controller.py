@@ -1,7 +1,7 @@
 import os
 from posixpath import join
 import logging
-from db import Star, Message
+from db import  Message
 from db import Star
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
@@ -22,7 +22,7 @@ class Controller(object):
     def __initLogger(self):
         if not os.path.exists('logs'):
             os.makedirs('logs', mode=0711)
-        logging.basicConfig(level=logging.DEBUG,
+        logging.basicConfig(level=logging.INFO,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
                             filename=join('logs', 'common.log'),
@@ -36,9 +36,9 @@ class Controller(object):
             config = ProgramConfig('default.conf')
             self.observer = config.getObserver()
             self.object = Object(self.observer)
-            self.dbManager = config.getDbManager()
-            self.star = Star(self.dbManager)
-            self.message = Message(self.dbManager)
+            self.__dbManager = config.getDbManager()
+            self.star = Star(self.__dbManager)
+            self.message = Message(self.__dbManager)
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
         except ConfigurationException as ce:
@@ -48,7 +48,10 @@ class Controller(object):
     def freeResources(self):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
-            self.dbManager.close()
+            del self.star
+            del self.message
+            del self.__dbManager
+
             self.PLCManager.close()
         except Exception as e:
             raise ClosingException(e)
@@ -79,7 +82,6 @@ class Controller(object):
         return self.setpoint.getCoordinatesAsString()
 
 
-
     def getTelescopePosition(self):
         """ Return current and target telescope position
         {'cur':(str,str) ,'end':(str,str)}
@@ -89,11 +91,11 @@ class Controller(object):
         return position
 
 
-    def setTelescopePosition(self,(ra,dec)):
+    def setTelescopePosition(self, (ra, dec)):
         """Sets telescope position in radians
         (float, float)
         """
-        self.PLCManager.setPosition((ra,dec))
+        self.PLCManager.setPosition((ra, dec))
 
     def getTelescopeFocus(self):
         """ Return current and target telescope focus
@@ -143,8 +145,7 @@ class Controller(object):
 
     def saveMessage(self, text):
         print(text)
-        print('ID: ',self.message.addMessage(text))
-
+        print('ID: ', self.message.addMessage(text))
 
 
 class SetPoint(object):
@@ -161,6 +162,7 @@ class SetPoint(object):
 
     def getCoordinatesAsString(self):
         return astronomy.rad2str(self.ra, self.dec)
+
 
 class Focus(object):
     def __init__(self, focus=0):
