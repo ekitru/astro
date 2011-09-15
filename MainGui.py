@@ -28,7 +28,8 @@ class MainGui(wx.Frame):
         self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
         self.positioningPanel = PositionPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
-        self.controlPanel = ControlPanel(ID=ID_CONTROLPANEL, **panelArgs)
+        self.manualSetpointPanel = ManualSetpointPanel(controller = self.controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
+        self.controlModePanel = ControlModePanel(controller = self.controller, ID=ID_CONTROLMODEPANEL, **panelArgs)
 
         grid = wx.FlexGridSizer(1, 2, 10, 10)   #3,2,10,10
         gridColumn1 = wx.BoxSizer(wx.VERTICAL)
@@ -36,7 +37,10 @@ class MainGui(wx.Frame):
 
         gridColumn1.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
         gridColumn1.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
-        gridColumn1.Add(self.controlPanel, flag=wx.ALL | wx.EXPAND)
+        gridColumn1.AddSpacer(10)
+        gridColumn1.Add(self.controlModePanel, flag=wx.ALL | wx.EXPAND)
+        gridColumn1.AddSpacer(5)
+        gridColumn1.Add(self.manualSetpointPanel, flag=wx.ALL | wx.EXPAND)
 
         gridColumn2.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         gridColumn2.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
@@ -52,20 +56,6 @@ class MainGui(wx.Frame):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
-
-        self.controlPanel.butSelSec.SetValue(True)
-
-        self.Bind(wx.EVT_BUTTON, self.OnButtonAutoManual, self.controlPanel.butAutoManual)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.controlPanel.butMove)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonUp, self.controlPanel.butMovUpRA)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonDown, self.controlPanel.butMovDwnRA)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonLeft, self.controlPanel.butMovLftDEC)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonRight, self.controlPanel.butMovRhtDEC)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelHour, self.controlPanel.butSelHour)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelMin, self.controlPanel.butSelMin)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelSec, self.controlPanel.butSelSec)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonIncFoc, self.controlPanel.butIncFoc)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonDecFoc, self.controlPanel.butDecFoc)
 
 
     #noinspection PyUnusedLocal
@@ -84,97 +74,13 @@ class MainGui(wx.Frame):
     def OnSettings(self, event):
         print('Settings')
 
-    def OnButtonAutoManual(self, event):
-        button = event.GetEventObject()
-        if self.controller.autoControlSelected():
-            self.controller.selectManualControl()
-            button.SetLabel(self.trans.get('pCtrlMan'))
-        else:
-            self.controller.selectAutoControl()
-            button.SetLabel(self.trans.get('pCtrlAuto'))
-
-    def OnButtonMove(self, event):
-        print('butMove')
-
-    def OnButtonUp(self, event):
-        incStep = 1
-        spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePositionInRad()['end'][0]
-        dec = self.controller.getTelescopePositionInRad()['end'][1]
-        ra = self.controller.incRAPosition(ra,spSpeed,incStep)
-        self.controller.setTelescopePosition((ra,dec))
-
-    def OnButtonDown(self, event):
-        incStep = -1
-        spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePositionInRad()['end'][0]
-        dec = self.controller.getTelescopePositionInRad()['end'][1]
-        ra = self.controller.incRAPosition(ra,spSpeed,incStep)
-        self.controller.setTelescopePosition((ra,dec))
-
-    def OnButtonLeft(self, event):
-        incStep = -1
-        spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePositionInRad()['end'][0]
-        dec = self.controller.getTelescopePositionInRad()['end'][1]
-        dec = self.controller.incDECPosition(dec,spSpeed,incStep)
-        self.controller.setTelescopePosition((ra,dec))
-
-    def OnButtonRight(self, event):
-        incStep = 1
-        spSpeed = self.controller.getSetpointSpeed()
-        ra = self.controller.getTelescopePositionInRad()['end'][0]
-        dec = self.controller.getTelescopePositionInRad()['end'][1]
-        dec = self.controller.incDECPosition(dec,spSpeed,incStep)
-        self.controller.setTelescopePosition((ra,dec))
-
-    def OnButtonIncFoc(self, event):
-        incStep = 0.1
-        focus = self.controller.getTelescopeFocusAsFloat()['end']
-        focus = self.controller.incFocus(focus,incStep)
-        self.controller.setTelescopeFocus(focus)
-
-    def OnButtonDecFoc(self, event):
-        incStep = -0.1
-        focus = self.controller.getTelescopeFocusAsFloat()['end']
-        focus = self.controller.incFocus(focus,incStep)
-        self.controller.setTelescopeFocus(focus)
-
-
-    def OnButtonSelHour(self, event):
-        butSelHour = self.controlPanel.butSelHour
-        butSelMin = self.controlPanel.butSelMin
-        butSelSec = self.controlPanel.butSelSec
-        self.__handleToggleLogic(butSelHour, butSelMin, butSelSec)
-        self.controller.setSetpointSpeed(3)
-
-    def OnButtonSelMin(self, event):
-        butSelHour = self.controlPanel.butSelHour
-        butSelMin = self.controlPanel.butSelMin
-        butSelSec = self.controlPanel.butSelSec
-        self.__handleToggleLogic(butSelMin, butSelHour, butSelSec)
-        self.controller.setSetpointSpeed(2)
-
-    def OnButtonSelSec(self, event):
-        butSelHour = self.controlPanel.butSelHour
-        butSelMin = self.controlPanel.butSelMin
-        butSelSec = self.controlPanel.butSelSec
-        self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
-        self.controller.setSetpointSpeed(1)
-
-    def __handleToggleLogic(self,but1,but2,but3):
-        if but1.GetValue():
-            but2.SetValue(False)
-            but3.SetValue(False)
-        else:
-            but1.SetValue(True)
-
 
     def update(self, event):
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)
         self.positioningPanel.update(self.controller)
-        self.controlPanel.update(self.controller)
+        self.manualSetpointPanel.update(self.controller)
+        self.controlModePanel.update(self.controller)
 
         self.Layout()
         self.Fit()

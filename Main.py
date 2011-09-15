@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 import wx
-from Controller import Controller, InitializationException, ClosingException
+from Controller import Controller, InitializationException, ClosingException, SetPoint
 from MainGui import MainGui
 
 __author__ = 'kitru'

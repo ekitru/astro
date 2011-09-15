@@ -44,4 +44,19 @@ class SimplePanel(wx.Panel):
         if font:
             toggleButton.SetFont(font)
         return toggleButton
-  
+
+    #Sizes and Fonts
+    def sizeSmall(self):
+        return 30,25
+
+    def sizeLarge(self):
+        return 85,27
+
+    def fontNorm(self):
+        return wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+
+    def fontBold(self):
+        return wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+
+    def bitmapType(self):
+        return wx.BITMAP_TYPE_ICO

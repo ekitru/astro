@@ -16,7 +16,8 @@ class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.object = None
-        self.setPoint = SetPoint() #In auto mode sends to plc
+        self.setpoint = SetPoint() #In auto mode it is sent to plc
+        self.focus = Focus()    #In Auto mode it is sent to plc
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -39,8 +40,6 @@ class Controller(object):
             self.starManager = StarManager(self.dbManager.getCursor())
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
-            self.controlMode = False
-            self.setpointSpeed = 1
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
@@ -65,7 +64,7 @@ class Controller(object):
             self.object.init(star['name'], star['ra'], star['dec'])
 
     def getObject(self):
-        self.updateSetPoint() #TODO temporaly place for continues update
+        self.updateSetPoint() #TODO temporarily place for continues update
         return self.object
 
     def updateSetPoint(self):
@@ -73,11 +72,11 @@ class Controller(object):
         #source selection
         position = self.object.getCurrentPosition()
         ra, dec = position['ra'], position['dec']
-        self.setPoint.setCoordinated(ra, dec)
+        self.setpoint.setCoordinates(ra, dec)
 
     def getSetPointCoordinates(self):
         """ Get current Set point coordinates """
-        return self.setPoint.getCoordinatesAsString()
+        return self.setpoint.getCoordinatesAsString()
 
 
 
@@ -89,13 +88,6 @@ class Controller(object):
         position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
-    def getTelescopePositionInRad(self):
-        """ Return current and target telescope position
-        {'cur':(rad,rad) ,'end':(rad,rad)}
-        """
-        telescopePosition = self.PLCManager.getPosition()
-        position = {'cur': telescopePosition[0], 'end': telescopePosition[1]}
-        return position
 
     def setTelescopePosition(self,(ra,dec)):
         """Sets telescope position in radians
@@ -111,13 +103,6 @@ class Controller(object):
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
-    def getTelescopeFocusAsFloat(self):
-        """ Return current and target telescope focus
-        {'current':float ,'end':float}
-        """
-        telescopeFocus = self.PLCManager.getFocus()
-        focus = {'cur': telescopeFocus[0], 'end': telescopeFocus[1]}
-        return focus
 
     def setTelescopeFocus(self, focus):
         """Sets the telescope focus.
@@ -129,18 +114,6 @@ class Controller(object):
         """  Returns True if status flag read from PLC equals "1" (PC control selected)
              Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
         return self.PLCManager.isPCControl()
-
-    def autoControlSelected(self):
-        """ Returns True if AUTO control selected
-            Returns False if MANUAL control selected
-        """
-        return self.controlMode
-
-    def selectAutoControl(self):
-        self.controlMode = True
-
-    def selectManualControl(self):
-        self.controlMode = False
 
     def scopeCanMove(self):
         canMove = True
@@ -157,59 +130,11 @@ class Controller(object):
             return False
 
 
-
-
-    def incRAPosition(self, ra, spSpeed, step):
-        if spSpeed == 1:
-            ra += astronomy.getHour()/60/60*step
-        if spSpeed == 2:
-            ra += astronomy.getHour()/60*step
-        if spSpeed == 3:
-            ra += astronomy.getHour()*step
-            if ra > astronomy.getHour()*24:
-                ra -= astronomy.getHour()*step
-        if ra >= astronomy.RA_235959():
-            ra = astronomy.RA_235959()
-        if ra < 0.0:
-            ra = 0.0
-        return ra
-
-    def incDECPosition(self, dec, spSpeed, step):
-        if spSpeed == 1:
-            dec += astronomy.getDegree()/60/60*step
-        if spSpeed == 2:
-            dec += astronomy.getDegree()/60*step
-        if spSpeed == 3:
-            dec += astronomy.getDegree()*step
-        if dec > astronomy.getDegree()*90:
-            dec = astronomy.getDegree()*90
-        if dec < -astronomy.getDegree()*90:
-            dec = -astronomy.getDegree()*90
-        return dec
-
-    def incFocus(self, foc, step):
-        min = 0.0
-        max = 2.0
-        f = foc + step
-        if f < min:
-            f = 0.0
-        elif f > max:
-            f = max
-        return f
-
-    def getSetpointSpeed(self):
-        return self.setpointSpeed
-
-    def setSetpointSpeed(self, spSpeed):
-        self.setpointSpeed = spSpeed
-
-
-
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
-        self.setCoordinated(ra, dec)
+        self.setCoordinates(ra, dec)
 
-    def setCoordinated(self, ra, dec):
+    def setCoordinates(self, ra, dec):
         """ can take coordinates in RAD or string (HH:MIN:SEC) """
         ra, dec = astronomy.getCoordinates(ra, dec)
         self.ra, self.dec = astronomy.normCoordinates(ra, dec)
@@ -219,6 +144,20 @@ class SetPoint(object):
 
     def getCoordinatesAsString(self):
         return astronomy.rad2str(self.ra, self.dec)
+
+class Focus(object):
+    def __init__(self, focus=0):
+        self.setFocus(focus)
+
+    def setFocus(self, focus):
+        """setFocus(float)"""
+        self.focus = focus
+
+    def getFocus(self):
+        return self.focus
+
+    def getFocusAsString(self):
+        return str(self.focus)
 
 
 
