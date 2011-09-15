@@ -5,7 +5,7 @@ from dialogs.ObjectListDialog import ObjectListDialog
 
 __author__ = 'kitru'
 
-class SelectObjectListDialog(ObjectListDialog):
+class SelectObjectDialog(ObjectListDialog):
     def __init__(self, parent, id, controller):
         ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dSelObj_title'), controller)
 

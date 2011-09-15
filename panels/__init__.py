@@ -1,9 +1,11 @@
 __author__ = 'kitru'
 
-from panels.ObjectPanel import ObjectPanel
-from panels.ManualSetpointPanel import ManualSetpointPanel
-from panels.ControlModePanel import ControlModePanel
-from panels.PositionPanel import PositionPanel
-from panels.TelescopePanel import TelescopePanel
-from panels.TimeDatePanel import TimeDatePanel
+from panels import ObjectPanel, PositionPanel, ManualSetpointPanel, TimeDatePanel, TelescopePanel, ControlModePanel
+
+ObjectPanel = ObjectPanel.ObjectPanel
+PositionPanel = PositionPanel.PositionPanel
+ManualSetpointPanel = ManualSetpointPanel.ManualSetpointPanel
+ControlModePanel = ControlModePanel.ControlModePanel
+TelescopePanel = TelescopePanel.TelescopePanel
+TimeDatePanel = TimeDatePanel.TimeDatePanel
 

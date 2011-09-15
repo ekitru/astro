@@ -6,7 +6,7 @@ from panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
 
-class EditObjectListDialog(ObjectListDialog, SimplePanel):
+class EditObjectDialog(ObjectListDialog, SimplePanel):
     def __init__(self, parent, id, controller):
         ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dEditObj_title'), controller)
 
