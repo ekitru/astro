@@ -1,5 +1,6 @@
 import wx
 from panels.SimplePanel import SimplePanel
+import astronomy
 
 __author__ = 'kitru'
 
@@ -100,7 +101,7 @@ class ManualSetpointPanel(SimplePanel):
         spSpeed = self.getSetpointSpeed()
         ra = self.setpoint.getCoordinates()[0]
         dec = self.setpoint.getCoordinates()[1]
-        ra = self.controller.incRAPosition(ra,spSpeed,incStep)
+        ra = self.incRAPosition(ra,spSpeed,incStep)
         self.setpoint.setCoordinates(ra,dec)
 
     def OnButtonDown(self, event):
@@ -108,7 +109,7 @@ class ManualSetpointPanel(SimplePanel):
         spSpeed = self.getSetpointSpeed()
         ra = self.setpoint.getCoordinates()[0]
         dec = self.setpoint.getCoordinates()[1]
-        ra = self.controller.incRAPosition(ra,spSpeed,incStep)
+        ra = self.incRAPosition(ra,spSpeed,incStep)
         self.setpoint.setCoordinates(ra,dec)
 
     def OnButtonLeft(self, event):
@@ -116,7 +117,7 @@ class ManualSetpointPanel(SimplePanel):
         spSpeed = self.getSetpointSpeed()
         ra = self.setpoint.getCoordinates()[0]
         dec = self.setpoint.getCoordinates()[1]
-        dec = self.controller.incDECPosition(dec,spSpeed,incStep)
+        dec = self.incDECPosition(dec,spSpeed,incStep)
         self.setpoint.setCoordinates(ra,dec)
 
     def OnButtonRight(self, event):
@@ -124,19 +125,19 @@ class ManualSetpointPanel(SimplePanel):
         spSpeed = self.getSetpointSpeed()
         ra = self.setpoint.getCoordinates()[0]
         dec = self.setpoint.getCoordinates()[1]
-        dec = self.controller.incDECPosition(dec,spSpeed,incStep)
+        dec = self.incDECPosition(dec,spSpeed,incStep)
         self.setpoint.setCoordinates(ra,dec)
 
     def OnButtonIncFoc(self, event):
         incStep = 0.1
         f = self.focus.getFocus()
-        f = self.controller.incFocus(f,incStep)
+        f = self.incFocus(f,incStep)
         self.focus.setFocus(f)
 
     def OnButtonDecFoc(self, event):
         incStep = -0.1
         f = self.focus.getFocus()
-        f = self.controller.incFocus(f,incStep)
+        f = self.incFocus(f,incStep)
         self.focus.setFocus(f)
 
     def OnButtonSelHour(self, event):
@@ -168,11 +169,11 @@ class ManualSetpointPanel(SimplePanel):
             but1.SetValue(True)
 
     def update(self, controller):
-        pcControl = controller.pcControlSelected()
-        if pcControl:
-            self.Enable()
+        autoControl = controller.autoControlSelected()
+        if autoControl:
+            self.Hide()
         else:
-            self.Disable()
+            self.Show()
 
 
 

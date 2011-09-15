@@ -17,6 +17,8 @@ class MainGui(wx.Frame):
 
         self.Bind(wx.EVT_MENU, self.OnSelectObject, id=ID_SELOBJ)
         self.Bind(wx.EVT_MENU, self.OnEditObject, id=ID_EDITOBJ)
+
+        self.Bind(wx.EVT_MENU, self.OnMessage, id=ID_MESSAGE)
         self.Bind(wx.EVT_MENU, self.OnSettings, id=ID_SETTINGS)
 
         self.CreateStatusBar()
@@ -70,12 +72,18 @@ class MainGui(wx.Frame):
         editObj.ShowModal()
         editObj.Destroy()
 
+    def OnMessage(self, event):
+        message = MessageDialog(self, wx.ID_ANY, self.controller)
+        message.ShowModal()
+        message.Destroy()
+
     #noinspection PyUnusedLocal
     def OnSettings(self, event):
         print('Settings')
 
 
     def update(self, event):
+        self.controller.updateSetPoint()
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)
         self.positioningPanel.update(self.controller)
@@ -109,6 +117,11 @@ class AstroMenu(wx.MenuBar):
 
     def CreateToolsMenu(self, trans):
         menu = wx.Menu()
+
+        self.message = wx.MenuItem(menu, ID_MESSAGE, text=trans.get('smMessage') + '\tctrl+m',
+                                    help=trans.get('smMessageHelp'))
+        menu.AppendItem(self.message)
+
         self.settings = wx.MenuItem(menu, ID_SETTINGS, text=trans.get('smSettings') + '\tctrl+s',
                                     help=trans.get('smSettingsHelp'))
         menu.AppendItem(self.settings)

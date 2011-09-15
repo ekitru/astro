@@ -18,6 +18,7 @@ class Controller(object):
         self.object = None
         self.setpoint = SetPoint() #In auto mode it is sent to plc
         self.focus = Focus()    #In Auto mode it is sent to plc
+        self.controlMode = True
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -114,6 +115,18 @@ class Controller(object):
         """  Returns True if status flag read from PLC equals "1" (PC control selected)
              Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
         return self.PLCManager.isPCControl()
+
+    def autoControlSelected(self):
+        """ Returns True if AUTO control selected
+            Returns False if MANUAL control selected
+        """
+        return self.controlMode
+
+    def selectAutoControl(self):
+        self.controlMode = True
+
+    def selectManualControl(self):
+        self.controlMode = False
 
     def scopeCanMove(self):
         canMove = True
