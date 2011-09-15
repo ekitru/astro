@@ -48,10 +48,11 @@ class Controller(object):
     def freeResources(self):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
+        # close database connections
             del self.star
             del self.message
             del self.__dbManager
-
+        # close PLC communication
             self.PLCManager.close()
         except Exception as e:
             raise ClosingException(e)

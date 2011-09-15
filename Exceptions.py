@@ -35,6 +35,7 @@ class ClosingException(Exception):
         if logger:
             logger.error(msg)
 
+
 class DbException(Exception):
     """Exception raised if Db return Exception.
     Attributes:
