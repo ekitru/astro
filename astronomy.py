@@ -114,6 +114,12 @@ class Observer(object):
         self.observer.pressure = pressure #TODO not very needed, not will be good to add this functionality
 
 
+RA_HOUR = ephem.twopi/24
+RA_MINUTE = RA_HOUR/60
+RA_SECOND = RA_MINUTE/60
+DEC_DEGREE = ephem.degree
+DEC_MINUTE = ephem.arcminute
+DEC_SECOND = ephem.arcsecond
 
 def getHour():
     """Returns radians (float) that corresponds to one getHour
@@ -130,12 +136,17 @@ def RA_235959():
     """
     return ephem.hours('23:59:59')
 
+def hours(ra):
+    return ephem.hours(ra)
+
+def degrees(dec):
+    return ephem.degrees(dec)
 
 # working with coordinates
 def getCoordinates(ra, dec):
     """ Return angles RA,DEC (topocentric position)
     Attr:
-       ra - radians or string (getHour:min:sec)
+       ra - radians or string (hour:min:sec)
        dec - radians or string (deg:min:sec)
     return:
        tuple(ephem.hours, ephem.degrees)
@@ -194,6 +205,5 @@ def _checkMin(min):
 
 def _checkSec(sec):
     return 0 <= float(sec) < 60
-
 
 

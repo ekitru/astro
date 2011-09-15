@@ -92,41 +92,37 @@ class ManualSetpointPanel(SimplePanel):
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelSec, self.butSelSec)
         self.Bind(wx.EVT_BUTTON, self.OnButtonIncFoc, self.butIncFoc)
         self.Bind(wx.EVT_BUTTON, self.OnButtonDecFoc, self.butDecFoc)
+        self.Bind(wx.EVT_SHOW, self.OnShow)
 
         self.butSelSec.SetValue(True)
 
 
+    def OnShow(self, event):
+        if event.GetShow():
+            self.inFieldRA.SetValue(self.setpoint.getCoordinatesAsString()[0])
+            self.inFieldDEC.SetValue(self.setpoint.getCoordinatesAsString()[1])
+            self.inFieldFoc.SetValue(self.focus.getFocusAsString())
+
+
     def OnButtonUp(self, event):
-        incStep = 1
-        spSpeed = self.getSetpointSpeed()
-        ra = self.setpoint.getCoordinates()[0]
-        dec = self.setpoint.getCoordinates()[1]
-        ra = self.incRAPosition(ra,spSpeed,incStep)
-        self.setpoint.setCoordinates(ra,dec)
+        sign = 1
+        speed = self.getSetpointSpeed()
+        self.__changeInputFieldValue(self.__incrementRa, self.inFieldRA, speed, sign)
 
     def OnButtonDown(self, event):
-        incStep = -1
-        spSpeed = self.getSetpointSpeed()
-        ra = self.setpoint.getCoordinates()[0]
-        dec = self.setpoint.getCoordinates()[1]
-        ra = self.incRAPosition(ra,spSpeed,incStep)
-        self.setpoint.setCoordinates(ra,dec)
+        sign = -1
+        speed = self.getSetpointSpeed()
+        self.__changeInputFieldValue(self.__incrementRa, self.inFieldRA, speed, sign)
 
     def OnButtonLeft(self, event):
-        incStep = -1
-        spSpeed = self.getSetpointSpeed()
-        ra = self.setpoint.getCoordinates()[0]
-        dec = self.setpoint.getCoordinates()[1]
-        dec = self.incDECPosition(dec,spSpeed,incStep)
-        self.setpoint.setCoordinates(ra,dec)
+        sign = -1
+        speed = self.getSetpointSpeed()
+        self.__changeInputFieldValue(self.__incrementDec, self.inFieldDEC, speed, sign)
 
     def OnButtonRight(self, event):
-        incStep = 1
-        spSpeed = self.getSetpointSpeed()
-        ra = self.setpoint.getCoordinates()[0]
-        dec = self.setpoint.getCoordinates()[1]
-        dec = self.incDECPosition(dec,spSpeed,incStep)
-        self.setpoint.setCoordinates(ra,dec)
+        sign = 1
+        speed = self.getSetpointSpeed()
+        self.__changeInputFieldValue(self.__incrementDec, self.inFieldDEC, speed, sign)
 
     def OnButtonIncFoc(self, event):
         incStep = 0.1
@@ -175,42 +171,40 @@ class ManualSetpointPanel(SimplePanel):
         else:
             self.Show()
 
-
-
     def getSetpointSpeed(self):
         return self.setpointSpeed
 
     def setSetpointSpeed(self, spSpeed):
         self.setpointSpeed = spSpeed
 
+    def __changeInputFieldValue(self, incrementFunction, inputField, speed, sign):
+        coordinate = str(inputField.GetValue())
+        coordinate = incrementFunction(coordinate,speed,sign)
+        return inputField.SetValue(coordinate)
 
-    def incRAPosition(self, ra, spSpeed, step):
-        if spSpeed == 1:
-            ra += astronomy.getHour()/60/60*step
-        if spSpeed == 2:
-            ra += astronomy.getHour()/60*step
-        if spSpeed == 3:
-            ra += astronomy.getHour()*step
-            if ra > astronomy.getHour()*24:
-                ra -= astronomy.getHour()*step
-        if ra >= astronomy.RA_235959():
-            ra = astronomy.RA_235959()
-        if ra < 0.0:
-            ra = 0.0
-        return ra
+    def __incrementRa(self, ra, speed, sign):
+        ra = astronomy.hours(ra)
+        if speed == 1:
+            ra = astronomy.hours(ra + astronomy.RA_SECOND*sign)
+        if speed == 2:
+            ra = astronomy.hours(ra + astronomy.RA_MINUTE*sign)
+        if speed == 3:
+            ra = astronomy.hours(ra + astronomy.RA_HOUR*sign)
+        if ra > astronomy.normRa(ra) or ra < astronomy.normRa(ra):
+            ra = astronomy.normRa(ra)
+        return str(ra)
 
-    def incDECPosition(self, dec, spSpeed, step):
-        if spSpeed == 1:
-            dec += astronomy.getDegree()/60/60*step
-        if spSpeed == 2:
-            dec += astronomy.getDegree()/60*step
-        if spSpeed == 3:
-            dec += astronomy.getDegree()*step
-        if dec > astronomy.getDegree()*90:
-            dec = astronomy.getDegree()*90
-        if dec < -astronomy.getDegree()*90:
-            dec = -astronomy.getDegree()*90
-        return dec
+    def __incrementDec(self, dec, speed, sign):
+        dec = astronomy.degrees(dec)
+        if speed == 1:
+            dec = astronomy.degrees(dec + astronomy.DEC_SECOND*sign)
+        if speed == 2:
+            dec = astronomy.degrees(dec + astronomy.DEC_MINUTE*sign)
+        if speed == 3:
+            dec = astronomy.degrees(dec + astronomy.DEC_DEGREE*sign)
+        if dec > astronomy.normDec(dec) or dec < astronomy.normDec(dec):
+            dec = astronomy.normDec(dec)
+        return str(dec)
 
     def incFocus(self, foc, step):
         min = 0.0
