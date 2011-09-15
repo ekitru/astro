@@ -77,8 +77,8 @@ class Controller(object):
         ra, dec = position['ra'], position['dec']
         self.setpoint.setCoordinates(ra, dec)
 
-    def getSetPointCoordinates(self):
-        """ Get current Set point coordinates """
+    def getSetpointCoordinates(self):
+        """ Get setpoint coordinates """
         return self.setpoint.getCoordinatesAsString()
 
 
@@ -90,6 +90,9 @@ class Controller(object):
         position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
+    def getSetpointFocus(self):
+        """ Get setpoint focus"""
+        return self.focus.getFocusAsString()
 
     def getTelescopeFocus(self):
         """ Return current and target telescope focus
@@ -148,7 +151,7 @@ class SetPoint(object):
 
 
 class Focus(object):
-    def __init__(self, focus=0):
+    def __init__(self, focus=0.0):
         self.setFocus(focus)
 
     def setFocus(self, focus):
