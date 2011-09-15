@@ -41,7 +41,7 @@ class ObjectListDialog(wx.Dialog):
     def __init__(self, parent, id, title, controller):
         wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
         self.controller = controller
-        self.starManager = controller.starManager
+        self.starManager = controller.star
         self.codes = controller.trans
 
         self.starName = ""

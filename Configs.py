@@ -6,7 +6,7 @@ from os.path import join
 from Exceptions import ConfigurationException
 from logger import  getLog
 
-from DbManager import DbManager
+from db import DbManager
 from PLCManager import PLCManager
 from astronomy import Observer
 

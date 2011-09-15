@@ -1,7 +1,8 @@
 import os
 from posixpath import join
 import logging
-from DbManager import StarManager
+from db import Star, Message
+from db import Star
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
 from Configs import ProgramConfig
@@ -36,7 +37,8 @@ class Controller(object):
             self.observer = config.getObserver()
             self.object = Object(self.observer)
             self.dbManager = config.getDbManager()
-            self.starManager = StarManager(self.dbManager.getCursor())
+            self.star = Star(self.dbManager.getDb())
+            self.message = Message(self.dbManager.getDb())
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
         except ConfigurationException as ce:
@@ -57,7 +59,7 @@ class Controller(object):
             name - star name
         """
         print(name)
-        star = self.starManager.getStarByName(name)
+        star = self.star.getStarByName(name)
         print(star)
         if star:
             self.object.init(star['name'], star['ra'], star['dec'])
@@ -132,7 +134,7 @@ class Controller(object):
         return canMove
 
     def checkName(self, name):
-        star = self.starManager.getStarByName(name)
+        star = self.star.getStarByName(name)
         print(star)
         if star:
             return True
@@ -141,6 +143,8 @@ class Controller(object):
 
     def saveMessage(self, text):
         print(text)
+        print('ID: ',self.message.addMessage(text))
+
 
 
 class SetPoint(object):

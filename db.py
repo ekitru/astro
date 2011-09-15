@@ -12,8 +12,7 @@ class DbManager(object):
     def __init__(self, confDict):
         self.logger = getLog('database')
         self.database = confDict['database']
-        self.conn = self.__getDbConnection(confDict)
-        self.cursor = self.conn.cursor()
+        self.db = self.__getDbConnection(confDict)
 
     def __getDbConnection(self, confDict):
         """ Get db connection dased on config file
@@ -29,18 +28,18 @@ class DbManager(object):
         except Exception as error:
             raise ConfigurationException(error.args, self.logger)
 
-    def getCursor(self):
-        return self.cursor
+    def getDb(self):
+        return self.db
 
     def close(self):
         self.logger.info("Close DB connection")
-        self.cursor.close()
-        self.conn.close()
+        self.db.close()
 
-class StarManager(object):
+class Star(object):
     """ manage operations with stars in DB """
-    def __init__(self, cursor):
-        self.cursor =  cursor
+    def __init__(self, db):
+        self.db =  db
+        self.cursor = db.cursor()
 
     def starExists(self, name):
         """ Check DB for record with same name """
@@ -51,7 +50,7 @@ class StarManager(object):
             return False
 
     def getStarById(self, id):
-        sql = "SELECT `name`,`ra`,`dec` FROM stars where id=%(id)s"
+        sql = "SELECT `name`,`ra`,`dec` FROM `stars` where id=%(id)s"
         args = {'id': id}
 
         self.cursor.execute(sql, args)
@@ -61,7 +60,7 @@ class StarManager(object):
         """ Take star from database by name
         Star name and position in suitable form for customer
         If star does not exist, return None"""
-        sql = "SELECT `name`,`ra`,`dec` FROM stars where name=%(name)s"
+        sql = "SELECT `name`,`ra`,`dec` FROM `stars` where name=%(name)s"
         args = {'name': name}
 
         self.cursor.execute(sql, args)
@@ -80,12 +79,12 @@ class StarManager(object):
 
     def updateStar(self, name, ra, dec):
         ra, dec = astronomy.str2rad(str(ra), str(dec))
-        sql = "update stars set`ra`=%(ra)s, `dec`=%(dec)s where `name`=%(name)s"
+        sql = "update `stars` set`ra`=%(ra)s, `dec`=%(dec)s where `name`=%(name)s"
         args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
         self.cursor.execute(sql, args)
 
     def deleteStar(self, star):
-        sql = "delete from stars where `name`=%(name)s"
+        sql = "delete from `stars` where `name`=%(name)s"
         args = {'name':star['name']}
         self.cursor.execute(sql, args)
 
@@ -104,7 +103,7 @@ class StarManager(object):
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
-        sql = "select `name`,`ra`,`dec` from stars where name like %(name)s order by `name`  limit 20"
+        sql = "select `name`,`ra`,`dec` from `stars` where name like %(name)s order by `name`  limit 20"
         args = {'name': (name + '%')}
 
         self.cursor.execute(sql, args)
@@ -118,3 +117,24 @@ class StarManager(object):
         name = star[0]
         ra, dec = astronomy.rad2str(star[1], star[2])
         return {'name': name, 'ra': ra, 'dec': dec}
+
+class Message(object):
+    """ manage operations with messages in DB """
+    def __init__(self, db):
+        self.db =  db
+        self.cursor = db.cursor()
+
+    def getMsgById(self, id):
+        sql = "SELECT `text` FROM `message` where id=%(id)s"
+        args = {'id': id}
+
+        self.cursor.execute(sql, args)
+        return self.cursor.fetchone()
+
+    def addMessage(self, text):
+        sql = "INSERT INTO `message` (`id`,`text`) values (default, %(text)s)"
+        args = {'text': text}
+        return self.cursor.execute(sql, args)
+
+
+

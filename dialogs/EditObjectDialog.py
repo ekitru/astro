@@ -81,7 +81,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 class AddStarDialog(wx.Dialog):
     def __init__(self, parent, controller):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.trans.get('dAddObj_title'), style=wx.CAPTION)
-        self.starManager = controller.starManager
+        self.starManager = controller.star
         self.codes = controller.trans
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.name.SetFocus()
