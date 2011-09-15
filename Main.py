@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2.6 -B
 # -*- coding: UTF-8 -*-
 import wx
 from Controller import Controller, InitializationException, ClosingException
