@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import MySQLdb
-from Exceptions import ConfigurationException
+from Exceptions import ConfigurationException, DbException
 import astronomy
 from logger import getLog
 
@@ -31,14 +31,34 @@ class DbManager(object):
     def getDb(self):
         return self.db
 
+    def getLog(self):
+        return self.logger
+
     def close(self):
         self.logger.info("Close DB connection")
         self.db.close()
 
-class Star(object):
+
+class DBQuery(object):
+    def __init__(self, db, logger):
+        self.db = db
+        self.logger = logger
+
+    def select(self, sql, args):
+        try:
+            cursor = self.db.cursor()
+            cursor.execute(sql, args)
+            return self.cursor.fetchone()
+        except Exception as error:
+            raise DbException(error.args, self.logger)
+
+
+class Star(DBQuery):
     """ manage operations with stars in DB """
-    def __init__(self, db):
-        self.db =  db
+
+    def __init__(self, db, logger):
+        DBQuery.__init__(self, db, logger)
+        self.db = db
         self.cursor = db.cursor()
 
     def starExists(self, name):
@@ -49,23 +69,17 @@ class Star(object):
         else:
             return False
 
-    def getStarById(self, id):
-        sql = "SELECT `name`,`ra`,`dec` FROM `stars` where id=%(id)s"
-        args = {'id': id}
-
-        self.cursor.execute(sql, args)
-        return self.cursor.fetchone()
-
     def getStarByName(self, name):
         """ Take star from database by name
-        Star name and position in suitable form for customer
-        If star does not exist, return None"""
+  Star name and position in suitable form for customer
+  If star does not exist, return None"""
         sql = "SELECT `name`,`ra`,`dec` FROM `stars` where name=%(name)s"
         args = {'name': name}
 
         self.cursor.execute(sql, args)
         star = self.cursor.fetchone()
-
+        ret = self.select(sql, args)
+        print('find star', ret)
         if star:
             return self.parseStar(star)
         else:
@@ -85,7 +99,7 @@ class Star(object):
 
     def deleteStar(self, star):
         sql = "delete from `stars` where `name`=%(name)s"
-        args = {'name':star['name']}
+        args = {'name': star['name']}
         self.cursor.execute(sql, args)
 
     def getStars(self, name):
@@ -120,8 +134,9 @@ class Star(object):
 
 class Message(object):
     """ manage operations with messages in DB """
+
     def __init__(self, db):
-        self.db =  db
+        self.db = db
         self.cursor = db.cursor()
 
     def getMsgById(self, id):
