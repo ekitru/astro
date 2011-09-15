@@ -53,7 +53,7 @@ class PositionPanel(SimplePanel):
 
 #        self.taskRA.SetLabel(position['end'][0])
 #        self.taskDEC.SetLabel(position['end'][1])
-        self.taskRA.SetLabel(controller.getSetPointCoordinates()[0])
-        self.taskDEC.SetLabel(controller.getSetPointCoordinates()[1])
-        self.taskFocus.SetLabel(focus['end'])
+        self.taskRA.SetLabel(controller.getSetpointCoordinates()[0])
+        self.taskDEC.SetLabel(controller.getSetpointCoordinates()[1])
+        self.taskFocus.SetLabel(controller.getSetpointFocus())
   
