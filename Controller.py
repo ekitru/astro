@@ -1,8 +1,6 @@
-from _mysql import connection
 import os
 from posixpath import join
 import logging
-import re
 from DbManager import StarManager
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
@@ -65,7 +63,6 @@ class Controller(object):
             self.object.init(star['name'], star['ra'], star['dec'])
 
     def getObject(self):
-        self.updateSetPoint() #TODO temporarily place for continues update
         return self.object
 
     def updateSetPoint(self):
@@ -141,6 +138,9 @@ class Controller(object):
             return True
         else:
             return False
+
+    def saveMessage(self, text):
+        print(text)
 
 
 class SetPoint(object):
