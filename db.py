@@ -40,36 +40,67 @@ class DbManager(object):
 
 
 class DBQuery(object):
+    __db = None
+    __cursor = None
+    __logger = None
+
     def __init__(self, db, logger):
-        self.db = db
-        self.cursor = db.cursor()
-        self.logger = logger
+        super(DBQuery, self).__init__()
+        self.__db = db
+        self.__cursor = db.cursor()
+        self.__logger = logger
 
     def selectOne(self, sql, args):
         try:
-            self.cursor.execute(sql, args)
-            return self.cursor.fetchone()
+            self.__cursor.execute(sql, args)
+            return self.__cursor.fetchone()
         except Exception as error:
-            raise DbException(error.args, self.logger)
+            raise DbException(error.args, self.__logger)
 
     def selectAll(self, sql, args):
         try:
-            self.cursor.execute(sql, args)
-            return self.cursor.fetchall()
+            self.__cursor.execute(sql, args)
+            return self.__cursor.fetchall()
         except Exception as error:
-            raise DbException(error.args, self.logger)
+            raise DbException(error.args, self.__logger)
+
+    def insert(self, sql, args):
+        """ Insert single row value
+        Return: last row number  """
+        try:
+            self.__cursor.execute(sql, args)
+            self.__db.commit()
+            return self.__cursor.lastrowid
+        except Exception as error:
+            self.__db.rollback()
+            raise DbException(error.args, self.__logger)
+
+    def update(self, sql, args):
+        try:
+            self.__cursor.execute(sql, args)
+            self.__db.commit()
+        except Exception as error:
+            self.__db.rollback()
+            raise DbException(error.args, self.__logger)
+
+    def delete(self, sql, args):
+        try:
+            self.__cursor.execute(sql, args)
+            self.__db.commit()
+        except Exception as error:
+            self.__db.rollback()
+            raise DbException(error.args, self.__logger)
+
 
     def close(self):
-        self.cursor.close()
+        self.__cursor.close()
 
 
 class Star(DBQuery):
     """ manage operations with stars in DB """
 
-    def __init__(self, db, logger):
-        DBQuery.__init__(self, db, logger)
-        self.db = db
-        self.cursor = db.cursor()
+    def __init__(self, dbManager):
+        super(Star, self).__init__(dbManager.getDb(), dbManager.getLog())
 
     def starExists(self, name):
         """ Check DB for record with same name """
@@ -78,6 +109,23 @@ class Star(DBQuery):
             return True
         else:
             return False
+
+    def saveStar(self, name, ra, dec):
+        ra, dec = astronomy.str2rad(str(ra), str(dec))
+        sql = "INSERT INTO `stars` (`id`,`name`,`ra`,`dec`) values (default, %(name)s,%(ra)s,%(dec)s)"
+        args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
+        self.insert(sql, args)
+
+    def updateStar(self, name, ra, dec):
+        ra, dec = astronomy.str2rad(str(ra), str(dec))
+        sql = "update `stars` set`ra`=%(ra)s, `dec`=%(dec)s where `name`=%(name)s"
+        args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
+        self.update(sql, args)
+
+    def deleteStar(self, star):
+        sql = "delete from `stars` where `name`=%(name)s"
+        args = {'name': star['name']}
+        self.delete(sql, args)
 
     def getStarByName(self, name):
         """ Take star from database by name
@@ -91,23 +139,6 @@ class Star(DBQuery):
             return self.parseStar(star)
         else:
             return None
-
-    def saveStar(self, name, ra, dec):
-        ra, dec = astronomy.str2rad(str(ra), str(dec))
-        sql = "INSERT INTO `stars` (`id`,`name`,`ra`,`dec`) values (default, %(name)s,%(ra)s,%(dec)s)"
-        args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
-        self.cursor.execute(sql, args)
-
-    def updateStar(self, name, ra, dec):
-        ra, dec = astronomy.str2rad(str(ra), str(dec))
-        sql = "update `stars` set`ra`=%(ra)s, `dec`=%(dec)s where `name`=%(name)s"
-        args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
-        self.cursor.execute(sql, args)
-
-    def deleteStar(self, star):
-        sql = "delete from `stars` where `name`=%(name)s"
-        args = {'name': star['name']}
-        self.cursor.execute(sql, args)
 
     def getStars(self, name):
         """ Returns list of star objects(name,ra,dec)
@@ -137,24 +168,22 @@ class Star(DBQuery):
         ra, dec = astronomy.rad2str(star[1], star[2])
         return {'name': name, 'ra': ra, 'dec': dec}
 
-class Message(object):
+class Message(DBQuery):
     """ manage operations with messages in DB """
 
-    def __init__(self, db):
-        self.db = db
-        self.cursor = db.cursor()
+    def __init__(self, dbManager):
+        super(Message, self).__init__(dbManager.getDb(), dbManager.getLog())
 
     def getMsgById(self, id):
         sql = "SELECT `text` FROM `message` where id=%(id)s"
         args = {'id': id}
-
-        self.cursor.execute(sql, args)
-        return self.cursor.fetchone()
+        return self.selectOne(sql, args)
 
     def addMessage(self, text):
+        """ return added message id """
         sql = "INSERT INTO `message` (`id`,`text`) values (default, %(text)s)"
         args = {'text': text}
-        return self.cursor.execute(sql, args)
+        return self.insert(sql, args)
 
 
 

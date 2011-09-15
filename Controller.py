@@ -37,8 +37,8 @@ class Controller(object):
             self.observer = config.getObserver()
             self.object = Object(self.observer)
             self.dbManager = config.getDbManager()
-            self.star = Star(self.dbManager.getDb(), self.dbManager.getLog())
-            self.message = Message(self.dbManager.getDb())
+            self.star = Star(self.dbManager)
+            self.message = Message(self.dbManager)
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
         except ConfigurationException as ce:
