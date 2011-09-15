@@ -152,6 +152,8 @@ class SetPoint(object):
 
 
 class Focus(object):
+    MIN = 0.0
+    MAX = 2.0
     def __init__(self, focus=0.0):
         self.setFocus(focus)
 

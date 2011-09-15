@@ -121,21 +121,6 @@ DEC_DEGREE = ephem.degree
 DEC_MINUTE = ephem.arcminute
 DEC_SECOND = ephem.arcsecond
 
-def getHour():
-    """Returns radians (float) that corresponds to one getHour
-    """
-    return ephem.pi/12
-
-def getDegree():
-    """Returns radians (float) that correspond to one getDegree
-    """
-    return ephem.degree
-
-def RA_235959():
-    """Returns radians that correspond to 23:59:59
-    """
-    return ephem.hours('23:59:59')
-
 def hours(ra):
     return ephem.hours(ra)
 

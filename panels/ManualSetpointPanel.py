@@ -106,63 +106,54 @@ class ManualSetpointPanel(SimplePanel):
 
     def OnButtonUp(self, event):
         sign = 1
-        speed = self.getSetpointSpeed()
+        speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self.__incrementRa, self.inFieldRA, speed, sign)
 
     def OnButtonDown(self, event):
         sign = -1
-        speed = self.getSetpointSpeed()
+        speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self.__incrementRa, self.inFieldRA, speed, sign)
 
     def OnButtonLeft(self, event):
         sign = -1
-        speed = self.getSetpointSpeed()
+        speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self.__incrementDec, self.inFieldDEC, speed, sign)
 
     def OnButtonRight(self, event):
         sign = 1
-        speed = self.getSetpointSpeed()
+        speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self.__incrementDec, self.inFieldDEC, speed, sign)
 
     def OnButtonIncFoc(self, event):
-        incStep = 0.1
-        f = self.focus.getFocus()
-        f = self.incFocus(f,incStep)
-        self.focus.setFocus(f)
+        sign = 1
+        speed = None
+        self.__changeInputFieldValue(self.__incrementFocus, self.inFieldFoc, speed, sign)
 
     def OnButtonDecFoc(self, event):
-        incStep = -0.1
-        f = self.focus.getFocus()
-        f = self.incFocus(f,incStep)
-        self.focus.setFocus(f)
+        sign = -1
+        speed = None
+        self.__changeInputFieldValue(self.__incrementFocus, self.inFieldFoc, speed, sign)
 
     def OnButtonSelHour(self, event):
         butSelHour = self.butSelHour
         butSelMin = self.butSelMin
         butSelSec = self.butSelSec
         self.__handleToggleLogic(butSelHour, butSelMin, butSelSec)
-        self.setSetpointSpeed(3)
+        self.__setSetpointSpeed(3)
 
     def OnButtonSelMin(self, event):
         butSelHour = self.butSelHour
         butSelMin = self.butSelMin
         butSelSec = self.butSelSec
         self.__handleToggleLogic(butSelMin, butSelHour, butSelSec)
-        self.setSetpointSpeed(2)
+        self.__setSetpointSpeed(2)
 
     def OnButtonSelSec(self, event):
         butSelHour = self.butSelHour
         butSelMin = self.butSelMin
         butSelSec = self.butSelSec
         self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
-        self.setSetpointSpeed(1)
-
-    def __handleToggleLogic(self,but1,but2,but3):
-        if but1.GetValue():
-            but2.SetValue(False)
-            but3.SetValue(False)
-        else:
-            but1.SetValue(True)
+        self.__setSetpointSpeed(1)
 
     def update(self, controller):
         autoControl = controller.autoControlSelected()
@@ -171,11 +162,18 @@ class ManualSetpointPanel(SimplePanel):
         else:
             self.Show()
 
-    def getSetpointSpeed(self):
+    def __handleToggleLogic(self,but1,but2,but3):
+        if but1.GetValue():
+            but2.SetValue(False)
+            but3.SetValue(False)
+        else:
+            but1.SetValue(True)
+
+    def __getSetpointSpeed(self):
         return self.setpointSpeed
 
-    def setSetpointSpeed(self, spSpeed):
-        self.setpointSpeed = spSpeed
+    def __setSetpointSpeed(self, speed):
+        self.setpointSpeed = speed
 
     def __changeInputFieldValue(self, incrementFunction, inputField, speed, sign):
         coordinate = str(inputField.GetValue())
@@ -206,12 +204,10 @@ class ManualSetpointPanel(SimplePanel):
             dec = astronomy.normDec(dec)
         return str(dec)
 
-    def incFocus(self, foc, step):
-        min = 0.0
-        max = 2.0
-        f = foc + step
-        if f < min:
-            f = 0.0
-        elif f > max:
-            f = max
-        return f
+    def __incrementFocus(self, focus, speed, sign):
+        focus = float(focus) + 0.1*sign
+        if focus < self.focus.MIN:
+            focus = self.focus.MIN
+        elif focus > self.focus.MAX:
+            focus = self.focus.MAX
+        return str(focus)
