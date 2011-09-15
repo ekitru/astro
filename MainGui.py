@@ -76,6 +76,7 @@ class MainGui(wx.Frame):
         self.Layout()
         self.Fit()
         self.Show()
+        event.Skip(False)
 
 
 class AstroMenu(wx.MenuBar):
@@ -93,23 +94,27 @@ class AstroMenu(wx.MenuBar):
 
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
-
+        event.Skip(False)
         self.showDial(SelectObjectDialog)
 
     def OnEditObject(self, event):
         """ Working with DB objects: add, update, delete """
+        event.Skip(False)
         self.showDial(EditObjectDialog)
 
     def OnMessage(self, event):
         """ Allows to setup new observation message (comment) """
+        event.Skip(False)
         self.showDial(MessageDialog)
 
     def OnLogs(self, event):
         """ Shows observation logs """
+        event.Skip(False)
         self.showDial(LogsDialog)
 
     def OnSettings(self, event):
         """ Give opportunities to change program default setups, like language or connection parameters """
+        event.Skip(False)
         self.showDial(SettingsDialog)
 
     def showDial(self, Dialog):
