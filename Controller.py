@@ -131,11 +131,6 @@ class Controller(object):
         else:
             return False
 
-    def saveMessage(self, text):
-        print(text)
-        print('ID: ', self.message.addMessage(text))
-
-
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
         self.setCoordinates(ra, dec)

@@ -52,23 +52,23 @@ class DBQuery(object):
     def __init__(self, db, logger):
         super(DBQuery, self).__init__()
         self.__db = db
-        self.__cursor = db.cursor()
+        self.cursor = db.cursor()
         self.__logger = logger
 
     def __del__(self):
         self.close()
 
-    def selectOne(self, sql, args):
+    def selectOne(self, sql, args=None):
         try:
-            self.__cursor.execute(sql, args)
-            return self.__cursor.fetchone()
+            self.cursor.execute(sql, args)
+            return self.cursor.fetchone()
         except Exception as error:
             raise DbException(error.args, self.__logger)
 
     def selectAll(self, sql, args):
         try:
-            self.__cursor.execute(sql, args)
-            return self.__cursor.fetchall()
+            self.cursor.execute(sql, args)
+            return self.cursor.fetchall()
         except Exception as error:
             raise DbException(error.args, self.__logger)
 
@@ -76,16 +76,16 @@ class DBQuery(object):
         """ Insert single row value
         Return: last row number  """
         try:
-            self.__cursor.execute(sql, args)
+            self.cursor.execute(sql, args)
             self.__db.commit()
-            return self.__cursor.lastrowid
+            return self.cursor.lastrowid
         except Exception as error:
             self.__db.rollback()
             raise DbException(error.args, self.__logger)
 
     def update(self, sql, args):
         try:
-            self.__cursor.execute(sql, args)
+            self.cursor.execute(sql, args)
             self.__db.commit()
         except Exception as error:
             self.__db.rollback()
@@ -93,7 +93,7 @@ class DBQuery(object):
 
     def delete(self, sql, args):
         try:
-            self.__cursor.execute(sql, args)
+            self.cursor.execute(sql, args)
             self.__db.commit()
         except Exception as error:
             self.__db.rollback()
@@ -103,7 +103,7 @@ class DBQuery(object):
     def close(self):
         if self.__db:
             self.__logger.debug("Close cursor")
-            self.__cursor.close()
+            self.cursor.close()
         else:
             self.__logger.debug("Cursor already closed")
 
@@ -188,16 +188,27 @@ class Message(DBQuery):
     def __init__(self, dbManager):
         super(Message, self).__init__(dbManager.getDb(), dbManager.getLog())
 
-    def getMsgById(self, id):
-        sql = "SELECT `text` FROM `message` where id=%(id)s"
-        args = {'id': id}
-        return self.selectOne(sql, args)
+#    def getMsgById(self, id):
+#        sql = "SELECT `text` FROM `message` where id=%(id)s"
+#        args = {'id': id}
+#        return str(self.selectOne(sql, args))
 
     def addMessage(self, text):
         """ return added message id """
         sql = "INSERT INTO `message` (`id`,`text`) values (default, %(text)s)"
         args = {'text': text}
         return self.insert(sql, args)
+
+    def getLast(self):
+        """ return last stored message, if there is no return empty string """
+        sql = "SELECT `text` FROM `message` ORDER BY `id` DESC LIMIT 1"
+        ret = self.selectOne(sql)
+        if len(ret)==1:
+            return ret[0]
+        else:
+            return ""
+
+
 
 
 
