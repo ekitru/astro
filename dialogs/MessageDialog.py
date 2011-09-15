@@ -29,7 +29,7 @@ class MessageDialog(wx.Dialog):
         text = self.text.GetValue()
         last = self.message.getLast()
         if  last != text:
-            self.message.addMessage(text)
+            self.message.setNew(text)
         self.EndModal(wx.ID_OK)
 
   

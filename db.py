@@ -193,7 +193,7 @@ class Message(DBQuery):
 #        args = {'id': id}
 #        return str(self.selectOne(sql, args))
 
-    def addMessage(self, text):
+    def setNew(self, text):
         """ return added message id """
         sql = "INSERT INTO `message` (`id`,`text`) values (default, %(text)s)"
         args = {'text': text}
