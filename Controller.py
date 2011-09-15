@@ -48,10 +48,11 @@ class Controller(object):
     def freeResources(self):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
+        # close database connections
             del self.star
             del self.message
             del self.__dbManager
-
+        # close PLC communication
             self.PLCManager.close()
         except Exception as e:
             raise ClosingException(e)
@@ -133,11 +134,6 @@ class Controller(object):
             return True
         else:
             return False
-
-    def saveMessage(self, text):
-        print(text)
-        print('ID: ', self.message.addMessage(text))
-
 
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
