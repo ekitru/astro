@@ -14,7 +14,7 @@ class ControlModePanel(SimplePanel):
         self.controller = controller
         self.codes = codes
 
-        self.butAutoManual = self.CreateButton(self.codes.get('pCtrlAuto'),font=self.fontNorm(),size=self.sizeLarge())
+        self.butAutoManual = self.CreateButton(self.codes.get('pCtrlMan'),font=self.fontNorm(),size=self.sizeLarge())
         self.butMove = self.CreateButton(label=self.codes.get('pCtrlMov'))
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -28,16 +28,31 @@ class ControlModePanel(SimplePanel):
 
     def OnButtonAutoManual(self, event):
         button = event.GetEventObject()
-        if self.controller.autoControlSelected():
-            self.controller.selectManualControl()
+        if self.autoControlSelected():
+            self.selectManualControl()
             button.SetLabel(self.codes.get('pCtrlMan'))
         else:
-            self.controller.selectAutoControl()
+            self.selectAutoControl()
             button.SetLabel(self.codes.get('pCtrlAuto'))
 
     def OnButtonMove(self, event):
         print('butMove')
 
+    def autoControlSelected(self):
+        """ Returns True if AUTO control selected
+            Returns False if MANUAL control selected
+        """
+        return self.controlMode
+
+    def selectAutoControl(self):
+        self.controlMode = True
+
+    def selectManualControl(self):
+        self.controlMode = False
 
     def update(self, controller):
-        return #TODO real implementation
+        pcControl = controller.pcControlSelected()
+        if pcControl:
+            self.Enable()
+        else:
+            self.Disable()
