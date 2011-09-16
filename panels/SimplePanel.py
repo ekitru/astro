@@ -1,4 +1,5 @@
 import wx
+from os.path import join
 
 __author__ = 'kitru'
 
@@ -35,8 +36,9 @@ class SimplePanel(wx.Panel):
             speedSelButton.SetFont(font)
         return speedSelButton
 
-    def CreateBitmapButton(self, rel_path, file_type, size=wx.DefaultSize):
-        bitmap = wx.Bitmap(rel_path, file_type)
+    def CreateBitmapButton(self, name, file_type, size=wx.DefaultSize):
+        path = join('bitmaps', name)
+        bitmap = wx.Bitmap(path, file_type)
         return wx.BitmapButton(self, id=wx.ID_ANY, bitmap=bitmap,size=size)
 
     def CreateToggleButton(self, label="", font=None ,size=wx.DefaultSize):
