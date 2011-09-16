@@ -93,9 +93,6 @@ class Controller(object):
     def getResourceKeeper(self):
         return self._resourceKeeper
 
-    def getDbManager(self):
-        return self._resourceKeeper.getDbManager()
-
     def setObject(self, name):
         """ Stores new object for observer
         Attr:
