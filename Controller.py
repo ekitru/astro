@@ -12,12 +12,13 @@ import astronomy
 __author__ = 'kitru'
 
 class Controller(object):
+
+    __controlMode = True
     def __init__(self):
         self.__initLogger()
         self.object = None
         self.setpoint = SetPoint() #In auto mode it is sent to plc
         self.focus = Focus()    #In Auto mode it is sent to plc
-        self.controlMode = True
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -113,13 +114,13 @@ class Controller(object):
         """ Returns True if AUTO control selected
             Returns False if MANUAL control selected
         """
-        return self.controlMode
+        return self.__controlMode
 
     def selectAutoControl(self):
-        self.controlMode = True
+        self.__controlMode = True
 
     def selectManualControl(self):
-        self.controlMode = False
+        self.__controlMode = False
 
     def scopeCanMove(self):
         canMove = True
