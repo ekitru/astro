@@ -31,18 +31,18 @@ class ManualSetpointPanel(SimplePanel):
         self.butMovLftDEC = self.CreateBitmapButton("arrow_left.ico", file_type=self.bitmapType(), size = self.sizeSmall())
         self.butMovRhtDEC = self.CreateBitmapButton("arrow_right.ico", file_type=self.bitmapType(), size = self.sizeSmall())
         self.butMovDwnRA =  self.CreateBitmapButton("arrow_down.ico", file_type=self.bitmapType(), size = self.sizeSmall())
-        self.butSelHour = self.CreateToggleButton(label=codes.get('pCtrlHour'),font=self.fontBold(), size=self.sizeSmall())
-        self.butSelMin = self.CreateToggleButton(label=codes.get('pCtrlMin'),font=self.fontBold(), size=self.sizeSmall())
-        self.butSelSec = self.CreateToggleButton(label=codes.get('pCtrlSec'),font=self.fontBold(), size=self.sizeSmall())
+        self.butSelHour = self.CreateToggleButton(label=codes.get('pSetpointHour'),font=self.fontBold(), size=self.sizeSmall())
+        self.butSelMin = self.CreateToggleButton(label=codes.get('pSetpointMin'),font=self.fontBold(), size=self.sizeSmall())
+        self.butSelSec = self.CreateToggleButton(label=codes.get('pSetpointSec'),font=self.fontBold(), size=self.sizeSmall())
         self.butIncFoc = self.CreateButton(label="+", size=self.sizeSmall())
         self.butDecFoc = self.CreateButton(label="-", size=self.sizeSmall())
 
         pControlCol1.AddSpacer(5)
-        pControlCol1.Add(self.CreateCaption(codes.get('pCtrlRA')), flag= wx.ALIGN_RIGHT)
+        pControlCol1.Add(self.CreateCaption(codes.get('pSetpointRA')), flag= wx.ALIGN_RIGHT)
         pControlCol1.AddSpacer(11)
-        pControlCol1.Add(self.CreateCaption(codes.get('pCtrlDEC')), flag=wx.ALIGN_RIGHT)
+        pControlCol1.Add(self.CreateCaption(codes.get('pSetpointDEC')), flag=wx.ALIGN_RIGHT)
         pControlCol1.AddSpacer(12)
-        pControlCol1.Add(self.CreateCaption(codes.get('pCtrlFoc')), flag=wx.ALIGN_RIGHT)
+        pControlCol1.Add(self.CreateCaption(codes.get('pSetpointFoc')), flag=wx.ALIGN_RIGHT)
         pControlCol1.AddSpacer(12)
 #        pControlCol1.Add(self.butAutoManual, flag=wx.ALIGN_RIGHT)
 
@@ -75,7 +75,7 @@ class ManualSetpointPanel(SimplePanel):
         pControlSizer.AddSpacer(18)
         pControlSizer.Add(pControlCol3)
 
-        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pCtrl')), wx.VERTICAL)
+        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pSetpoint')), wx.VERTICAL)
         comSizer.Add(pControlSizer, flag=wx.ALL, border=10)
 
         self.SetSizer(comSizer)
