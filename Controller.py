@@ -1,7 +1,7 @@
 import os
 from posixpath import join
 import logging
-from db import  Message
+from db import  Message, Log
 from db import Star
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
@@ -39,11 +39,14 @@ class Controller(object):
             self.__dbManager = config.getDbManager()
             self.star = Star(self.__dbManager)
             self.message = Message(self.__dbManager)
+            self.log = Log(self.__dbManager)
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
+
+        self.log.saveLog()
 
     def freeResources(self):
         try:

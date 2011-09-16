@@ -49,6 +49,7 @@ class DbManager(object):
 
 class DBQuery(object):
     """ Simple db helper, makes easier data manipulations  """
+
     def __init__(self, db, logger):
         super(DBQuery, self).__init__()
         self.__db = db
@@ -108,7 +109,6 @@ class DBQuery(object):
             self.__logger.debug("Cursor already closed")
 
 
-
 class Star(DBQuery):
     """ manage operations with stars in DB """
 
@@ -125,18 +125,18 @@ class Star(DBQuery):
 
     def saveStar(self, name, ra, dec):
         ra, dec = astronomy.str2rad(str(ra), str(dec))
-        sql = "INSERT INTO `stars` (`id`,`name`,`ra`,`dec`) values (default, %(name)s,%(ra)s,%(dec)s)"
+        sql = "INSERT INTO `star` (`id`,`name`,`ra`,`dec`) VALUES (default, %(name)s,%(ra)s,%(dec)s)"
         args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
         self.insert(sql, args)
 
     def updateStar(self, name, ra, dec):
         ra, dec = astronomy.str2rad(str(ra), str(dec))
-        sql = "update `stars` set`ra`=%(ra)s, `dec`=%(dec)s where `name`=%(name)s"
+        sql = "update `star` set`ra`=%(ra)s, `dec`=%(dec)s WHERE `name`=%(name)s"
         args = {'name': name, 'ra': float(ra), 'dec': float(dec)}
         self.update(sql, args)
 
     def deleteStar(self, star):
-        sql = "delete from `stars` where `name`=%(name)s"
+        sql = "DELETE FROM `star` WHERE `name`=%(name)s"
         args = {'name': star['name']}
         self.delete(sql, args)
 
@@ -144,7 +144,7 @@ class Star(DBQuery):
         """ Take star from database by name
   Star name and position in suitable form for customer
   If star does not exist, return None"""
-        sql = "SELECT `name`,`ra`,`dec` FROM `stars` where name=%(name)s"
+        sql = "SELECT `name`,`ra`,`dec` FROM `star` WHERE name=%(name)s"
         args = {'name': name}
 
         star = self.selectOne(sql, args)
@@ -168,7 +168,7 @@ class Star(DBQuery):
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
-        sql = "select `name`,`ra`,`dec` from `stars` where name like %(name)s order by `name`  limit 20"
+        sql = "SELECT `name`,`ra`,`dec` FROM `star` WHERE name LIKE %(name)s ORDER BY `name`  LIMIT 20"
         args = {'name': (name + '%')}
         return self.selectAll(sql, args)
 
@@ -188,14 +188,14 @@ class Message(DBQuery):
     def __init__(self, dbManager):
         super(Message, self).__init__(dbManager.getDb(), dbManager.getLog())
 
-#    def getMsgById(self, id):
-#        sql = "SELECT `text` FROM `message` where id=%(id)s"
-#        args = {'id': id}
-#        return str(self.selectOne(sql, args))
+    #    def getMsgById(self, id):
+    #        sql = "SELECT `text` FROM `message` where id=%(id)s"
+    #        args = {'id': id}
+    #        return str(self.selectOne(sql, args))
 
     def setNew(self, text):
         """ return added message id """
-        sql = "INSERT INTO `message` (`id`,`text`) values (default, %(text)s)"
+        sql = "INSERT INTO `message` (`id`,`text`) VALUES (default, %(text)s)"
         args = {'text': text}
         return self.insert(sql, args)
 
@@ -203,12 +203,69 @@ class Message(DBQuery):
         """ return last stored message, if there is no return empty string """
         sql = "SELECT `text` FROM `message` ORDER BY `id` DESC LIMIT 1"
         ret = self.selectOne(sql)
-        if len(ret)==1:
+        if len(ret) == 1:
             return ret[0]
         else:
             return ""
 
 
+class Log(DBQuery):
+    """ manage operations with logs in Log table """
 
+    def __init__(self, dbManager):
+        super(Log, self).__init__(dbManager.getDb(), dbManager.getLog())
+        self.cleanValues()
+
+    def saveLog(self):
+        self.addRecord()
+        self.cleanValues()
+
+    def addRecord(self):
+        sql = self.createSQL()
+        args = self.fillArgs()
+        self.insert(sql, args)
+
+    def createSQL(self):
+        fields = "(`id`, `star_id`, `msg_id`, `ra`, `dec`, `focus`,`temp_in`, `temp_out`,`status`)"
+        values = "(default, %(star_id)s, %(msg_id)s, %(ra)s, %(dec)s, %(focus)s, %(temp_in)s, %(temp_out)s, %(status)s)"
+        sql = "INSERT INTO `log` " + fields + " VALUES " + values
+        return sql
+
+    def fillArgs(self):
+        return {'id': self.__id, 'star_id': self.__star_id, 'msg_id': self.__msg_id, 'ra': self.__ra, 'dec': self.__dec,
+                'focus': self.__focus, 'temp_in': self.__temp_in, 'temp_out': self.__temp_out, 'status': self.__status}
+
+    def cleanValues(self):
+        #Parameters from program
+        self.__id = None
+        self.__star_id = None
+        self.__msg_id = None
+        #Parameters from PLC
+        self.__ra = None
+        self.__dec = None
+        self.__focus = None
+        self.__temp_in = None
+        self.__temp_out = None
+        self.__status = None #alarm status word
+
+    def setStarId(self, id):
+        self.__star_id = id
+
+    def setMsgId(self, id):
+        self.__msg_id = id
+
+    def setCurrentRaDec(self, ra, dec):
+        self.__ra = ra
+        self.__dec= dec
+
+    def setCurrentForus(self, focus):
+        self.__focus = focus
+
+    def setTemperature(self, temp_in, temp_out):
+        self.__temp_in = temp_in
+        self.__temp_out = temp_out
+
+    def setAlarmStatus(self, word):
+        self.__status = word
 
 
