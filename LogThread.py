@@ -27,7 +27,7 @@ class LogThread(object):
         self._log.setMsgId(self.getMsgId())
         self._log.setCurrentRaDec(*self.getCurrentRaDec())
         self._log.setCurrentFocus(self.getCurrentFocus())
-        self._log.saveLog()
+        self._log.writeToLog()
 
 
         self.start()
