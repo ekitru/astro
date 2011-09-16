@@ -200,14 +200,22 @@ class Message(DBQuery):
         args = {'text': text}
         return self.insert(sql, args)
 
-    def getLast(self):
+    def getLastId(self):
+        """ return last stored message idd, if there is no return empty string """
+        if self.getLastRow():
+            return self.getLastRow()[0]
+
+    def getLastMsg(self):
         """ return last stored message, if there is no return empty string """
-        sql = "SELECT `text` FROM `message` ORDER BY `id` DESC LIMIT 1"
-        ret = self.selectOne(sql)
-        if len(ret) == 1:
-            return ret[0]
+        if self.getLastRow():
+            return self.getLastRow()[1]
         else:
             return ""
+
+    def getLastRow(self):
+        sql = "SELECT `id`,`text` FROM `message` ORDER BY `id` DESC LIMIT 1"
+        return self.selectOne(sql)
+
 
 
 class Log(DBQuery):

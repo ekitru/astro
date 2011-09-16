@@ -10,7 +10,7 @@ class MessageDialog(wx.Dialog):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.text = wx.TextCtrl(self, size=(250, 70), style=wx.MULTIPLE)
-        self.text.SetValue(self.message.getLast())
+        self.text.SetValue(self.message.getLastMsg())
         self.text.SetFocus()
         sizer.Add(self.text, flag=wx.LEFT | wx.RIGHT | wx.TOP | wx.EXPAND, border=10)
 
@@ -27,7 +27,7 @@ class MessageDialog(wx.Dialog):
 
     def OnSelect(self, event):
         text = self.text.GetValue()
-        last = self.message.getLast()
+        last = self.message.getLastMsg()
         if  last != text:
             self.message.setNew(text)
         self.EndModal(wx.ID_OK)

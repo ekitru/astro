@@ -10,7 +10,7 @@ class LogThread(object):
         self.__controller = controller
         self.__star = Star(controller.getDbManager())
         self.__log = Log(controller.getDbManager())
-        self.__Message = Message(controller.getDbManager())
+        self.__message = Message(controller.getDbManager())
         self.start()
 
     def start(self):
@@ -21,5 +21,22 @@ class LogThread(object):
         self.__timer.cancel()
 
     def doWork(self):
+        self.__log.setStarId(self.getStarId())
+        self.__log.setMsgId(self.getMsgId())
+
+        self.__log.saveLog()
         self.start()
-  
+
+    def getStarId(self):
+        object = self.__controller.getObject()
+        starName = object.getName()
+        if starName:
+            star = self.__star.getStarByName(starName)
+            star_id = star['id']
+            return star_id
+        else:
+            return None
+
+    def getMsgId(self):
+        id = self.__message.getLastId()
+        return id
