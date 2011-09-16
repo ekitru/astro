@@ -1,6 +1,8 @@
 import os
 from posixpath import join
 import logging
+import threading
+import sys
 from db import  Message, Log
 from db import Star
 
@@ -8,6 +10,7 @@ from Exceptions import ConfigurationException, InitializationException, ClosingE
 from Configs import ProgramConfig
 from astronomy import Object
 import astronomy
+from LogThread import LogThread
 
 __author__ = 'kitru'
 
@@ -39,23 +42,23 @@ class Controller(object):
             self.__dbManager = config.getDbManager()
             self.star = Star(self.__dbManager)
             self.message = Message(self.__dbManager)
-            self.log = Log(self.__dbManager)
             self.PLCManager = config.getPLCManager()
             self.trans = config.getTranslation()
+            self.logThread = LogThread(self)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
 
-        self.log.saveLog()
 
     def freeResources(self):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
-        # close database connections
+            # close database connections
+            self.logThread.stop()
             del self.star
             del self.message
+            # close PLC communication
             del self.__dbManager
-        # close PLC communication
             self.PLCManager.close()
         except Exception as e:
             raise ClosingException(e)
@@ -73,6 +76,9 @@ class Controller(object):
 
     def getObject(self):
         return self.object
+
+    def getDbManager(self):
+        return self.__dbManager
 
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
@@ -138,6 +144,7 @@ class Controller(object):
         else:
             return False
 
+
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
         self.setCoordinates(ra, dec)
@@ -157,6 +164,7 @@ class SetPoint(object):
 class Focus(object):
     MIN = 0.0
     MAX = 2.0
+
     def __init__(self, focus=0.0):
         self.setFocus(focus)
 

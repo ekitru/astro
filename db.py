@@ -144,7 +144,7 @@ class Star(DBQuery):
         """ Take star from database by name
   Star name and position in suitable form for customer
   If star does not exist, return None"""
-        sql = "SELECT `name`,`ra`,`dec` FROM `star` WHERE name=%(name)s"
+        sql = "SELECT `id`,`name`,`ra`,`dec` FROM `star` WHERE name=%(name)s"
         args = {'name': name}
 
         star = self.selectOne(sql, args)
@@ -168,7 +168,7 @@ class Star(DBQuery):
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
-        sql = "SELECT `name`,`ra`,`dec` FROM `star` WHERE name LIKE %(name)s ORDER BY `name`  LIMIT 20"
+        sql = "SELECT `id`,`name`,`ra`,`dec` FROM `star` WHERE name LIKE %(name)s ORDER BY `name`  LIMIT 20"
         args = {'name': (name + '%')}
         return self.selectAll(sql, args)
 
@@ -177,9 +177,10 @@ class Star(DBQuery):
         Attr:
           star - one record from DB
         """
-        name = star[0]
-        ra, dec = astronomy.rad2str(star[1], star[2])
-        return {'name': name, 'ra': ra, 'dec': dec}
+        id = star[0]
+        name = star[1]
+        ra, dec = astronomy.rad2str(star[2], star[3])
+        return {'id': id, 'name': name, 'ra': ra, 'dec': dec}
 
 
 class Message(DBQuery):
@@ -256,7 +257,7 @@ class Log(DBQuery):
 
     def setCurrentRaDec(self, ra, dec):
         self.__ra = ra
-        self.__dec= dec
+        self.__dec = dec
 
     def setCurrentForus(self, focus):
         self.__focus = focus

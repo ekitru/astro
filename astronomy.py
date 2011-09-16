@@ -28,6 +28,9 @@ class Object(object):
         else:
             return False
 
+    def getName(self):
+        return self.fixedBodyName
+
     def getData(self):
         if self.selected():
             ra, dec = rad2str(self.fixedBody._ra, self.fixedBody._dec)

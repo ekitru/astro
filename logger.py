@@ -17,4 +17,10 @@ def closeLog(log):
         log.removeHandler(i)
         i.flush()
         i.close()
-  
+
+
+
+
+
+
+
