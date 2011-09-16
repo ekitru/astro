@@ -4,9 +4,9 @@ __author__ = 'kitru'
 
 class LogsDialog(wx.Dialog):
     def __init__(self, parent, id, controller):
-        wx.Dialog.__init__(self, parent, id, controller.trans.get('dLogs_title'),
+        wx.Dialog.__init__(self, parent, id, controller.getResourceKeeper().getCodes().get('dLogs_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
-        codes = controller.trans
+        codes = controller.getResourceKeeper().getCodes()
 
         self.list = self.CreateLists(codes)
 

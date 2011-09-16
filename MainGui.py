@@ -14,7 +14,8 @@ class MainGui(wx.Frame):
         #        InspectionTool().Show()
         self.controller = controller
 
-        panelArgs = {"parent": self, "codes": controller.trans}
+        codes = controller.getResourceKeeper().getCodes()
+        panelArgs = {"parent": self, "codes": codes}
 
         self.objectPanel = ObjectPanel(ID=ID_OBJPANEL, **panelArgs)
         self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
@@ -84,13 +85,14 @@ class AstroMenu(wx.MenuBar):
 
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
-        self.controller = controller
+        self._controller = controller
+        codes = controller.getResourceKeeper().getCodes()
 
-        objMenu = self.CreateObjectMenu(controller.trans)
-        toolsMenu = self.CreateToolsMenu(controller.trans)
+        objMenu = self.CreateObjectMenu(codes)
+        toolsMenu = self.CreateToolsMenu(codes)
 
-        self.Append(menu=objMenu, title=controller.trans.get('mObj'))
-        self.Append(menu=toolsMenu, title=controller.trans.get('mTools'))
+        self.Append(menu=objMenu, title=codes.get('mObj'))
+        self.Append(menu=toolsMenu, title=codes.get('mTools'))
 
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
@@ -122,7 +124,7 @@ class AstroMenu(wx.MenuBar):
         Attr:
             Dialog(wx.Dialog) class object
         """
-        dialog = Dialog(self, wx.ID_ANY, self.controller)
+        dialog = Dialog(self, wx.ID_ANY, self._controller)
         dialog.ShowModal()
         dialog.Destroy()
 

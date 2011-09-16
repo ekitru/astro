@@ -1,7 +1,7 @@
 import os
 from posixpath import join
 import logging
-from db import  Message
+from db import  Message, Log
 from db import Star
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
@@ -11,6 +11,42 @@ import astronomy
 from LogThread import LogThread
 
 __author__ = 'kitru'
+
+class ResourceKeeper(object):
+    def __init__(self, config):
+        self._codes = config.getTranslation()
+        self._PLCManager = config.getPLCManager()
+        self._dbManager = config.getDbManager()
+        self._star = Star(self._dbManager)
+        self._log = Log(self._dbManager)
+        self._message = Message(self._dbManager)
+
+    def __del__(self):
+        del self._message
+        del self._log
+        del self._star
+        del self._dbManager
+        del self._PLCManager
+        del self._codes
+
+    def getCodes(self):
+        return self._codes
+
+    def getPLCManager(self):
+        return self._PLCManager
+
+    def getDbManager(self):
+        return self._dbManager
+
+    def getStarHolder(self):
+        return self._star
+
+    def getLogHolder(self):
+        return self._log
+
+    def getMessageHolder(self):
+        return self._message
+
 
 class Controller(object):
     __controlMode = True
@@ -37,11 +73,8 @@ class Controller(object):
             config = ProgramConfig('default.conf')
             self.observer = config.getObserver()
             self.object = Object(self.observer)
-            self.__dbManager = config.getDbManager()
-            self.star = Star(self.__dbManager)
-            self.message = Message(self.__dbManager)
-            self.PLCManager = config.getPLCManager()
-            self.trans = config.getTranslation()
+
+            self._resourceKeeper = ResourceKeeper(config)
             self.logThread = LogThread(self)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
@@ -53,30 +86,27 @@ class Controller(object):
             logging.info('======= Free all resources: DB, MODBUS =======')
             # close database connections
             self.logThread.stop()
-            del self.star
-            del self.message
-            # close PLC communication
-            del self.__dbManager
-            self.PLCManager.close()
+            del self._resourceKeeper
         except Exception as e:
             raise ClosingException(e)
+
+    def getResourceKeeper(self):
+        return self._resourceKeeper
+
+    def getDbManager(self):
+        return self._resourceKeeper.getDbManager()
 
     def setObject(self, name):
         """ Stores new object for observer
         Attr:
             name - star name
         """
-        print(name)
-        star = self.star.getStarByName(name)
-        print(star)
+        star = self._resourceKeeper.getStarHolder().getStarByName(name)
         if star:
             self.object.init(star['id'], star['name'], star['ra'], star['dec'])
 
     def getObject(self):
         return self.object
-
-    def getDbManager(self):
-        return self.__dbManager
 
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
@@ -94,7 +124,7 @@ class Controller(object):
         """ Return current and target telescope position
         {'cur':(str,str) ,'end':(str,str)}
         """
-        telescopePosition = self.PLCManager.getPosition()
+        telescopePosition = self._resourceKeeper.getPLCManager().getPosition()
         position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
         return position
 
@@ -106,7 +136,7 @@ class Controller(object):
         """ Return current and target telescope focus
         {'current':str() ,'end':str()}
         """
-        telescopeFocus = self.PLCManager.getFocus()
+        telescopeFocus = self._resourceKeeper.getPLCManager().getFocus()
         focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
         return focus
 
@@ -114,12 +144,12 @@ class Controller(object):
     def pcControlSelected(self):
         """  Returns True if status flag read from PLC equals "1" (PC control selected)
              Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
-        return self.PLCManager.isPCControl()
+        return self._resourceKeeper.getPLCManager().isPCControl()
 
     def remoteControlSelected(self):
         """  Returns True if status flag read from PLC equals "0" (REMOTE control selected)
              Returns False if status flag read from PLC equals "1" (PC control selected)"""
-        return not self.PLCManager.isPCControl()
+        return not self._resourceKeeper.getPLCManager().isPCControl()
 
     def objSetpointControlSelected(self):
         """ Returns True if AUTO control selected

@@ -9,9 +9,11 @@ class LogThread(object):
     def __init__(self, controller, minutes=1):
         self._period = minutes * self._scale
         self._controller = controller
-        self._log = Log(controller.getDbManager())
-        self._message = Message(controller.getDbManager())
-        self._plc = controller.PLCManager
+        self._resurseKeeper = controller.getResourceKeeper()
+
+        self._log = Log(self._resurseKeeper.getDbManager())
+        self._message = Message(self._resurseKeeper.getDbManager())
+        self._plc = self._resurseKeeper.getPLCManager()
         self.start()
 
     def start(self):

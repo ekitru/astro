@@ -1,5 +1,6 @@
 import wx
 import sys
+
 __author__ = 'kitru'
 
 class StarList(wx.ListCtrl):
@@ -38,16 +39,15 @@ class ObjectListDialog(wx.Dialog):
     OnOk, OnCancel, OnListItemSelected, OnListItemActivated
     """
 
-    def __init__(self, parent, id, title, controller):
+    def __init__(self, parent, id, title, resources):
         wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
-        self.controller = controller
-        self.starManager = controller.star
-        self.codes = controller.trans
+        self._starHolder = resources.getStarHolder()
+        self.codes = resources.getCodes()
 
         self.starName = ""
         self.list = StarList(self, self.codes)
 
-        stars = self.starManager.getStars(self.starName)
+        stars = self._starHolder.getStars(self.starName)
         self.list.FillList(stars)
 
         self.Bind(wx.EVT_BUTTON, self.OnOkClicked, id=wx.ID_OK)
@@ -65,7 +65,7 @@ class ObjectListDialog(wx.Dialog):
         self.ReloadList()
 
     def ReloadList(self):
-        stars = self.starManager.getStars(self.GetStarName())
+        stars = self._starHolder.getStars(self.GetStarName())
         self.list.FillList(stars)
 
     def GetStarName(self):
@@ -88,5 +88,5 @@ class ObjectListDialog(wx.Dialog):
 
     def GetSelectedStar(self):
         name = self.list.GetSelectedStarName()
-        return self.starManager.getStarByName(name)
+        return self._starHolder.getStarByName(name)
   

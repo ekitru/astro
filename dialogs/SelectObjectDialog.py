@@ -7,8 +7,9 @@ __author__ = 'kitru'
 
 class SelectObjectDialog(ObjectListDialog):
     def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.trans.get('dSelObj_title'), controller)
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.getResourceKeeper().getCodes().get('dSelObj_title'), controller.getResourceKeeper())
 
+        self.controller = controller
         self.text = wx.TextCtrl(self, size=(120, -1))
         self.text.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
@@ -82,7 +83,7 @@ class SelectObjectDialog(ObjectListDialog):
         if not self.isCorrectCoordinates():
             return
 
-        if self.starManager.starExists(self.starName):
+        if self._starHolder.starExists(self.starName):
             self.controller.setObject(self.starName)
             self.EndModal(wx.ID_OK)
         else:
@@ -90,7 +91,7 @@ class SelectObjectDialog(ObjectListDialog):
                                        style=wx.YES_NO | wx.YES_DEFAULT | wx.CENTER)
             if confirm.ShowModal() == wx.ID_YES:
                 confirm.Destroy()
-                self.starManager.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
+                self._starHolder.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
                 self.controller.setObject(self.starName)
                 self.EndModal(wx.ID_OK)
   
