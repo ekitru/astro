@@ -27,7 +27,10 @@ class LogThread(object):
         self.__log.setCurrentRaDec(*self.getCurrentRaDec())
         self.__log.setCurrentFocus(self.getCurrentFocus())
         self.__log.saveLog()
+
         self.start()
+
+        print(self.__log.readLog('denebola'))
 
     def getStarId(self):
         object = self.__controller.getObject()

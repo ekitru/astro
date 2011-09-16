@@ -62,15 +62,19 @@ class DBQuery(object):
     def __del__(self):
         self.close()
 
-    def selectOne(self, sql, args=None):
+    def selectOne(self, sql, args=None, where=None):
         try:
+            if where:
+                sql = sql +" WHERE "+where
             self.cursor.execute(sql, args)
             return self.cursor.fetchone()
         except Exception as error:
             raise DbException(error.args, self.__logger)
 
-    def selectAll(self, sql, args):
+    def selectAll(self, sql, args=None, where=None):
         try:
+            if where:
+                sql = sql +" WHERE "+where
             self.cursor.execute(sql, args)
             return self.cursor.fetchall()
         except Exception as error:
@@ -247,6 +251,18 @@ class Log(DBQuery):
         return {'id': self.__id, 'star_id': self.__star_id, 'msg_id': self.__msg_id, 'ra': self.__ra, 'dec': self.__dec,
                 'focus': self.__focus, 'temp_in': self.__temp_in, 'temp_out': self.__temp_out, 'status': self.__status}
 
+    def readLog(self, starName=None):
+        select = "SELECT l.id,s.id,s.ra,s.dec, m.text, l.ra, l.dec, l.temp_in, l.temp_out, l.status FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
+        if starName:
+            condition = "s.name= \""+starName+"\""
+        else:
+            condition = None
+        ret = self.selectAll(select, args=None, where=condition)
+        return ret
+
+
+
+
     def cleanValues(self):
         #Parameters from program
         self.__id = None
@@ -276,7 +292,6 @@ class Log(DBQuery):
     def setTemperature(self, temp_in, temp_out):
         self.__temp_in = temp_in
         self.__temp_out = temp_out
-
     def setAlarmStatus(self, word):
         self.__status = word
 
