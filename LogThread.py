@@ -1,55 +1,59 @@
 import threading
-from db import Message, Log, Star
+from db import Message, Log
 
 __author__ = 'kitru'
 
 class LogThread(object):
-    __scale = 1
+    _scale = 1
 
     def __init__(self, controller, minutes=1):
-        self.__period = minutes * self.__scale
-        self.__controller = controller
-        self.__log = Log(controller.getDbManager())
-        self.__message = Message(controller.getDbManager())
-        self.__plc = controller.PLCManager
+        self._period = minutes * self._scale
+        self._controller = controller
+        self._log = Log(controller.getDbManager())
+        self._message = Message(controller.getDbManager())
+        self._plc = controller.PLCManager
         self.start()
 
     def start(self):
-        self.__timer = threading.Timer(self.__period, self.doWork)
-        self.__timer.start()
+        self._timer = threading.Timer(self._period, self.doWork)
+        self._timer.start()
 
     def stop(self):
-        self.__timer.cancel()
+        self._timer.cancel()
+        self._timer.join()
 
     def doWork(self):
-        self.__log.setStarId(self.getStarId())
-        self.__log.setMsgId(self.getMsgId())
-        self.__log.setCurrentRaDec(*self.getCurrentRaDec())
-        self.__log.setCurrentFocus(self.getCurrentFocus())
-        self.__log.saveLog()
+        self._log.setStarId(self.getStarId())
+        self._log.setMsgId(self.getMsgId())
+        self._log.setCurrentRaDec(*self.getCurrentRaDec())
+        self._log.setCurrentFocus(self.getCurrentFocus())
+        self._log.saveLog()
+
 
         self.start()
 
-        print(self.__log.readLog('denebola'))
+        print(self._log.readLog('denebola'))
 
     def getStarId(self):
-        object = self.__controller.getObject()
+        object = self._controller.getObject()
         return object.getId()
 
     def getMsgId(self):
-        id = self.__message.getLastId()
+        id = self._message.getLastId()
         return id
 
     def getCurrentRaDec(self):
-        position = self.__plc.getPosition()
+        position = self._plc.getPosition()
         return position[0]
 
     def getCurrentFocus(self):
-        focus = self.__plc.getFocus()
+        focus = self._plc.getFocus()
         return focus[0]
 
     def getTemperature(self, temp_in, temp_out):
         pass #PLC
 
     def getAlarmStatus(self, word):
-        pass #PLC
+        pass
+
+#PLC
