@@ -21,6 +21,5 @@ class LogThread(object):
         self.__timer.cancel()
 
     def doWork(self):
-
         self.start()
   
