@@ -6,57 +6,62 @@ __author__ = 'kitru'
 
 class Object(object):
     def __init__(self, observer):
-        self.observer = observer
-        self.fixedBody = None
-        self.fixedBodyName = ''
+        self.__observer = observer
+        self.__fixedBody = None
+        self.__name = ''
+        self.__id = None
 
-    def init(self, name, ra, dec):
+    def init(self, id, name, ra, dec):
         """ Set new observation object
         Attr:
             name - name for object
             ra - RA in radians
             de - DEC in radians
         """
-        self.fixedBodyName = name
-        self.fixedBody = ephem.FixedBody()
-        self.fixedBody._ra = ephem.hours(ra)
-        self.fixedBody._dec = ephem.degrees(dec)
+        self.__id = id
+        self.__name = name
+        self.__fixedBody = ephem.FixedBody()
+        self.__fixedBody._ra = ephem.hours(ra)
+        self.__fixedBody._dec = ephem.degrees(dec)
 
     def selected(self):
-        if self.fixedBody:
+        if self.__fixedBody:
             return True
         else:
             return False
 
+    def getId(self):
+        return self.__id
+
     def getName(self):
-        return self.fixedBodyName
+        return self.__name
 
     def getData(self):
         if self.selected():
-            ra, dec = rad2str(self.fixedBody._ra, self.fixedBody._dec)
-            name = self.fixedBodyName
+            ra, dec = rad2str(self.__fixedBody._ra, self.__fixedBody._dec)
+            name = self.__name
         else:
-            ra, dec, name = '', '', ''
+            ra, dec, name, id = '', '', '', ''
 
-        return {'name': name, 'ra': ra, 'dec': dec}
+        return {'name': name, 'ra': ra, 'dec': dec, 'id': self.__id}
 
     def getCurrentPosition(self):
         """ return position in radians like {'ra','dec','alt'}. If object is not selected return empty dictionary """
-        if self.fixedBody:
-            self.observer.updateToNow()
-            self.fixedBody.compute(self.observer.observer)
-            ra, dec = rad2str(self.fixedBody.ra, self.fixedBody.dec)
-            alt = str(self.fixedBody.alt)
-            ha = rad2str((self.observer.getLST()-self.fixedBody.ra), 0)
+        if self.__fixedBody:
+            self.__observer.updateToNow()
+            self.__fixedBody.compute(self.__observer.observer)
+            ra, dec = rad2str(self.__fixedBody.ra, self.__fixedBody.dec)
+            alt = str(self.__fixedBody.alt)
+            ha = rad2str((self.__observer.getLST() - self.__fixedBody.ra), 0)
             rise = self.getRisingTime()
             set = self.getSettingTime()
         else:
-            ra, dec, alt, ha, rise, set  = '', '', '', ' ', '', ''
-        return {'ra': ra, 'dec': dec, 'alt': alt, 'ha':ha[0], 'rise':rise, 'set':set}
+            ra, dec, alt, ha, rise, set = '', '', '', ' ', '', ''
+        return {'ra': ra, 'dec': dec, 'alt': alt, 'ha': ha[0], 'rise': rise, 'set': set}
 
     def getRisingTime(self):
         try:
-            time = self.observer.observer.next_rising(self.fixedBody)
+            time = self.__observer.observer.next_rising(self.__fixedBody)
             return str(time).split(" ")[1]
         except ephem.NeverUpError:
             return 'never'
@@ -65,7 +70,7 @@ class Object(object):
 
     def getSettingTime(self):
         try:
-            time = self.observer.observer.next_setting(self.fixedBody)
+            time = self.__observer.observer.next_setting(self.__fixedBody)
             return str(time).split(" ")[1]
         except ephem.NeverUpError:
             return 'never'
@@ -117,15 +122,16 @@ class Observer(object):
         self.observer.pressure = pressure #TODO not very needed, not will be good to add this functionality
 
 
-RA_HOUR = ephem.twopi/24
-RA_MINUTE = RA_HOUR/60
-RA_SECOND = RA_MINUTE/60
+RA_HOUR = ephem.twopi / 24
+RA_MINUTE = RA_HOUR / 60
+RA_SECOND = RA_MINUTE / 60
 DEC_DEGREE = ephem.degree
 DEC_MINUTE = ephem.arcminute
 DEC_SECOND = ephem.arcsecond
 
 def hours(ra):
     return ephem.hours(ra)
+
 
 def degrees(dec):
     return ephem.degrees(dec)
@@ -143,29 +149,36 @@ def getCoordinates(ra, dec):
     dec = ephem.degrees(dec)
     return ra, dec
 
+
 def rad2str(ra, dec):
     """ Convert (ra,dec) in radians to more readable form """
     ra, dec = getCoordinates(ra, dec)
     return str(ra), str(dec)
+
 
 def str2rad(ra, dec):
     """ Convert (ra,dec) strings to radians  """
     ra, dec = getCoordinates(ra, dec)
     return ra.real, dec.real
 
+
 def normCoordinates(ra, dec):
     return normRa(ra), normDec(dec)
+
 
 def normRa(ra):
     return ra.norm
 
+
 def normDec(dec):
-    dec = ephem.degrees(2*dec)
-    dec =  dec.znorm
-    return ephem.degrees(dec/2)
+    dec = ephem.degrees(2 * dec)
+    dec = dec.znorm
+    return ephem.degrees(dec / 2)
+
 
 def checkCoordinates(dec, ra):
-        return checkHours(ra) and checkDegrees(dec)
+    return checkHours(ra) and checkDegrees(dec)
+
 
 def checkHours( hours):
     try:
@@ -173,6 +186,7 @@ def checkHours( hours):
         return _checkHour(h) and _checkMin(m) and _checkSec(s)
     except Exception:
         return False
+
 
 def checkDegrees(degrees):
     try:
@@ -185,11 +199,14 @@ def checkDegrees(degrees):
 def _checkDegree(deg):
     return -90 < int(deg) < 90
 
+
 def _checkHour(hour):
     return 0 <= int(hour) < 24
 
+
 def _checkMin(min):
     return 0 <= int(min) < 60
+
 
 def _checkSec(sec):
     return 0 <= float(sec) < 60

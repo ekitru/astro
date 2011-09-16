@@ -72,7 +72,7 @@ class Controller(object):
         star = self.star.getStarByName(name)
         print(star)
         if star:
-            self.object.init(star['name'], star['ra'], star['dec'])
+            self.object.init(star['id'], star['name'], star['ra'], star['dec'])
 
     def getObject(self):
         return self.object

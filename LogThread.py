@@ -29,13 +29,7 @@ class LogThread(object):
 
     def getStarId(self):
         object = self.__controller.getObject()
-        starName = object.getName()
-        if starName:
-            star = self.__star.getStarByName(starName)
-            star_id = star['id']
-            return star_id
-        else:
-            return None
+        return object.getId()
 
     def getMsgId(self):
         id = self.__message.getLastId()

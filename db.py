@@ -10,6 +10,8 @@ from logger import getLog, closeLog
 __author__ = 'kitru'
 
 class DbManager(object):
+    """ Manage DB connection
+    handle it opening and closing, also handle logs """
     def __init__(self, confDict):
         self.__logger = getLog('database')
         self.__dbName = confDict['database']
@@ -40,6 +42,7 @@ class DbManager(object):
         return self.__logger
 
     def close(self):
+        """ Closes DB connection. If it clsoed logs event and do nothing """
         if self.__db:
             self.__logger.info("Close DB connection")
             self.__db.close()
@@ -267,7 +270,7 @@ class Log(DBQuery):
         self.__ra = ra
         self.__dec = dec
 
-    def setCurrentForus(self, focus):
+    def setCurrentFocus(self, focus):
         self.__focus = focus
 
     def setTemperature(self, temp_in, temp_out):
