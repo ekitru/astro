@@ -9,7 +9,7 @@ class ManualSetpointPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
-
+    __setpointSpeed = 1
     def __init__(self, parent, controller, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self,parent,ID)
 
@@ -17,9 +17,6 @@ class ManualSetpointPanel(SimplePanel):
         self.setpoint = controller.setpoint
         self.focus = controller.focus
         self.trans = codes
-
-        self.controlMode = False
-        self.setpointSpeed = 1
 
         #Positioning panel control sizer
         pControlSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -103,7 +100,6 @@ class ManualSetpointPanel(SimplePanel):
             self.inFieldDEC.SetValue(self.setpoint.getCoordinatesAsString()[1])
             self.inFieldFoc.SetValue(self.focus.getFocusAsString())
 
-
     def OnButtonUp(self, event):
         sign = 1
         speed = self.__getSetpointSpeed()
@@ -170,10 +166,10 @@ class ManualSetpointPanel(SimplePanel):
             but1.SetValue(True)
 
     def __getSetpointSpeed(self):
-        return self.setpointSpeed
+        return self.__setpointSpeed
 
     def __setSetpointSpeed(self, speed):
-        self.setpointSpeed = speed
+        self.__setpointSpeed = speed
 
     def __changeInputFieldValue(self, incrementFunction, inputField, speed, sign):
         coordinate = str(inputField.GetValue())
