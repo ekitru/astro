@@ -75,7 +75,8 @@ class Controller(object):
             self.object = Object(self.observer)
 
             self._resourceKeeper = ResourceKeeper(config)
-            self.logThread = LogThread(self)
+            minutes = float(config.getCommonConfigDict()['logging time'])
+            self.logThread = LogThread(self, minutes)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
