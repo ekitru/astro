@@ -44,11 +44,25 @@ class ControlModePanel(SimplePanel):
         self.controller.selManSetpointControl()
 
     def OnRemoteCtrlRadBut(self, event):
-        print('remote control')
+        return
 
     def OnButtonMove(self, event):
-        print('butMove')
-
+        #if self.controller.PLCManager.mockPCMode:
+        #    self.controller.PLCManager.mockPCMode = False
+        #else:
+        #    self.controller.PLCManager.mockPCMode = True
+        return
 
     def update(self, controller):
-        return #TODO real implementation
+        if controller.remoteControlSelected():
+            self.rbObjectSetpoint.Disable()
+            self.rbManualSetpoint.Disable()
+            self.rbRemoteControl.Enable()
+            self.rbRemoteControl.SetValue(True)
+            controller.selObjSetpointControl()
+        if controller.pcControlSelected():
+            self.rbRemoteControl.Disable()
+            self.rbObjectSetpoint.Enable()
+            self.rbManualSetpoint.Enable()
+            if self.rbRemoteControl.GetValue():
+                self.rbObjectSetpoint.SetValue(True)
