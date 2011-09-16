@@ -38,10 +38,10 @@ class ControlModePanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.butMove)
 
     def OnObjSetpointRadBut(self, event):
-        self.controller.selectAutoControl()
+        self.controller.selObjSetpointControl()
 
     def OnManSetpointRadBut(self, event):
-        self.controller.selectManualControl()
+        self.controller.selManSetpointControl()
 
     def OnRemoteCtrlRadBut(self, event):
         print('remote control')

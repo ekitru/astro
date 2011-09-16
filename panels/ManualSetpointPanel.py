@@ -152,7 +152,7 @@ class ManualSetpointPanel(SimplePanel):
         self.__setSetpointSpeed(1)
 
     def update(self, controller):
-        autoControl = controller.autoControlSelected()
+        autoControl = controller.objSetpointControlSelected()
         if autoControl:
             self.Hide()
         else:

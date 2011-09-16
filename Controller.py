@@ -116,16 +116,21 @@ class Controller(object):
              Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
         return self.PLCManager.isPCControl()
 
-    def autoControlSelected(self):
+    def remoteControlSelected(self):
+        """  Returns True if status flag read from PLC equals "0" (REMOTE control selected)
+             Returns False if status flag read from PLC equals "1" (PC control selected)"""
+        return not self.PLCManager.isPCControl()
+
+    def objSetpointControlSelected(self):
         """ Returns True if AUTO control selected
             Returns False if MANUAL control selected
         """
         return self.__controlMode
 
-    def selectAutoControl(self):
+    def selObjSetpointControl(self):
         self.__controlMode = True
 
-    def selectManualControl(self):
+    def selManSetpointControl(self):
         self.__controlMode = False
 
     def scopeCanMove(self):
