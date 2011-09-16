@@ -41,10 +41,10 @@ class DbManager(object):
 
     def close(self):
         if self.__db:
-            self.__logger.debug("Close DB connection")
+            self.__logger.info("Close DB connection")
             self.__db.close()
         else:
-            self.__logger.debug("DB connection already closed")
+            self.__logger.info("DB connection already closed")
 
 
 class DBQuery(object):
