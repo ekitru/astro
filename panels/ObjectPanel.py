@@ -8,6 +8,7 @@ class ObjectPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
+
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
@@ -18,6 +19,10 @@ class ObjectPanel(SimplePanel):
         self.SetSizer(comSizer)
 
     def CreateCoordinatesGrid(self, codes):
+        """ return sizer for Object position mapping
+        Attr:
+            codes - translation codes
+        """
         sizer = wx.GridSizer(4, 3, 5, 10)
 
         self.objectName = self.CreateField()
@@ -43,6 +48,10 @@ class ObjectPanel(SimplePanel):
         return sizer
 
     def CreateBottomPanel(self, codes):
+        """ Return sizer with control buttons
+        Attr:
+            codes - translation codes
+        """
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         objPos = self.CreateObjectPosition(codes)
@@ -51,6 +60,10 @@ class ObjectPanel(SimplePanel):
         return sizer
 
     def CreateObjectPosition(self, codes):
+        """ Return sizer object position
+        Attr:
+            codes - translation codes
+        """
         self.objAltitude = self.CreateCoordField()
         self.objHourAngle = self.CreateCoordField()
         self.objRisingTime = self.CreateField()
@@ -74,10 +87,11 @@ class ObjectPanel(SimplePanel):
         object = controller.getObject()
         data = object.getData()
 
+        # show object data
         self.objectName.SetLabel(data['name'])
         self.objectOrigRA.SetLabel(data['ra'])
         self.objectOrigDEC.SetLabel(data['dec'])
-
+        # show current object position
         position = object.getCurrentPosition()
         self.objectCurrRA.SetLabel(position['ra'])
         self.objectCurrDEC.SetLabel(position['dec'])

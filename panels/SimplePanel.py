@@ -14,7 +14,9 @@ class SimplePanel(wx.Panel):
         return self.CreateElement(name, wx.Font(10, wx.SWISS, wx.FONTSTYLE_SLANT, wx.FONTWEIGHT_LIGHT))
 
     def CreateField(self):
-        return self.CreateElement()
+        element = self.CreateElement()
+        element.SetMinSize(wx.Size(80, 20))
+        return element
 
     def CreateCoordField(self):
         element = self.CreateElement()

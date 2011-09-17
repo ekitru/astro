@@ -11,7 +11,6 @@ class PositionPanel(SimplePanel):
     def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent, ID)
 
-        #Positioning panel view sizer
         pPosSizer = wx.GridSizer(4, 3, 5, 10)
 
         self.curRA = self.CreateField()
