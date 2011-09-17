@@ -4,7 +4,7 @@ from db import Message, Log
 __author__ = 'kitru'
 
 class LogThread(object):
-    _scale = 1
+    _scale = 60
 
     def __init__(self, controller, minutes=1):
         self._period = minutes * self._scale
@@ -30,11 +30,7 @@ class LogThread(object):
         self._log.setCurrentRaDec(*self.getCurrentRaDec())
         self._log.setCurrentFocus(self.getCurrentFocus())
         self._log.writeToLog()
-
-
         self.start()
-
-        print(self._log.readLog('denebola'))
 
     def getStarId(self):
         object = self._controller.getObject()
