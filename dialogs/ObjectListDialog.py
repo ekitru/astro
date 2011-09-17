@@ -40,7 +40,7 @@ class ObjectListDialog(wx.Dialog):
     """
 
     def __init__(self, parent, id, title, resources):
-        wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
+        wx.Dialog.__init__(self, parent, id, resources.getCodes().get(title), style=wx.CAPTION)
         self._starHolder = resources.getStarHolder()
         self.codes = resources.getCodes()
 

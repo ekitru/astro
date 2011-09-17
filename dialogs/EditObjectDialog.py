@@ -8,7 +8,7 @@ __author__ = 'kitru'
 
 class EditObjectDialog(ObjectListDialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.getResourceKeeper().getCodes().get('dEditObj_title'), controller.getResourceKeeper())
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller.getResourceKeeper())
         self._controller = controller
         self.codes = controller.getResourceKeeper().getCodes()
 

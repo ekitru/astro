@@ -7,7 +7,7 @@ __author__ = 'kitru'
 
 class SelectObjectDialog(ObjectListDialog):
     def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, controller.getResourceKeeper().getCodes().get('dSelObj_title'), controller.getResourceKeeper())
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dSelObj_title', controller.getResourceKeeper())
 
         self.controller = controller
         self.text = wx.TextCtrl(self, size=(120, -1))
