@@ -198,7 +198,7 @@ class Star(DBQuery):
     def getStarsByPartName(self, name):
         """ looks for all like name%   """
         name = name.encode('utf-8')
-        sql = "SELECT `id`,`name`,`ra`,`dec` FROM `star` WHERE name LIKE %(name)s ORDER BY `name`  LIMIT 20"
+        sql = "SELECT `id`,`name`,`ra`,`dec` FROM `star` WHERE name LIKE %(name)s ORDER BY `name`  LIMIT 100"
         args = {'name': (name + '%')}
         return self.selectAll(sql, args)
 

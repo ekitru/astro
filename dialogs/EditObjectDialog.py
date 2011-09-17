@@ -63,6 +63,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
                 if response == wx.ID_YES:
                     self._starHolder.deleteStar(star)
                     self.list.DeleteItem(index)
+                    self.list.Select(index)
         else:
             event.Skip()
 
