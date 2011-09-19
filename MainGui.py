@@ -37,7 +37,7 @@ class MainGui(wx.Frame):
         gridColumn2.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         gridColumn2.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
-        grid = wx.FlexGridSizer(1, 2, 10, 10)   #3,2,10,10
+        grid = wx.GridSizer(1, 2, 10, 10)   #3,2,10,10
         grid.Add(gridColumn1)
         grid.Add(gridColumn2)
 
