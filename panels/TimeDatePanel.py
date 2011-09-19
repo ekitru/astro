@@ -20,13 +20,13 @@ class TimeDatePanel(SimplePanel):
         self.LST = self.CreateField()
 
         sizer.Add(self.CreateCaption(codes.get('pTimeLT')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.LT, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.LT, flag=wx.ALL | wx.EXPAND | wx.CENTER)
         sizer.Add(self.CreateCaption(codes.get('pTimeUTC')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.UTC, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.UTC, flag=wx.ALL | wx.EXPAND | wx.CENTER)
         sizer.Add(self.CreateCaption(codes.get('pTimeJD')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.JD, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.JD, flag=wx.ALL | wx.EXPAND | wx.CENTER)
         sizer.Add(self.CreateCaption(codes.get('pTimeLST')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.LST, flag=wx.ALL | wx.CENTER)
+        sizer.Add(self.LST, flag=wx.ALL | wx.EXPAND | wx.CENTER)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pTime')), wx.VERTICAL)
         comSizer.Add(sizer, flag=wx.ALL, border=10)

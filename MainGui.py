@@ -24,27 +24,26 @@ class MainGui(wx.Frame):
         self.manualSetpointPanel = ManualSetpointPanel(controller=self.controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
         self.controlModePanel = ControlModePanel(controller=self.controller, ID=ID_CONTROLMODEPANEL, **panelArgs)
 
-        gridColumn1 = wx.BoxSizer(wx.VERTICAL)
+        leftColon = wx.BoxSizer(wx.VERTICAL)
+        leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
+        leftColon.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
+        leftColon.AddSpacer(10)
+        leftColon.Add(self.controlModePanel, flag=wx.ALL | wx.EXPAND)
+        leftColon.AddSpacer(5)
+        leftColon.Add(self.manualSetpointPanel, flag=wx.ALL | wx.EXPAND)
 
-        gridColumn1.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
-        gridColumn1.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
-        gridColumn1.AddSpacer(10)
-        gridColumn1.Add(self.controlModePanel, flag=wx.ALL | wx.EXPAND)
-        gridColumn1.AddSpacer(5)
-        gridColumn1.Add(self.manualSetpointPanel, flag=wx.ALL | wx.EXPAND)
-        gridColumn2 = wx.BoxSizer(wx.VERTICAL)
+        rightColon = wx.BoxSizer(wx.VERTICAL)
+        rightColon.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
+        rightColon.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
-        gridColumn2.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
-        gridColumn2.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
+        grid = wx.FlexGridSizer(1, 2, 10, 10)   #3,2,10,10
+        grid.Add(leftColon)
+        grid.Add(rightColon)
 
-        grid = wx.GridSizer(1, 2, 10, 10)   #3,2,10,10
-        grid.Add(gridColumn1, flag=wx.ALL | wx.EXPAND)
-        grid.Add(gridColumn2, flag=wx.ALL | wx.EXPAND)
+        commonSizer = wx.BoxSizer(wx.VERTICAL)
+        commonSizer.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
 
-        canvas = wx.BoxSizer(wx.VERTICAL)
-        canvas.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
-
-        self.SetSizer(canvas)
+        self.SetSizer(commonSizer)
         self.Centre()
 
         self.timer = wx.Timer(self)
@@ -62,7 +61,7 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_MENU, menu.OnSettings, id=ID_SETTINGS)
 
         self.CreateStatusBar()
-        self.SetStatusText('Program starts')
+        self.SetStatusText(codes.get('mainSuccStart'))
 
 
     def update(self, event):
