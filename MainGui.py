@@ -38,8 +38,8 @@ class MainGui(wx.Frame):
         gridColumn2.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
         grid = wx.GridSizer(1, 2, 10, 10)   #3,2,10,10
-        grid.Add(gridColumn1)
-        grid.Add(gridColumn2)
+        grid.Add(gridColumn1, flag=wx.ALL | wx.EXPAND)
+        grid.Add(gridColumn2, flag=wx.ALL | wx.EXPAND)
 
         canvas = wx.BoxSizer(wx.VERTICAL)
         canvas.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
