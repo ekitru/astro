@@ -29,7 +29,7 @@ class TimeDatePanel(SimplePanel):
         sizer.Add(self.LST, flag=wx.ALL | wx.EXPAND | wx.CENTER)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pTime')), wx.VERTICAL)
-        comSizer.Add(sizer, flag=wx.ALL, border=10)
+        comSizer.Add(sizer, flag=wx.ALL | wx.EXPAND, border=10)
         self.SetSizer(comSizer)
 
     def update(self, controller):

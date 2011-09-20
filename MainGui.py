@@ -37,8 +37,8 @@ class MainGui(wx.Frame):
         rightColon.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
         grid = wx.FlexGridSizer(1, 2, 10, 10)   #3,2,10,10
-        grid.Add(leftColon)
-        grid.Add(rightColon)
+        grid.Add(leftColon, flag= wx.ALL | wx.EXPAND)
+        grid.Add(rightColon, flag = wx.ALL | wx.EXPAND)
 
         commonSizer = wx.BoxSizer(wx.VERTICAL)
         commonSizer.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
