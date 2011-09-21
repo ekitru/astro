@@ -31,6 +31,7 @@ class TimeDatePanel(SimplePanel):
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pTime')), wx.VERTICAL)
         comSizer.Add(sizer, flag=wx.ALL | wx.EXPAND, border=10)
         self.SetSizer(comSizer)
+        self.SetMinSize((290, -1))
 
     def update(self, controller):
         """Updates local time, sidereal time, julian day and UTC time """
@@ -39,4 +40,3 @@ class TimeDatePanel(SimplePanel):
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])
         self.LST.SetLabel(times[3])
-  
