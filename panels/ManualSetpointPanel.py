@@ -36,6 +36,7 @@ class ManualSetpointPanel(SimplePanel):
         self.butSelSec = self.CreateToggleButton(label=codes.get('pSetpointSec'),font=self.fontBold(), size=self.sizeSmall())
         self.butIncFoc = self.CreateButton(label="+", size=self.sizeSmall())
         self.butDecFoc = self.CreateButton(label="-", size=self.sizeSmall())
+        self.butSetCoords = self.CreateButton(label='Set', size=self.sizeLarge())
 
         pControlCol1.AddSpacer(5)
         pControlCol1.Add(self.CreateCaption(codes.get('pSetpointRA')), flag= wx.ALIGN_RIGHT)
@@ -52,7 +53,7 @@ class ManualSetpointPanel(SimplePanel):
         pControlCol2.AddSpacer(2)
         pControlCol2.Add(self.inFieldFoc)
         pControlCol2.AddSpacer(4)
-#        pControlCol2.Add(self.butMove)
+        pControlCol2.AddSpacer(self.butSetCoords)
         #self.moveBut.Enable(controller.scopeCanMove())
 
         pControlCol3.AddSpacer(5)
