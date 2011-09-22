@@ -43,16 +43,16 @@ class PositionPanel(SimplePanel):
         self.SetSizer(comSizer)
 
     def update(self, controller):
-        position = controller.getTelescopePosition()
-        focus = controller.getTelescopeFocus()
+        currentCoordinates = controller.currentCoordinates
+        setpointCoordinates = controller.setpointCoordinates
+        currentFocus =  controller.currentFocus
+        setpointFocus = controller.setpointFocus
 
-        self.curRA.SetLabel(position['cur'][0])
-        self.curDEC.SetLabel(position['cur'][1])
-        self.curFocus.SetLabel(focus['cur'])
+        self.curRA.SetLabel(currentCoordinates.getAsString()[0])
+        self.curDEC.SetLabel(currentCoordinates.getAsString()[1])
+        self.curFocus.SetLabel(currentFocus.getAsString())
 
-#        self.taskRA.SetLabel(position['end'][0])
-#        self.taskDEC.SetLabel(position['end'][1])
-        self.taskRA.SetLabel(controller.getSetpointCoordinates()[0])
-        self.taskDEC.SetLabel(controller.getSetpointCoordinates()[1])
-        self.taskFocus.SetLabel(controller.getSetpointFocus())
+        self.taskRA.SetLabel(setpointCoordinates.getAsString()[0])
+        self.taskDEC.SetLabel(setpointCoordinates.getAsString()[1])
+        self.taskFocus.SetLabel(setpointFocus.getAsString())
   

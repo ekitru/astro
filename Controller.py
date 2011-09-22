@@ -53,8 +53,12 @@ class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.object = None
-        self.setpoint = SetPoint() #In auto mode it is sent to plc
-        self.focus = Focus()    #In Auto mode it is sent to plc
+        self.currentCoordinates = Coordinates()  #read from PLC
+        self.setpointCoordinates = Coordinates() #sent to PLC
+        self.currentFocus = Focus()     #read from PLC
+        self.setpointFocus = Focus()    #sent to PLC
+        self.manPosition = None
+        self.manFocus = None
 
     def __initLogger(self):
         if not os.path.exists('logs'):
@@ -109,34 +113,10 @@ class Controller(object):
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
         #source selection
-        position = self.object.getCurrentPosition()
-        ra, dec = position['ra'], position['dec']
-        self.setpoint.setCoordinates(ra, dec)
-
-    def getSetpointCoordinates(self):
-        """ Get setpoint coordinates """
-        return self.setpoint.getCoordinatesAsString()
-
-
-    def getTelescopePosition(self):
-        """ Return current and target telescope position
-        {'cur':(str,str) ,'end':(str,str)}
-        """
-        telescopePosition = self._resourceKeeper.getPLCManager().getPosition()
-        position = {'cur': astronomy.rad2str(*telescopePosition[0]), 'end': astronomy.rad2str(*telescopePosition[1])}
-        return position
-
-    def getSetpointFocus(self):
-        """ Get setpoint focus"""
-        return self.focus.getFocusAsString()
-
-    def getTelescopeFocus(self):
-        """ Return current and target telescope focus
-        {'current':str() ,'end':str()}
-        """
-        telescopeFocus = self._resourceKeeper.getPLCManager().getFocus()
-        focus = {'cur': str(telescopeFocus[0]), 'end': str(telescopeFocus[1])}
-        return focus
+        if self.objSetpointControlSelected():
+            position = self.object.getCurrentPosition()
+            ra, dec = position['ra'], position['dec']
+            self.setpointCoordinates.setValue(ra, dec)
 
 
     def pcControlSelected(self):
@@ -197,20 +177,32 @@ class Focus(object):
     MAX = 2.0
 
     def __init__(self, focus=0.0):
-        self.setFocus(focus)
+        self.setValue(focus)
 
-    def setFocus(self, focus):
-        """setFocus(float)"""
+    def setValue(self, focus):
+        """setValue(float)"""
         self.focus = focus
 
-    def getFocus(self):
+    def getValue(self):
         return self.focus
 
-    def getFocusAsString(self):
+    def getAsString(self):
         return str(self.focus)
 
+class Coordinates(object):
+    def __init__(self, ra=0, dec=0):
+        self.setValue(ra, dec)
 
+    def setValue(self, ra, dec):
+        """ can take coordinates in RAD or string (HH:MIN:SEC) """
+        ra, dec = astronomy.getCoordinates(ra, dec)
+        self.ra, self.dec = astronomy.normCoordinates(ra, dec)
 
+    def getValue(self):
+        return self.ra, self.dec
+
+    def getAsString(self):
+        return astronomy.rad2str(self.ra, self.dec)
 
 
 

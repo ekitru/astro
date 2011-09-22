@@ -64,5 +64,8 @@ class ControlModePanel(SimplePanel):
             self.rbRemoteControl.Disable()
             self.rbObjectSetpoint.Enable()
             self.rbManualSetpoint.Enable()
+            self.butMove.Disable()
             if self.rbRemoteControl.GetValue():
                 self.rbObjectSetpoint.SetValue(True)
+            if controller.scopeCanMove() or not controller.objSetpointControlSelected():
+                self.butMove.Enable()

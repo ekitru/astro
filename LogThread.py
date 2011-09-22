@@ -45,7 +45,7 @@ class LogThread(object):
         return position[0]
 
     def getCurrentFocus(self):
-        focus = self._plc.getFocus()
+        focus = self._plc.getValue()
         return focus[0]
 
     def getTemperature(self, temp_in, temp_out):

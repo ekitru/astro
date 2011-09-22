@@ -14,8 +14,8 @@ class ManualSetpointPanel(SimplePanel):
         SimplePanel.__init__(self,parent,ID)
 
         self.controller = controller
-        self.setpoint = controller.setpoint
-        self.focus = controller.focus
+        self.setpoint = controller.setpointCoordinates
+        self.focus = controller.setpointFocus
         self.trans = codes
 
         #Positioning panel control sizer
@@ -81,6 +81,7 @@ class ManualSetpointPanel(SimplePanel):
 
         self.SetSizer(comSizer)
 
+        self.Bind(wx.EVT_SHOW, self.OnShow)
         self.Bind(wx.EVT_BUTTON, self.OnButtonUp, self.butMovUpRA)
         self.Bind(wx.EVT_BUTTON, self.OnButtonDown, self.butMovDwnRA)
         self.Bind(wx.EVT_BUTTON, self.OnButtonLeft, self.butMovLftDEC)
@@ -90,16 +91,25 @@ class ManualSetpointPanel(SimplePanel):
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelSec, self.butSelSec)
         self.Bind(wx.EVT_BUTTON, self.OnButtonIncFoc, self.butIncFoc)
         self.Bind(wx.EVT_BUTTON, self.OnButtonDecFoc, self.butDecFoc)
-        self.Bind(wx.EVT_SHOW, self.OnShow)
+        self.Bind(wx.EVT_BUTTON, self.OnButtonSet, self.butSetCoords)
 
         self.butSelSec.SetValue(True)
 
 
     def OnShow(self, event):
         if event.GetShow():
-            self.inFieldRA.SetValue(self.setpoint.getCoordinatesAsString()[0])
-            self.inFieldDEC.SetValue(self.setpoint.getCoordinatesAsString()[1])
-            self.inFieldFoc.SetValue(self.focus.getFocusAsString())
+            self.inFieldRA.SetValue(self.setpoint.getAsString()[0])
+            self.inFieldDEC.SetValue(self.setpoint.getAsString()[1])
+            self.inFieldFoc.SetValue(self.focus.getAsString())
+
+    def OnButtonSet(self, event):
+        ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(),self.inFieldFoc.GetValue()
+        if astronomy.checkCoordinates(dec, ra):
+            self.controller.setpointCoordinates.setValue(str(ra),str(dec))
+            self.controller.setpointFocus.setValue(foc)
+        else:
+            #temp solution TODO: real implementation
+            print('check coordinates')
 
     def OnButtonUp(self, event):
         sign = 1
