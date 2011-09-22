@@ -4,7 +4,7 @@ from db import Message, Log
 __author__ = 'kitru'
 
 class LogThread(object):
-    _scale = 60
+    _scale = 1
 
     def __init__(self, controller, minutes=1):
         self._period = minutes * self._scale
@@ -45,7 +45,7 @@ class LogThread(object):
         return position[0]
 
     def getCurrentFocus(self):
-        focus = self._plc.getValue()
+        focus = self._plc.getFocus()
         return focus[0]
 
     def getTemperature(self, temp_in, temp_out):
