@@ -36,32 +36,35 @@ class MainGui(wx.Frame):
         rightColon.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         rightColon.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
 
-        grid = wx.FlexGridSizer(1, 2, 10, 10)   #3,2,10,10
+        grid = wx.FlexGridSizer(1, 2, 10, 10)
         grid.Add(leftColon, flag= wx.ALL | wx.EXPAND)
         grid.Add(rightColon, flag = wx.ALL | wx.EXPAND)
 
         commonSizer = wx.BoxSizer(wx.VERTICAL)
         commonSizer.Add(grid, flag=wx.ALL | wx.EXPAND, border=10)
 
-        self.SetSizer(commonSizer)
-        self.Centre()
-
         self.timer = wx.Timer(self)
+
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
-
         menu = AstroMenu(self.controller)
+
         self.SetMenuBar(menu)
-
         self.Bind(wx.EVT_MENU, menu.OnSelectObject, id=ID_SELOBJ)
-        self.Bind(wx.EVT_MENU, menu.OnEditObject, id=ID_EDITOBJ)
 
+        self.Bind(wx.EVT_MENU, menu.OnEditObject, id=ID_EDITOBJ)
         self.Bind(wx.EVT_MENU, menu.OnMessage, id=ID_MESSAGE)
+
         self.Bind(wx.EVT_MENU, menu.OnLogs, id=ID_LOGS)
         self.Bind(wx.EVT_MENU, menu.OnSettings, id=ID_SETTINGS)
-
         self.CreateStatusBar()
+
         self.SetStatusText(codes.get('mainSuccStart'))
+
+
+        self.SetSizer(commonSizer)
+        self.Layout()
+        self.Centre()
 
 
     def update(self, event):
@@ -72,8 +75,6 @@ class MainGui(wx.Frame):
         self.positioningPanel.update(self.controller)
         self.manualSetpointPanel.update(self.controller)
         self.controlModePanel.update(self.controller)
-
-        self.Layout()
         self.Fit()
         self.Show()
         event.Skip(False)
