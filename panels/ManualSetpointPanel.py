@@ -104,9 +104,9 @@ class ManualSetpointPanel(SimplePanel):
 
     def OnButtonSet(self, event):
         ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(),self.inFieldFoc.GetValue()
-        if astronomy.checkCoordinates(dec, ra):
+        if astronomy.checkCoordinates(dec, ra) and self.__checkFocus(foc):
             self.controller.setpointCoordinates.setValue(str(ra),str(dec))
-            self.controller.setpointFocus.setValue(foc)
+            self.controller.setpointFocus.setValue(float(foc))
         else:
             #temp solution TODO: real implementation
             print('check coordinates')
@@ -212,9 +212,33 @@ class ManualSetpointPanel(SimplePanel):
         return str(dec)
 
     def __incrementFocus(self, focus, speed, sign):
-        focus = float(focus) + 0.1*sign
-        if focus < self.focus.MIN:
-            focus = self.focus.MIN
-        elif focus > self.focus.MAX:
-            focus = self.focus.MAX
-        return str(focus)
+        if self.__checkFocus(focus):
+            focus = float(focus) + 0.1*sign
+            focus = self.__normFocus(focus)
+            return str(focus)
+        else:
+            #temp solution TODO: real implementation
+            print('check focus')
+            return focus
+
+    def __normFocus(self, focus):
+        """(float)
+            Checks that focus distance is within limits. If not, then it's value is set to the closest limit
+        """
+        if focus < 0.0:
+            return 0.0
+        if focus > 2.0:
+            return 2.0
+        else:
+            return focus
+
+    def __checkFocus(self, focus):
+        try:
+            focus = float(focus)
+            if focus >= 0.0 and focus <= 2.0:
+                return True
+            else:
+                return False
+        except Exception:
+            return False
+
