@@ -283,8 +283,20 @@ class Log(DBQuery):
         """ Read log, result can be filtered by star name or logging period """
         select = "SELECT l.`id`,l.`time`, s.`name`, s.`ra`,s.`dec`, m.`text`, l.`ra`, l.`dec`, l.`temp_in`, l.`temp_out`, l.`status` FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
         condition = self.condConstruct(starName, startDate, endDate)
-        ret = self.selectAll(select, args=None, where=condition)
-        return ret
+        rows = self.selectAll(select, where=condition)
+        list = []
+        for row in rows:
+            dict = {}
+            dict['id']=row[0]
+            dict['time']=time.ctime(int(row[1]))
+            dict['name']=row[2]
+            dict['sRa'], dict['sDec'] = astronomy.rad2str(row[3], row[4])
+            dict['msg'] = row[5]
+            dict['ra'], dict['dec'] = astronomy.rad2str(row[6], row[7])
+            dict['temp_in'], dict['temp_out'] = row[8], row[9]
+            dict['status']=row[10]
+            list.append(dict)
+        return list
 
 
     def condConstruct(self, starName, startDate, endDate):
