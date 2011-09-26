@@ -145,6 +145,11 @@ def getCoordinates(ra, dec):
     return:
        tuple(ephem.hours, ephem.degrees)
     """
+    if not ra:
+        ra=0.0
+    if not dec:
+        dec=0.0
+
     ra = ephem.hours(ra)
     dec = ephem.degrees(dec)
     return ra, dec
