@@ -5,7 +5,7 @@ from db import Message, Log
 __author__ = 'kitru'
 
 class LogThread(object):
-    _scale = 1
+    _scale = 30
 
     def __init__(self, controller, minutes=1):
         self._period = minutes * self._scale
