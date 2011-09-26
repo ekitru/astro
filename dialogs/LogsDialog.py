@@ -21,7 +21,7 @@ class LogsDialog(wx.Dialog):
         list = wx.ListCtrl(self, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
         list.SetMinSize((950, 300))
         list.InsertColumn(col=0, heading=codes.get('dLogs_ID'), format=wx.LIST_FORMAT_LEFT)
-        list.InsertColumn(col=1, heading=codes.get('dLogs_star_id'), format=wx.LIST_FORMAT_LEFT)
+        list.InsertColumn(col=1, heading=codes.get('dLogs_time'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=2, heading=codes.get('dLogs_star_name'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=3, heading=codes.get('dLogs_star_ra'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=4, heading=codes.get('dLogs_star_dec'), format=wx.LIST_FORMAT_LEFT)

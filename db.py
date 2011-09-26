@@ -2,6 +2,7 @@
 import threading
 
 import MySQLdb
+import time
 import astronomy
 
 from Exceptions import ConfigurationException, DbException
@@ -259,32 +260,43 @@ class Log(DBQuery):
     def writeToLog(self):
         """ Saves new row in DB.
         can throw DbException """
-        self.addRecord()
+        self._addRecord()
         self.cleanValues()
 
-    def addRecord(self):
-        sql = self._insertSQL()
-        args = self._insertSQLargs()
+    def _addRecord(self):
+        sql = self._getSQL()
+        args = self._getArgs()
         self.insert(sql, args)
 
-    def _insertSQL(self):
-        fields = "(`id`, `star_id`, `msg_id`, `ra`, `dec`, `focus`,`temp_in`, `temp_out`,`status`)"
-        values = "(default, %(star_id)s, %(msg_id)s, %(ra)s, %(dec)s, %(focus)s, %(temp_in)s, %(temp_out)s, %(status)s)"
+    def _getSQL(self):
+        fields = "(`id`, `time`, `star_id`, `msg_id`, `ra`, `dec`, `focus`,`temp_in`, `temp_out`,`status`)"
+        values = "(default, %(time)s, %(star_id)s, %(msg_id)s, %(ra)s, %(dec)s, %(focus)s, %(temp_in)s, %(temp_out)s, %(status)s)"
         sql = "INSERT INTO `log` " + fields + " VALUES " + values
         return sql
 
-    def _insertSQLargs(self):
-        return {'id': self._id, 'star_id': self._star_id, 'msg_id': self._msg_id, 'ra': self._ra, 'dec': self._dec,
+    def _getArgs(self):
+        timestamp = int(time.time())
+        return {'id': self._id, 'time': timestamp, 'star_id': self._star_id, 'msg_id': self._msg_id, 'ra': self._ra, 'dec': self._dec,
                 'focus': self._focus, 'temp_in': self._temp_in, 'temp_out': self._temp_out, 'status': self._status}
 
-    def readLog(self, starName=None):
-        select = "SELECT l.id,s.id,s.ra,s.dec, m.text, l.ra, l.dec, l.temp_in, l.temp_out, l.status FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
-        if starName:
-            condition = "s.name= \"" + starName + "\""
-        else:
-            condition = None
+    def readLog(self, starName=None, startDate=None, endDate=None):
+        """ Read log, result can be filtered by star name or logging period """
+        select = "SELECT l.`id`,l.`time`, s.`name`, s.`ra`,s.`dec`, m.`text`, l.`ra`, l.`dec`, l.`temp_in`, l.`temp_out`, l.`status` FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
+        condition = self.condConstruct(starName, startDate, endDate)
         ret = self.selectAll(select, args=None, where=condition)
         return ret
+
+
+    def condConstruct(self, starName, startDate, endDate):
+        """ Construct where codition """
+        list = []
+        if starName:
+            list.append("s.`name` =\""+starName+"\"")
+        if startDate and endDate:
+            list.append("l.`time` between " + str(startDate) +" and "+str(endDate))
+        row = " AND ".join(list)
+        print(row)
+        return row
 
 
     def cleanValues(self):

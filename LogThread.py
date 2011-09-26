@@ -1,4 +1,5 @@
 import threading
+import time
 from db import Message, Log
 
 __author__ = 'kitru'
