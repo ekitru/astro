@@ -1,5 +1,7 @@
 import wx
 import sys
+import datetime
+import time
 from db import Log
 from panels.SimplePanel import SimplePanel
 
@@ -19,7 +21,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(searchPanel, flag=wx.ALL | wx.EXPAND, border=10)
         sizer.Add(self._list, flag=wx.EXPAND)
-        sizer.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dLogs_close')), flag=wx.ALL | wx.ALIGN_RIGHT, border =10)
+        sizer.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dLogs_close')), flag=wx.ALL | wx.ALIGN_RIGHT, border=10)
 
         self.SetSizer(sizer)
         self.Fit()
@@ -48,18 +50,18 @@ class LogsDialog(wx.Dialog, SimplePanel):
         sizer = wx.FlexGridSizer(1, 12, 5, 5)
 
         self.name = wx.TextCtrl(self, size=(120, -1))
-        self.startDate = wx.TextCtrl(self, size=(120, -1))
-        self.endDate = wx.TextCtrl(self, size=(120, -1))
+        self.startDate = wx.DatePickerCtrl(self, dt=wx.DateTime().UNow(), size=(120, -1), style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
+        self.endDate = wx.DatePickerCtrl(self, dt=wx.DateTime.UNow(), size=(120, -1), style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
 
         sizer.Add(self.CreateCaption(codes.get('dLogs_name')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         sizer.Add(self.name)
-        sizer.AddSpacer((40,-1))
+        sizer.AddSpacer((40, -1))
         sizer.Add(self.CreateCaption(codes.get('dLogs_from')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         sizer.Add(self.startDate)
-        sizer.AddSpacer((40,-1))
+        sizer.AddSpacer((40, -1))
         sizer.Add(self.CreateCaption(codes.get('dLogs_to')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         sizer.Add(self.endDate)
-        sizer.AddSpacer((20,-1))
+        sizer.AddSpacer((20, -1))
         sizer.Add(wx.Button(self, wx.ID_FIND, label=codes.get('dLogs_find')), proportion=2,
                   flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
 
@@ -69,7 +71,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
     def FillList(self, logs):
         self._list.DeleteAllItems()
         for log in logs:
-            index = self._list.InsertStringItem(sys.maxint, str(log['id']) )
+            index = self._list.InsertStringItem(sys.maxint, str(log['id']))
             self._list.SetStringItem(index, 1, str(log['time']))
             self._list.SetStringItem(index, 2, unicode(log['name']))
             self._list.SetStringItem(index, 3, str(log['sRa']))
@@ -81,15 +83,23 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 9, str(log['temp_out']))
             self._list.SetStringItem(index, 10, str(log['status']))
 
+    def getDate(self, dateTime):
+        day, month, year = dateTime.GetDay(), dateTime.GetMonth()+1, dateTime.GetYear()
+        date = datetime.date(year, month, day)
+        return time.mktime(date.timetuple())
+
     def OnFind(self, event):
         name = self.name.GetValue();
-        start = self.startDate.GetValue();
-        end= self.endDate.GetValue();
-        logs = self._log.readLog(starName=name, startDate=start, endDate=end)
+        start = self.startDate.GetValue()
+        end = self.endDate.GetValue()
+
+        startDate = self.getDate(start)
+        endDate = self.getDate(end)
+        logs = self._log.readLog(name, startDate, endDate)
         self.FillList(logs)
 
     def OnCancel(self, event):
-       self.EndModal(wx.ID_CANCEL)
+        self.EndModal(wx.ID_CANCEL)
 
 
 
