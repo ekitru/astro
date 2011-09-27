@@ -90,7 +90,7 @@ class Controller(object):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
             # close database connections
-            self.logThread._stop()
+            self.logThread.stop()
             del self._resourceKeeper
         except Exception as e:
             raise ClosingException(e)
@@ -120,7 +120,7 @@ class Controller(object):
 
     def logNow(self):
         print('forse log to write')
-        self.logThread.doWork()
+        self.logThread.force()
 
 
     def pcControlSelected(self):

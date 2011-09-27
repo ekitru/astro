@@ -4,7 +4,7 @@ from db import Message, Log
 __author__ = 'kitru'
 
 class LogThread(object):
-    _scale = 30
+    _scale = 10
 
     def __init__(self, controller, minutes=1):
         self._mutex = threading.RLock()
@@ -18,21 +18,27 @@ class LogThread(object):
         self._start()
 
     def _start(self):
-        self._timer = threading.Timer(self._period, self.doWork)
+        self._doWork()
+        self._timer = threading.Timer(self._period, self._start)
         self._timer.start()
 
-    def _stop(self):
+    def stop(self):
         with self._mutex:
             self._timer.cancel()
             self._timer.join()
 
-    def doWork(self):
+    def _doWork(self):
         with self._mutex:
             self._log.setMsgId(self.getMsgId())
             self._log.setCurrentRaDec(*self.getCurrentRaDec())
             self._log.setCurrentFocus(self.getCurrentFocus())
             self._log.setStarId(self.getStarId())
             self._log.writeToLog()
+
+    def force(self):
+        with self._mutex:
+            self._timer.cancel()
+            self._timer.join()
             self._start()
 
     def getStarId(self):
