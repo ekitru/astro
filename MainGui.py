@@ -97,7 +97,10 @@ class AstroMenu(wx.MenuBar):
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
         event.Skip(False)
-        self.showDial(SelectObjectDialog)
+        ret = self.showDial(SelectObjectDialog)
+        if ret==wx.ID_OK:
+            print('selected')
+            self._controller.logNow()
 
     def OnEditObject(self, event):
         """ Working with DB objects: add, update, delete """
@@ -107,7 +110,10 @@ class AstroMenu(wx.MenuBar):
     def OnMessage(self, event):
         """ Allows to setup new observation message (comment) """
         event.Skip(False)
-        self.showDial(MessageDialog)
+        ret = self.showDial(MessageDialog)
+        if ret==wx.ID_OK:
+            print('updated msg')
+            self._controller.logNow()
 
     def OnLogs(self, event):
         """ Shows observation logs """
@@ -125,8 +131,9 @@ class AstroMenu(wx.MenuBar):
             Dialog(wx.Dialog) class object
         """
         dialog = Dialog(self, wx.ID_ANY, self._controller)
-        dialog.ShowModal()
+        ret = dialog.ShowModal()
         dialog.Destroy()
+        return ret
 
 
     def CreateObjectMenu(self, trans):

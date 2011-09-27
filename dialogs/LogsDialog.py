@@ -71,7 +71,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
         for log in logs:
             index = self._list.InsertStringItem(sys.maxint, str(log['id']) )
             self._list.SetStringItem(index, 1, str(log['time']))
-            self._list.SetStringItem(index, 2, str(log['name']))
+            self._list.SetStringItem(index, 2, unicode(log['name']))
             self._list.SetStringItem(index, 3, str(log['sRa']))
             self._list.SetStringItem(index, 4, str(log['sDec']))
             self._list.SetStringItem(index, 5, str(log['msg']))

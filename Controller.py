@@ -90,7 +90,7 @@ class Controller(object):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
             # close database connections
-            self.logThread.stop()
+            self.logThread._stop()
             del self._resourceKeeper
         except Exception as e:
             raise ClosingException(e)
@@ -117,6 +117,10 @@ class Controller(object):
             position = self.object.getCurrentPosition()
             ra, dec = position['ra'], position['dec']
             self.setpointCoordinates.setValue(ra, dec)
+
+    def logNow(self):
+        print('forse log to write')
+        self.logThread.doWork()
 
 
     def pcControlSelected(self):

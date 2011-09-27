@@ -1,5 +1,4 @@
 import threading
-import time
 from db import Message, Log
 
 __author__ = 'kitru'
@@ -15,13 +14,13 @@ class LogThread(object):
         self._log = Log(self._resurseKeeper.getDbManager())
         self._message = Message(self._resurseKeeper.getDbManager())
         self._plc = self._resurseKeeper.getPLCManager()
-        self.start()
+        self._start()
 
-    def start(self):
+    def _start(self):
         self._timer = threading.Timer(self._period, self.doWork)
         self._timer.start()
 
-    def stop(self):
+    def _stop(self):
         self._timer.cancel()
         self._timer.join()
 
@@ -31,7 +30,7 @@ class LogThread(object):
         self._log.setCurrentRaDec(*self.getCurrentRaDec())
         self._log.setCurrentFocus(self.getCurrentFocus())
         self._log.writeToLog()
-        self.start()
+        self._start()
 
     def getStarId(self):
         object = self._controller.getObject()
