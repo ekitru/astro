@@ -307,7 +307,7 @@ class Log(DBQuery):
         if startDate and endDate:
             list.append("l.`time` between " + str(startDate) +" and "+str(endDate))
         row = " AND ".join(list)
-        print(row)
+        print('condition',row)
         return row
 
 
