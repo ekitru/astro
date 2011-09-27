@@ -1,6 +1,5 @@
 import wx
 import sys
-from astronomy import rad2str
 from db import Log
 from panels.SimplePanel import SimplePanel
 
@@ -8,10 +7,11 @@ __author__ = 'kitru'
 
 class LogsDialog(wx.Dialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        wx.Dialog.__init__(self, parent, id, 'dLogs_title',
-                           style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
         resources = controller.getResourceKeeper()
         codes = resources.getCodes()
+        wx.Dialog.__init__(self, parent, id, codes.get('dLogs_title'),
+                           style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
+
         self._log = Log(resources.getDbManager())
         self._list = self.CreateLists(codes)
         searchPanel = self.CreateSearchPanel(codes)
@@ -74,7 +74,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 2, unicode(log['name']))
             self._list.SetStringItem(index, 3, str(log['sRa']))
             self._list.SetStringItem(index, 4, str(log['sDec']))
-            self._list.SetStringItem(index, 5, str(log['msg']))
+            self._list.SetStringItem(index, 5, unicode(log['msg']))
             self._list.SetStringItem(index, 6, str(log['ra']))
             self._list.SetStringItem(index, 7, str(log['dec']))
             self._list.SetStringItem(index, 8, str(log['temp_in']))
