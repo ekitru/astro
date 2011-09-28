@@ -23,11 +23,13 @@ class LogsDialog(wx.Dialog, SimplePanel):
         sizer.Add(self._list, flag=wx.EXPAND)
         sizer.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dLogs_close')), flag=wx.ALL | wx.ALIGN_RIGHT, border=10)
 
+        self.SetFocus()
         self.SetSizer(sizer)
         self.Fit()
 
         self.Bind(wx.EVT_BUTTON, self.OnFind, id=wx.ID_FIND)
         self.Bind(wx.EVT_BUTTON, self.OnCancel, id=wx.ID_CANCEL)
+        self.Bind(wx.EVT_KEY_UP, self.OnListCharacter)
 
     def CreateLists(self, codes):
         list = wx.ListCtrl(self, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
@@ -64,9 +66,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
         sizer.AddSpacer((20, -1))
         sizer.Add(wx.Button(self, wx.ID_FIND, label=codes.get('dLogs_find')), proportion=2,
                   flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
-
         return sizer
-
 
     def FillList(self, logs):
         self._list.DeleteAllItems()
@@ -83,24 +83,40 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 9, str(log['temp_out']))
             self._list.SetStringItem(index, 10, str(log['status']))
 
-    def getDate(self, dateTime):
-        day, month, year = dateTime.GetDay(), dateTime.GetMonth()+1, dateTime.GetYear()
+    def getUnixTimeStamp(self, dateTime):
+        day, month, year = dateTime.GetDay(), dateTime.GetMonth() + 1, dateTime.GetYear()
         date = datetime.date(year, month, day)
         return time.mktime(date.timetuple())
 
+    def getStartDay(self, dateTime):
+        """ Return first second of the day """
+        return self.getUnixTimeStamp(dateTime)
+
+    def getEndDay(self, dateTime):
+        """ Return last second of the day """
+        ONE_DAY=24*60*60-1 #23hour 59 minutes 59 seconds
+        return self.getUnixTimeStamp(dateTime)+ONE_DAY
+
+
     def OnFind(self, event):
+        event.Skip()
+        self.findInLog()
+
+
+    def OnListCharacter (self, event):
+        event.Skip()
+        if event.GetKeyCode() == wx.WXK_RETURN:
+            self.findInLog()
+
+    def findInLog(self):
         name = self.name.GetValue();
         start = self.startDate.GetValue()
         end = self.endDate.GetValue()
-
-        startDate = self.getDate(start)
-        endDate = self.getDate(end)
+        startDate = self.getStartDay(start)
+        endDate = self.getEndDay(end)
+        print('diff', startDate - endDate)
         logs = self._log.readLog(name, startDate, endDate)
         self.FillList(logs)
 
     def OnCancel(self, event):
         self.EndModal(wx.ID_CANCEL)
-
-
-
-  
