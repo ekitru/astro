@@ -83,11 +83,6 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 9, str(log['temp_out']))
             self._list.SetStringItem(index, 10, str(log['status']))
 
-    def getUnixTimeStamp(self, dateTime):
-        day, month, year = dateTime.GetDay(), dateTime.GetMonth() + 1, dateTime.GetYear()
-        date = datetime.date(year, month, day)
-        return time.mktime(date.timetuple())
-
     def getStartDay(self, dateTime):
         """ Return first second of the day """
         return self.getUnixTimeStamp(dateTime)
@@ -96,6 +91,11 @@ class LogsDialog(wx.Dialog, SimplePanel):
         """ Return last second of the day """
         ONE_DAY=24*60*60-1 #23hour 59 minutes 59 seconds
         return self.getUnixTimeStamp(dateTime)+ONE_DAY
+
+    def getUnixTimeStamp(self, dateTime):
+        day, month, year = dateTime.GetDay(), dateTime.GetMonth() + 1, dateTime.GetYear()
+        date = datetime.date(year, month, day)
+        return time.mktime(date.timetuple())
 
 
     def OnFind(self, event):
@@ -108,13 +108,16 @@ class LogsDialog(wx.Dialog, SimplePanel):
         if event.GetKeyCode() == wx.WXK_RETURN:
             self.findInLog()
 
-    def findInLog(self):
-        name = self.name.GetValue();
+    def getPeriod(self):
         start = self.startDate.GetValue()
         end = self.endDate.GetValue()
         startDate = self.getStartDay(start)
         endDate = self.getEndDay(end)
-        print('diff', startDate - endDate)
+        return startDate, endDate
+
+    def findInLog(self):
+        name = self.name.GetValue();
+        startDate, endDate = self.getPeriod()
         logs = self._log.readLog(name, startDate, endDate)
         self.FillList(logs)
 
