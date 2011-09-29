@@ -9,7 +9,7 @@ class ManualSetpointPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
-    __setpointSpeed = 1
+    _setpointSpeed = 1
     def __init__(self, parent, controller, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self,parent,ID)
 
@@ -179,10 +179,10 @@ class ManualSetpointPanel(SimplePanel):
             but1.SetValue(True)
 
     def __getSetpointSpeed(self):
-        return self.__setpointSpeed
+        return self._setpointSpeed
 
     def __setSetpointSpeed(self, speed):
-        self.__setpointSpeed = speed
+        self._setpointSpeed = speed
 
     def __changeInputFieldValue(self, incrementFunction, inputField, speed, sign):
         coordinate = str(inputField.GetValue())
