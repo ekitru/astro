@@ -49,7 +49,7 @@ class ResourceKeeper(object):
 
 
 class Controller(object):
-    __controlMode = True
+    _controlMode = True
     def __init__(self):
         self.__initLogger()
         self.object = None
@@ -137,13 +137,13 @@ class Controller(object):
         """ Returns True if AUTO control selected
             Returns False if MANUAL control selected
         """
-        return self.__controlMode
+        return self._controlMode
 
     def selObjSetpointControl(self):
-        self.__controlMode = True
+        self._controlMode = True
 
     def selManSetpointControl(self):
-        self.__controlMode = False
+        self._controlMode = False
 
     def scopeCanMove(self):
         canMove = True

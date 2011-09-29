@@ -8,10 +8,10 @@ class ControlModePanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
-    def __init__(self, parent, controller, ID=wx.ID_ANY, codes=None):
+    _setpointControlMode = 1
+    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self,parent,ID)
 
-        self.controller = controller
         self.codes = codes
 
         self.rbObjectSetpoint = wx.RadioButton(self, wx.ID_ANY, self.codes.get('pCtrlObjSP'))
@@ -38,10 +38,10 @@ class ControlModePanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.butMove)
 
     def OnObjSetpointRadBut(self, event):
-        self.controller.selObjSetpointControl()
+        self._setpointControlMode = 1
 
     def OnManSetpointRadBut(self, event):
-        self.controller.selManSetpointControl()
+        self._setpointControlMode = 0
 
     def OnRemoteCtrlRadBut(self, event):
         return
@@ -54,12 +54,17 @@ class ControlModePanel(SimplePanel):
         return
 
     def update(self, controller):
+        if self._setpointControlMode == 1:
+            controller.selObjSetpointControl()
+        else:
+            controller.selManSetpointControl()
+
         if controller.remoteControlSelected():
             self.rbObjectSetpoint.Disable()
             self.rbManualSetpoint.Disable()
             self.rbRemoteControl.Enable()
             self.rbRemoteControl.SetValue(True)
-            controller.selObjSetpointControl()
+            self._setpointControlMode = 1
         if controller.pcControlSelected():
             self.rbRemoteControl.Disable()
             self.rbObjectSetpoint.Enable()
@@ -67,5 +72,5 @@ class ControlModePanel(SimplePanel):
             self.butMove.Disable()
             if self.rbRemoteControl.GetValue():
                 self.rbObjectSetpoint.SetValue(True)
-            if controller.scopeCanMove() or not controller.objSetpointControlSelected():
+            if controller.scopeCanMove() or not self._setpointControlMode == 1:
                 self.butMove.Enable()

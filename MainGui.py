@@ -22,7 +22,7 @@ class MainGui(wx.Frame):
         self.positioningPanel = PositionPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
         self.manualSetpointPanel = ManualSetpointPanel(controller=self.controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
-        self.controlModePanel = ControlModePanel(controller=self.controller, ID=ID_CONTROLMODEPANEL, **panelArgs)
+        self.controlModePanel = ControlModePanel(ID=ID_CONTROLMODEPANEL, **panelArgs)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
