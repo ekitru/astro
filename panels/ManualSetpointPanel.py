@@ -103,13 +103,10 @@ class ManualSetpointPanel(SimplePanel):
             self.inFieldFoc.SetValue(self.focus.getAsString())
 
     def OnButtonSet(self, event):
-        ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(),self.inFieldFoc.GetValue()
-        if astronomy.checkCoordinates(dec, ra) and self.__checkFocus(foc):
+        if self.__checkCoordinatesAndFocus():
+            ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(),self.inFieldFoc.GetValue()
             self.controller.setpointCoordinates.setValue(str(ra),str(dec))
             self.controller.setpointFocus.setValue(float(foc))
-        else:
-            #temp solution TODO: real implementation
-            print('check coordinates')
 
     def OnButtonUp(self, event):
         sign = 1
@@ -168,6 +165,11 @@ class ManualSetpointPanel(SimplePanel):
             self.Hide()
         else:
             self.Show()
+        if self.__checkCoordinatesAndFocus():
+           self.butSetCoords.Enable()
+        else:
+           self.butSetCoords.Disable()
+
 
     def __handleToggleLogic(self,but1,but2,but3):
         if but1.GetValue():
@@ -242,3 +244,6 @@ class ManualSetpointPanel(SimplePanel):
         except Exception:
             return False
 
+    def __checkCoordinatesAndFocus(self):
+        ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(),self.inFieldFoc.GetValue()
+        return astronomy.checkCoordinates(dec, ra) and self.__checkFocus(foc)
