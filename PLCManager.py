@@ -12,10 +12,13 @@ class PLCManager(object):
         self.logger.info('Establishing connection')
         try:
             #Connect to the slave
-            self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=confDict['port'])
+            self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=int(confDict['port']))
             self.ID = confDict['slave id']
+            self.master._do_open()
             self.logger.info('Connection established')
         except modbus_tk.modbus.ModbusError as error:
+            raise ConfigurationException(error.args, self.logger)
+        except Exception as error:
             raise ConfigurationException(error.args, self.logger)
 
         self.mockCurRA = 0.231
