@@ -51,23 +51,23 @@ class ProgramConfig(SystemConf):
     def __init__(self, configFileName):
         SystemConf.__init__(self, 'programConfig')
         self.logger.info('Read configuration file: ' + configFileName)
-        self.config = self.getConfigFromFile(configFileName)
+        self._config = self.getConfigFromFile(configFileName)
 
     def getPLCManager(self):
         """ Get communication configuration from config file. If communication section is missing raise  Configuration Exception  """
         logging.info('=== Communication initialization ===')
-        commConfig = self.getConfigBySection(self.config, "communication")
+        commConfig = self.getConfigBySection(self._config, "communication")
         return PLCManager(commConfig)
 
     def getDbManager(self):
         logging.info('=== DB initialization ===')
-        dbConfig = self.getConfigBySection(self.config, "db configuration")
+        dbConfig = self.getConfigBySection(self._config, "db configuration")
         return DbManager(dbConfig)
 
     def getObserver(self):
         """ get observer for telescope position """
         logging.info('=== Reading telescope configurations ===')
-        configs = self.getConfigBySection(self.config, "observer")
+        configs = self.getConfigBySection(self._config, "observer")
         return Observer(configs)
 
     def getTranslation(self):
@@ -83,8 +83,11 @@ class ProgramConfig(SystemConf):
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
-        return self.getConfigBySection(self.config, "common")
+        return self.getConfigBySection(self._config, "common")
+#        e=self.getConfigBySection(self.config, "common")
 
+    def setCommonConfigDict(self, comDict):
+        """ Takes a dictionary and saves into common dictionary """
 
 class TransConf(SystemConf):
     def __init__(self, lang):
