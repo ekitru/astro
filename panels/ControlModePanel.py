@@ -9,8 +9,8 @@ class ControlModePanel(SimplePanel):
         codes - Translation codes
     """
     _setpointControlMode = 1
-    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self,parent,ID)
+    def __init__(self, parent, id=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self,parent,id)
 
         self.codes = codes
 

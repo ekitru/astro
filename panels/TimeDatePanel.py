@@ -9,8 +9,8 @@ class TimeDatePanel(SimplePanel):
         codes - Translation codes
     """
 
-    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent, ID)
+    def __init__(self, parent, id=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, id)
 
         sizer = wx.GridSizer(4, 2, 5, 10)
 

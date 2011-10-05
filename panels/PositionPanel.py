@@ -8,8 +8,8 @@ class PositionPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
-    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent, ID)
+    def __init__(self, parent, id=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, id)
 
         pPosSizer = wx.GridSizer(4, 3, 5, 10)
 

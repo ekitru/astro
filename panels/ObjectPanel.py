@@ -9,8 +9,8 @@ class ObjectPanel(SimplePanel):
         codes - Translation codes
     """
 
-    def __init__(self, parent, ID=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent, ID)
+    def __init__(self, parent, id=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self, parent, id)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("pObject")), wx.VERTICAL)
         comSizer.Add(self.CreateCoordinatesGrid(codes), flag=wx.ALL, border=10)

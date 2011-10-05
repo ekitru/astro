@@ -12,7 +12,7 @@ from LogThread import LogThread
 
 __author__ = 'kitru'
 
-class ResourceKeeper(object):
+class Resources(object):
     def __init__(self, config):
         self._codes = config.getTranslation()
         self._PLCManager = config.getPLCManager()
@@ -74,12 +74,12 @@ class Controller(object):
         Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
-            config = ProgramConfig('default.conf')
-            self.observer = config.getObserver()
+            self._config = ProgramConfig('default.conf')
+            self.observer = self._config.getObserver()
             self.object = Object(self.observer)
 
-            self._resourceKeeper = ResourceKeeper(config)
-            minutes = float(config.getCommonConfigDict()['logging time'])
+            self._resourceKeeper = Resources(self._config)
+            minutes = float(self._config.getCommonConfigDict()['logging time'])
             self.logThread = LogThread(self, minutes)
         except ConfigurationException as ce:
             logging.error('Erron during initialization occure: ' + ce.__str__())
@@ -94,6 +94,9 @@ class Controller(object):
             del self._resourceKeeper
         except Exception as e:
             raise ClosingException(e)
+
+    def getConfig(self):
+        return self._config
 
     def getResourceKeeper(self):
         return self._resourceKeeper

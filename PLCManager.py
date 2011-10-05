@@ -14,7 +14,7 @@ class PLCManager(object):
             #Connect to the slave
             self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=int(confDict['port']))
             self.ID = confDict['slave id']
-            self.master._do_open()
+#            self.master._do_open()
             self.logger.info('Connection established')
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self.logger)

@@ -10,8 +10,8 @@ class ManualSetpointPanel(SimplePanel):
         codes - Translation codes
     """
     _setpointSpeed = 1
-    def __init__(self, parent, controller, ID=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self,parent,ID)
+    def __init__(self, parent, controller, id=wx.ID_ANY, codes=None):
+        SimplePanel.__init__(self,parent,id)
 
         self.controller = controller
         self.setpoint = controller.setpointCoordinates
