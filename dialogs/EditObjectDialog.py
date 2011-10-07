@@ -75,7 +75,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
     def askConfirmation(self, star):
         confirm = wx.MessageDialog(self, caption=star['name'], message=self.codes.get('dEditObj_confirm'),
-                                       style=wx.YES_NO | wx.NO_DEFAULT | wx.CENTER)
+                                       style=wx.YES_NO | wx.NO_DEFAULT | wx.CENTER | wx.ICON_QUESTION | wx.CAPTION)
         response = confirm.ShowModal()
         confirm.Destroy()
         return response
@@ -91,7 +91,7 @@ class AddStarDialog(wx.Dialog):
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
-        self.saveButton = wx.Button(self, id=wx.ID_OK, label=self.codes.get("dAddObj_add"))
+        self.saveButton = wx.Button(self, id=wx.ID_ADD, label=self.codes.get("dAddObj_add"))
         self.cancelButton = wx.Button(self, id=wx.ID_CANCEL, label=self.codes.get("dAddObj_cancel"))
         buttons = wx.BoxSizer(wx.HORIZONTAL)
         buttons.Add(self.saveButton, flag=wx.ALL | wx.ALIGN_LEFT)
@@ -103,7 +103,7 @@ class AddStarDialog(wx.Dialog):
         self.SetSizer(sizer)
         self.Fit()
 
-        self.Bind(wx.EVT_BUTTON, self.OnSaveClicked, id=wx.ID_OK)
+        self.Bind(wx.EVT_BUTTON, self.OnSaveClicked, id=wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
 
         self.timer = wx.Timer(self)
