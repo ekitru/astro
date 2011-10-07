@@ -15,6 +15,8 @@ class DBQuery(object):
         self.close()
 
     def selectOne(self, sql, args=None, where=None):
+        """ select single row from DB, if where condition is presented
+        sql concatinates with where condition """
         with self._mutex:
             try:
                 if where:
@@ -25,6 +27,8 @@ class DBQuery(object):
                 raise DbException(error.args, self._logger)
 
     def selectAll(self, sql, args=None, where=None):
+        """ select multy records from DB, if where condition is presented
+        sql concatinates with where condition """
         with self._mutex:
             try:
                 if where:
@@ -35,8 +39,6 @@ class DBQuery(object):
                 raise DbException(error.args, self._logger)
 
     def insert(self, sql, args):
-        """ Insert single row value
-        Return: last row number  """
         with self._mutex:
             try:
                 self.cursor.execute(sql, args)
