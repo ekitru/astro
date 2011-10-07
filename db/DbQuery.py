@@ -15,14 +15,14 @@ class DBQuery(object):
         self.close()
 
     def selectOne(self, sql, args=None, where=None):
-        try:
-            with self._mutex:
+        with self._mutex:
+            try:
                 if where:
                     sql = sql + " WHERE " + where
                 self.cursor.execute(sql, args)
                 return self.cursor.fetchone()
-        except Exception as error:
-            raise DbException(error.args, self._logger)
+            except Exception as error:
+                raise DbException(error.args, self._logger)
 
     def selectAll(self, sql, args=None, where=None):
         with self._mutex:
