@@ -39,7 +39,7 @@ class SimplePanel(wx.Panel):
         return speedSelButton
 
     def CreateBitmapButton(self, name, file_type, size=wx.DefaultSize):
-        path = join('resources', 'bitmaps', name)
+        path = join('resources', 'icons', name)
         bitmap = wx.Bitmap(path, file_type)
         return wx.BitmapButton(self, id=wx.ID_ANY, bitmap=bitmap, size=size)
 

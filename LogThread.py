@@ -4,7 +4,7 @@ from db import Message, Log
 __author__ = 'kitru'
 
 class LogThread(object):
-    _scale = 10
+    _scale = 30
 
     def __init__(self, controller, minutes=1):
         self._mutex = threading.RLock()
