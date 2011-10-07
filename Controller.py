@@ -61,12 +61,13 @@ class Controller(object):
         self.manFocus = None
 
     def __initLogger(self):
-        if not os.path.exists('logs'):
-            os.makedirs('logs', mode=0711)
+        logPath = join('resources','logs')
+        if not os.path.exists(logPath):
+            os.makedirs(logPath, mode=0711)
         logging.basicConfig(level=logging.INFO,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
-                            filename=join('logs', 'common.log'),
+                            filename=join(logPath, 'common.log'),
                             filemode='w')
 
     def initialization(self):

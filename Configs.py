@@ -79,11 +79,11 @@ class ProgramConfig(SystemConf):
         """ Find default translation from config file """
         dict = self.getCommonConfigDict()
         self.logger.info('Read default translation')
-        return dict["default translation"]
+        return dict['default translation']
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
-        return self.getConfigBySection(self.config, "common")
+        return self.getConfigBySection(self.config, 'common')
 
 
 class TransConf(SystemConf):
@@ -108,4 +108,4 @@ class TransConf(SystemConf):
         Return SafeConfigParser from name.conf file
         """
         self.logger.info('Read translations for ' + language)
-        return self.getConfigFromFile(join("trans", language + ".conf"))
+        return self.getConfigFromFile(join('resources','trans', language + '.conf'))
