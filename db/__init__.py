@@ -1,11 +1,11 @@
-__author__ = 'kitru'
-
 from db import DbManager
-from db import DbQuery
+from db import Star, Message, Log
+
+__author__ = 'kitru'
 
 DbManager = DbManager.DbManager
 
-Message = DbQuery.Message
-Star = DbQuery.Star
-Log = DbQuery.Log
+Star = Star.Star
+Message = Message.Message
+Log = Log.Log
 

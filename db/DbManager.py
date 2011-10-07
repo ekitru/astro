@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import MySQLdb
 from Exceptions import ConfigurationException
-
 from logger import getLog, closeLog
 
 
@@ -13,7 +12,6 @@ class DbManager(object):
 
     def __init__(self, confDict):
         self._logger = getLog('database')
-        self._dbName = confDict['database']
         self._db = self._getDbConnection(confDict)
 
     def __del__(self):
