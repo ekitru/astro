@@ -131,6 +131,7 @@ class AddStarDialog(wx.Dialog):
         return astronomy.checkCoordinates(dec, ra) & (not self.starManager.starExists(name))
 
     def CheckField(self, event):
+        event.Skip()
         if self.isCorrectInput():
             self.saveButton.Enable()
         else:
@@ -141,10 +142,11 @@ class AddStarDialog(wx.Dialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.starManager.saveStar(name, ra, dec)
+        self.starManager.saveStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
 
     def OnCancelClicked(self, event):
+        event.Skip()
         self.EndModal(wx.ID_CANCEL)
 
 class UpdateStarDialog(AddStarDialog):
@@ -158,7 +160,6 @@ class UpdateStarDialog(AddStarDialog):
 
     def isCorrectInput(self):
         """ Check correct values for RA and DEC """
-        name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
         return astronomy.checkCoordinates(dec, ra)
@@ -167,6 +168,6 @@ class UpdateStarDialog(AddStarDialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.starManager.updateStar(name, ra, dec)
+        self.starManager.updateStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
   

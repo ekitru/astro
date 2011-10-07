@@ -122,4 +122,5 @@ class LogsDialog(wx.Dialog, SimplePanel):
         self.FillList(logs)
 
     def OnCancel(self, event):
+        event.Skip()
         self.EndModal(wx.ID_CANCEL)

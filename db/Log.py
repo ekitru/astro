@@ -41,7 +41,7 @@ class Log(DBQuery):
         rows = self.selectAll(select, where=condition)
         list = []
         for row in rows:
-            dict = {}
+            dict = dict()
             dict['id'] = row[0]
             dict['time'] = time.ctime(int(row[1]))
             dict['name'] = row[2]

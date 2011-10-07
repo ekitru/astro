@@ -22,9 +22,9 @@ class StarList(wx.ListCtrl):
             stars - dict('name','ra','dec') """
         self.DeleteAllItems()
         for star in stars:
-            index = self.InsertStringItem(sys.maxint, star['name'])
-            self.SetStringItem(index, 1, star['ra'])
-            self.SetStringItem(index, 2, star['dec'])
+            index = self.InsertStringItem(index=sys.maxint, label=star['name'])
+            self.SetStringItem(index, col=1, label=star['ra'])
+            self.SetStringItem(index, cal=2, label=star['dec'])
 
     def GetSelectedStarName(self):
         curItemId = self.GetFirstSelected()
@@ -78,6 +78,7 @@ class ObjectListDialog(wx.Dialog):
         self.EndModal(wx.ID_OK)
 
     def OnCancelClicked(self, event):
+        event.Skip()
         self.EndModal(wx.ID_CANCEL)
 
     def OnListItemSelected(self, event): #item selection in list
