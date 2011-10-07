@@ -24,11 +24,11 @@ class StarList(wx.ListCtrl):
         for star in stars:
             index = self.InsertStringItem(index=sys.maxint, label=star['name'])
             self.SetStringItem(index, col=1, label=star['ra'])
-            self.SetStringItem(index, cal=2, label=star['dec'])
+            self.SetStringItem(index, col=2, label=star['dec'])
 
     def GetSelectedStarName(self):
         curItemId = self.GetFirstSelected()
-        item = self.GetItem(curItemId, 0).GetText()
+        item = self.GetItem(curItemId).GetText()
         return item
 
 

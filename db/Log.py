@@ -41,16 +41,16 @@ class Log(DBQuery):
         rows = self.selectAll(select, where=condition)
         list = []
         for row in rows:
-            dict = dict()
-            dict['id'] = row[0]
-            dict['time'] = time.ctime(int(row[1]))
-            dict['name'] = row[2]
-            dict['sRa'], dict['sDec'] = astronomy.rad2str(row[3], row[4])
-            dict['msg'] = row[5]
-            dict['ra'], dict['dec'] = astronomy.rad2str(row[6], row[7])
-            dict['temp_in'], dict['temp_out'] = row[8], row[9]
-            dict['status'] = row[10]
-            list.append(dict)
+            data = {}
+            data['id'] = row[0]
+            data['time'] = time.ctime(int(row[1]))
+            data['name'] = row[2]
+            data['sRa'], data['sDec'] = astronomy.rad2str(row[3], row[4])
+            data['msg'] = row[5]
+            data['ra'], data['dec'] = astronomy.rad2str(row[6], row[7])
+            data['temp_in'], data['temp_out'] = row[8], row[9]
+            data['status'] = row[10]
+            list.append(data)
         return list
 
 

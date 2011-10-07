@@ -12,7 +12,7 @@ class MainGui(wx.Frame):
         super(MainGui, self).__init__(parent, title=title,
                                       size=(706, 388))
         #        InspectionTool().Show()
-        self.controller = controller
+        self._controller = controller
 
         codes = controller.getResourceKeeper().getCodes()
         panelArgs = {"parent": self, "codes": codes}
@@ -21,7 +21,7 @@ class MainGui(wx.Frame):
         self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
         self.positioningPanel = PositionPanel(ID=ID_POSITIONING, **panelArgs)
         self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(controller=self.controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
+        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
         self.controlModePanel = ControlModePanel(ID=ID_CONTROLMODEPANEL, **panelArgs)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
@@ -47,7 +47,7 @@ class MainGui(wx.Frame):
 
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
-        menu = AstroMenu(self.controller)
+        menu = AstroMenu(self._controller)
 
         self.SetMenuBar(menu)
         self.Bind(wx.EVT_MENU, menu.OnSelectObject, id=ID_SELOBJ)
@@ -69,12 +69,12 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         """ Updates panels view """
-        self.controller.updateSetPoint()
-        self.objectPanel.update(self.controller)
-        self.timeDatePanel.update(self.controller)
-        self.positioningPanel.update(self.controller)
-        self.manualSetpointPanel.update(self.controller)
-        self.controlModePanel.update(self.controller)
+        self._controller.updateSetPoint()
+        self.objectPanel.update(self._controller)
+        self.timeDatePanel.update(self._controller)
+        self.positioningPanel.update(self._controller)
+        self.manualSetpointPanel.update(self._controller)
+        self.controlModePanel.update(self._controller)
         self.Fit()
         self.Show()
         event.Skip(False)
