@@ -83,7 +83,7 @@ class ProgramConfig(SystemConf):
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
-        return self.getConfigBySection(self.config, 'common')
+        return self.getConfigBySection(self._config, 'common')
 
 class TransConf(SystemConf):
     def __init__(self, lang):

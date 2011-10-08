@@ -17,12 +17,12 @@ class MainGui(wx.Frame):
         codes = controller.getResourceKeeper().getCodes()
         panelArgs = {"parent": self, "codes": codes}
 
-        self.objectPanel = ObjectPanel(ID=ID_OBJPANEL, **panelArgs)
-        self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
-        self.positioningPanel = PositionPanel(ID=ID_POSITIONING, **panelArgs)
-        self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
-        self.controlModePanel = ControlModePanel(ID=ID_CONTROLMODEPANEL, **panelArgs)
+        self.objectPanel = ObjectPanel(id=ID_OBJPANEL, **panelArgs)
+        self.timeDatePanel = TimeDatePanel(id=ID_TIMEPANEL, **panelArgs)
+        self.positioningPanel = PositionPanel(id=ID_POSITIONING, **panelArgs)
+        self.telescopePanel = TelescopePanel(id=ID_TELESCOPE, **panelArgs)
+        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, id=ID_MANUALSETPOINTPANEL, **panelArgs)
+        self.controlModePanel = ControlModePanel(id=ID_CONTROLMODEPANEL, **panelArgs)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -86,13 +86,13 @@ class AstroMenu(wx.MenuBar):
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
         self._controller = controller
-        codes = controller.getResourceKeeper().getCodes()
+        self._codes = controller.getResourceKeeper().getCodes()
 
-        objMenu = self.CreateObjectMenu(codes)
-        toolsMenu = self.CreateToolsMenu(codes)
+        objMenu = self.CreateObjectMenu(self._codes)
+        toolsMenu = self.CreateToolsMenu(self._codes)
 
-        self.Append(menu=objMenu, title=codes.get('mObj'))
-        self.Append(menu=toolsMenu, title=codes.get('mTools'))
+        self.Append(menu=objMenu, title=self._codes.get('mObj'))
+        self.Append(menu=toolsMenu, title=self._codes.get('mTools'))
 
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
