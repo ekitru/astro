@@ -155,15 +155,6 @@ class Controller(object):
             canMove = False
         return canMove
 
-    def checkName(self, name):
-        star = self.star.getStarByName(name)
-        print(star)
-        if star:
-            return True
-        else:
-            return False
-
-
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
         self.setCoordinates(ra, dec)

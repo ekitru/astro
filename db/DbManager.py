@@ -35,7 +35,7 @@ class DbManager(object):
     def getDb(self):
         return self._db
 
-    def getLog(self):
+    def getLogger(self):
         return self._logger
 
     def close(self):

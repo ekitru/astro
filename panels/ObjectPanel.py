@@ -26,10 +26,10 @@ class ObjectPanel(SimplePanel):
         sizer = wx.GridSizer(4, 3, 5, 10)
 
         self.objectName = self.CreateField()
-        self.objectOrigRA = self.CreateCoordField()
-        self.objectCurrRA = self.CreateCoordField()
-        self.objectOrigDEC = self.CreateCoordField()
-        self.objectCurrDEC = self.CreateCoordField()
+        self.objectOrigRA = self.CreateCoordinateField()
+        self.objectCurrRA = self.CreateCoordinateField()
+        self.objectOrigDEC = self.CreateCoordinateField()
+        self.objectCurrDEC = self.CreateCoordinateField()
 
         sizer.Add(self.CreateCaption(codes.get('pObjName')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objectName, flag=wx.ALL | wx.EXPAND | wx.CENTER)
@@ -64,8 +64,8 @@ class ObjectPanel(SimplePanel):
         Attr:
             codes - translation codes
         """
-        self.objAltitude = self.CreateCoordField()
-        self.objHourAngle = self.CreateCoordField()
+        self.objAltitude = self.CreateCoordinateField()
+        self.objHourAngle = self.CreateCoordinateField()
         self.objRisingTime = self.CreateField()
         self.objSettingTime = self.CreateField()
 

@@ -17,12 +17,12 @@ class MainGui(wx.Frame):
         codes = controller.getResourceKeeper().getCodes()
         panelArgs = {"parent": self, "codes": codes}
 
-        self.objectPanel = ObjectPanel(id=ID_OBJPANEL, **panelArgs)
-        self.timeDatePanel = TimeDatePanel(id=ID_TIMEPANEL, **panelArgs)
-        self.positioningPanel = PositionPanel(id=ID_POSITIONING, **panelArgs)
-        self.telescopePanel = TelescopePanel(id=ID_TELESCOPE, **panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, id=ID_MANUALSETPOINTPANEL, **panelArgs)
-        self.controlModePanel = ControlModePanel(id=ID_CONTROLMODEPANEL, **panelArgs)
+        self.objectPanel = ObjectPanel(**panelArgs)
+        self.timeDatePanel = TimeDatePanel(**panelArgs)
+        self.positioningPanel = PositionPanel(**panelArgs)
+        self.telescopePanel = TelescopePanel(**panelArgs)
+        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, **panelArgs)
+        self.controlModePanel = ControlModePanel(**panelArgs)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -124,7 +124,7 @@ class AstroMenu(wx.MenuBar):
         """ Give opportunities to change program default setups, like language or connection parameters """
         event.Skip(False)
         dialog = SettingsDialog(self, wx.ID_ANY, self._codes, self._controller)
-        ret = dialog.ShowModal()
+        dialog.ShowModal()
         dialog.Destroy()
 
     def showDial(self, Dialog):

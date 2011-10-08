@@ -7,7 +7,7 @@ class Star(DBQuery):
     """ manage operations with stars in DB """
 
     def __init__(self, dbManager):
-        super(Star, self).__init__(dbManager.getDb(), dbManager.getLog())
+        super(Star, self).__init__(dbManager.getDb(), dbManager.getLogger())
 
     def starExists(self, name):
         """ Check DB for record with same name """

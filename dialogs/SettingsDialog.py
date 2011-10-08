@@ -17,12 +17,12 @@ class SettingsNoteBook(wx.Notebook):
     def __init__(self, parent, codes, controller):
         wx.Notebook.__init__(self, parent, id=wx.ID_ANY, style=wx.BK_DEFAULT)
         commonTab = CommonTab(self, codes, controller)
-        self.AddPage(commonTab, codes.get("tCommon_title"))
+        self.AddPage(page=commonTab, text=codes.get("tCommon_title"), select=True)
 
 
 class CommonTab(SimplePanel):
     def __init__(self, parent, codes, controller):
-        SimplePanel.__init__(self, parent, id=wx.ID_ANY)
+        SimplePanel.__init__(self, parent)
         self._config = controller.getConfig()
 
         commonDict = self._config.getCommonConfigDict()

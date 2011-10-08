@@ -18,7 +18,7 @@ class SimplePanel(wx.Panel):
         element.SetMinSize(wx.Size(80, 20))
         return element
 
-    def CreateCoordField(self):
+    def CreateCoordinateField(self):
         element = self.CreateElement()
         element.SetMinSize(wx.Size(80, 20))
         return element

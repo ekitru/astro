@@ -6,7 +6,7 @@ class Message(DBQuery):
     """ manage operations with messages in DB """
 
     def __init__(self, dbManager):
-        super(Message, self).__init__(dbManager.getDb(), dbManager.getLog())
+        super(Message, self).__init__(dbManager.getDb(), dbManager.getLogger())
 
     def setNew(self, text):
         """ return added message id
