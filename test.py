@@ -10,7 +10,7 @@ if __name__ == '__main__':
     telescope.long = ephem.degrees('26.46008849143982')
     telescope.lat = ephem.degrees('58.26574454393915')
     telescope.elevation = 320
-    telescope.temp = 25;
+    telescope.temp = 25
     print('telescope time', telescope.date)
     print('local sidereal time', telescope.sidereal_time())  #correct
     print('UTC', ephem.now())

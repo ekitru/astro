@@ -4,17 +4,17 @@ from db import Message, Log
 __author__ = 'kitru'
 
 class LogThread(object):
-    _scale = 10
+    _scale = 30
 
     def __init__(self, controller, minutes=1):
         self._mutex = threading.RLock()
         self._period = minutes * self._scale
         self._controller = controller
 
-        self._resurseKeeper = controller.getResourceKeeper()
-        self._log = Log(self._resurseKeeper.getDbManager())
-        self._message = Message(self._resurseKeeper.getDbManager())
-        self._plc = self._resurseKeeper.getPLCManager()
+        self._resourseKeeper = controller.getResourceKeeper()
+        self._log = Log(self._resourseKeeper.getDbManager())
+        self._message = Message(self._resourseKeeper.getDbManager())
+        self._plc = self._resourseKeeper.getPLCManager()
         self._start()
 
     def _start(self):

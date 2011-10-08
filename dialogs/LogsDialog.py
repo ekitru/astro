@@ -116,10 +116,11 @@ class LogsDialog(wx.Dialog, SimplePanel):
         return startDate, endDate
 
     def findInLog(self):
-        name = self.name.GetValue();
+        name = self.name.GetValue()
         startDate, endDate = self.getPeriod()
         logs = self._log.readLog(name, startDate, endDate)
         self.FillList(logs)
 
     def OnCancel(self, event):
+        event.Skip()
         self.EndModal(wx.ID_CANCEL)

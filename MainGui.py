@@ -12,17 +12,17 @@ class MainGui(wx.Frame):
         super(MainGui, self).__init__(parent, title=title,
                                       size=(706, 388))
         #        InspectionTool().Show()
-        self.controller = controller
+        self._controller = controller
 
         codes = controller.getResourceKeeper().getCodes()
         panelArgs = {"parent": self, "codes": codes}
 
-        self.objectPanel = ObjectPanel(id=ID_OBJPANEL, **panelArgs)
-        self.timeDatePanel = TimeDatePanel(id=ID_TIMEPANEL, **panelArgs)
-        self.positioningPanel = PositionPanel(id=ID_POSITIONING, **panelArgs)
-        self.telescopePanel = TelescopePanel(id=ID_TELESCOPE, **panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(controller=self.controller, id=ID_MANUALSETPOINTPANEL, **panelArgs)
-        self.controlModePanel = ControlModePanel(id=ID_CONTROLMODEPANEL, **panelArgs)
+        self.objectPanel = ObjectPanel(ID=ID_OBJPANEL, **panelArgs)
+        self.timeDatePanel = TimeDatePanel(ID=ID_TIMEPANEL, **panelArgs)
+        self.positioningPanel = PositionPanel(ID=ID_POSITIONING, **panelArgs)
+        self.telescopePanel = TelescopePanel(ID=ID_TELESCOPE, **panelArgs)
+        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, ID=ID_MANUALSETPOINTPANEL, **panelArgs)
+        self.controlModePanel = ControlModePanel(ID=ID_CONTROLMODEPANEL, **panelArgs)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -47,7 +47,7 @@ class MainGui(wx.Frame):
 
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(500)
-        menu = AstroMenu(self.controller)
+        menu = AstroMenu(self._controller)
 
         self.SetMenuBar(menu)
         self.Bind(wx.EVT_MENU, menu.OnSelectObject, id=ID_SELOBJ)
@@ -69,12 +69,12 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         """ Updates panels view """
-        self.controller.updateSetPoint()
-        self.objectPanel.update(self.controller)
-        self.timeDatePanel.update(self.controller)
-        self.positioningPanel.update(self.controller)
-        self.manualSetpointPanel.update(self.controller)
-        self.controlModePanel.update(self.controller)
+        self._controller.updateSetPoint()
+        self.objectPanel.update(self._controller)
+        self.timeDatePanel.update(self._controller)
+        self.positioningPanel.update(self._controller)
+        self.manualSetpointPanel.update(self._controller)
+        self.controlModePanel.update(self._controller)
         self.Fit()
         self.Show()
         event.Skip(False)
@@ -86,13 +86,13 @@ class AstroMenu(wx.MenuBar):
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
         self._controller = controller
-        self._codes = controller.getResourceKeeper().getCodes()
+        codes = controller.getResourceKeeper().getCodes()
 
-        objMenu = self.CreateObjectMenu(self._codes)
-        toolsMenu = self.CreateToolsMenu(self._codes)
+        objMenu = self.CreateObjectMenu(codes)
+        toolsMenu = self.CreateToolsMenu(codes)
 
-        self.Append(menu=objMenu, title=self._codes.get('mObj'))
-        self.Append(menu=toolsMenu, title=self._codes.get('mTools'))
+        self.Append(menu=objMenu, title=codes.get('mObj'))
+        self.Append(menu=toolsMenu, title=codes.get('mTools'))
 
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """

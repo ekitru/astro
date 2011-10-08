@@ -32,18 +32,18 @@ class SimplePanel(wx.Panel):
     def CreateInputField(self, size=wx.DefaultSize):
         return wx.TextCtrl(self, id=wx.ID_ANY, size=size)
 
-    def CreateButton(self, label="",font=None, size=wx.DefaultSize):
+    def CreateButton(self, label="", font=None, size=wx.DefaultSize):
         speedSelButton = wx.Button(self, id=wx.ID_ANY, label=label, size=size)
         if font:
             speedSelButton.SetFont(font)
         return speedSelButton
 
     def CreateBitmapButton(self, name, file_type, size=wx.DefaultSize):
-        path = join('bitmaps', name)
+        path = join('resources', 'icons', name)
         bitmap = wx.Bitmap(path, file_type)
-        return wx.BitmapButton(self, id=wx.ID_ANY, bitmap=bitmap,size=size)
+        return wx.BitmapButton(self, id=wx.ID_ANY, bitmap=bitmap, size=size)
 
-    def CreateToggleButton(self, label="", font=None ,size=wx.DefaultSize):
+    def CreateToggleButton(self, label="", font=None, size=wx.DefaultSize):
         toggleButton = wx.ToggleButton(self, id=wx.ID_ANY, label=label, size=size)
         if font:
             toggleButton.SetFont(font)
@@ -51,10 +51,10 @@ class SimplePanel(wx.Panel):
 
     #Sizes and Fonts
     def sizeSmall(self):
-        return 30,25
+        return 30, 25
 
     def sizeLarge(self):
-        return 85,27
+        return 85, 27
 
     def fontNorm(self):
         return wx.Font(10, wx.SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)

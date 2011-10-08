@@ -75,7 +75,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
     def askConfirmation(self, star):
         confirm = wx.MessageDialog(self, caption=star['name'], message=self.codes.get('dEditObj_confirm'),
-                                       style=wx.YES_NO | wx.NO_DEFAULT | wx.CENTER)
+                                       style=wx.YES_NO | wx.NO_DEFAULT | wx.CENTER | wx.ICON_QUESTION | wx.CAPTION)
         response = confirm.ShowModal()
         confirm.Destroy()
         return response
@@ -91,7 +91,7 @@ class AddStarDialog(wx.Dialog):
         self.RA = wx.TextCtrl(self, size=(120, -1))
         self.DEC = wx.TextCtrl(self, size=(120, -1))
 
-        self.saveButton = wx.Button(self, id=wx.ID_OK, label=self.codes.get("dAddObj_add"))
+        self.saveButton = wx.Button(self, id=wx.ID_ADD, label=self.codes.get("dAddObj_add"))
         self.cancelButton = wx.Button(self, id=wx.ID_CANCEL, label=self.codes.get("dAddObj_cancel"))
         buttons = wx.BoxSizer(wx.HORIZONTAL)
         buttons.Add(self.saveButton, flag=wx.ALL | wx.ALIGN_LEFT)
@@ -103,7 +103,7 @@ class AddStarDialog(wx.Dialog):
         self.SetSizer(sizer)
         self.Fit()
 
-        self.Bind(wx.EVT_BUTTON, self.OnSaveClicked, id=wx.ID_OK)
+        self.Bind(wx.EVT_BUTTON, self.OnSaveClicked, id=wx.ID_ADD)
         self.Bind(wx.EVT_BUTTON, self.OnCancelClicked, id=wx.ID_CANCEL)
 
         self.timer = wx.Timer(self)
@@ -131,6 +131,7 @@ class AddStarDialog(wx.Dialog):
         return astronomy.checkCoordinates(dec, ra) & (not self.starManager.starExists(name))
 
     def CheckField(self, event):
+        event.Skip()
         if self.isCorrectInput():
             self.saveButton.Enable()
         else:
@@ -141,10 +142,11 @@ class AddStarDialog(wx.Dialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.starManager.saveStar(name, ra, dec)
+        self.starManager.saveStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
 
     def OnCancelClicked(self, event):
+        event.Skip()
         self.EndModal(wx.ID_CANCEL)
 
 class UpdateStarDialog(AddStarDialog):
@@ -158,7 +160,6 @@ class UpdateStarDialog(AddStarDialog):
 
     def isCorrectInput(self):
         """ Check correct values for RA and DEC """
-        name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
         return astronomy.checkCoordinates(dec, ra)
@@ -167,6 +168,6 @@ class UpdateStarDialog(AddStarDialog):
         name = self.name.GetValue()
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        star = self.starManager.updateStar(name, ra, dec)
+        self.starManager.updateStar(name, ra, dec)
         self.EndModal(wx.ID_OK)
   

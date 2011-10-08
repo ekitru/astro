@@ -9,7 +9,7 @@ class SelectObjectDialog(ObjectListDialog):
     def __init__(self, parent, id, controller):
         ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dSelObj_title', controller.getResourceKeeper())
 
-        self.controller = controller
+        self._controller = controller
         self.text = wx.TextCtrl(self, size=(120, -1))
         self.text.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
@@ -84,7 +84,7 @@ class SelectObjectDialog(ObjectListDialog):
             return
 
         if self._starHolder.starExists(self.starName):
-            self.controller.setObject(self.starName)
+            self._controller.setObject(self.starName)
             self.EndModal(wx.ID_OK)
         else:
             confirm = wx.MessageDialog(self, caption=self.starName, message=self.codes.get('dSelObj_addQues'),
@@ -92,6 +92,6 @@ class SelectObjectDialog(ObjectListDialog):
             if confirm.ShowModal() == wx.ID_YES:
                 confirm.Destroy()
                 self._starHolder.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
-                self.controller.setObject(self.starName)
+                self._controller.setObject(self.starName)
                 self.EndModal(wx.ID_OK)
   

@@ -26,6 +26,7 @@ class MessageDialog(wx.Dialog):
 
 
     def OnSelect(self, event):
+        event.Skip()
         text = self.text.GetValue()
         last = self.message.getLastMsg()
         if  last != text:
