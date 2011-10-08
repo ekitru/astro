@@ -1,8 +1,8 @@
 import wx
 import astronomy
 
-from dialogs.ObjectListDialog import ObjectListDialog
-from panels.SimplePanel import SimplePanel
+from gui.dialogs.ObjectListDialog import ObjectListDialog
+from gui.panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
 

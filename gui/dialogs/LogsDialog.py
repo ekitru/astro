@@ -3,7 +3,7 @@ import sys
 import datetime
 import time
 from db import Log
-from panels.SimplePanel import SimplePanel
+from gui.panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
 

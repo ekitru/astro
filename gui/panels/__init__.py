@@ -1,6 +1,6 @@
 __author__ = 'kitru'
 
-from panels import ObjectPanel, PositionPanel, ManualSetpointPanel, TimeDatePanel, TelescopePanel, ControlModePanel
+from gui.panels import ObjectPanel, PositionPanel, ManualSetpointPanel, TimeDatePanel, TelescopePanel, ControlModePanel
 
 ObjectPanel = ObjectPanel.ObjectPanel
 PositionPanel = PositionPanel.PositionPanel

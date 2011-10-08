@@ -1,6 +1,6 @@
 __author__ = 'kitru'
 
-from dialogs import SelectObjectDialog, EditObjectDialog, MessageDialog, SettingsDialog, LogsDialog
+from gui.dialogs import SelectObjectDialog, EditObjectDialog, MessageDialog, SettingsDialog, LogsDialog
 
 SelectObjectDialog = SelectObjectDialog.SelectObjectDialog
 EditObjectDialog = EditObjectDialog.EditObjectDialog

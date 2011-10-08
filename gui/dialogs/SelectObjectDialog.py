@@ -1,7 +1,7 @@
 import wx
 import astronomy
 
-from dialogs.ObjectListDialog import ObjectListDialog
+from gui.dialogs.ObjectListDialog import ObjectListDialog
 
 __author__ = 'kitru'
 
