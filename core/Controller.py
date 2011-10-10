@@ -52,7 +52,7 @@ class Controller(object):
     _controlMode = True
     def __init__(self):
         self.__initLogger()
-        self.object = None
+        self._object = None
         self.currentCoordinates = Coordinates()  #read from PLC
         self.setpointCoordinates = Coordinates() #sent to PLC
         self.currentFocus = Focus()     #read from PLC
@@ -76,8 +76,8 @@ class Controller(object):
         try:
             logging.info('======= Program initialization =======')
             self._config = ProgramConfig('default.conf')
-            self.observer = self._config.getObserver()
-            self.object = Object(self.observer)
+            self._observer = self._config.getObserver()
+            self._object = Object(self._observer)
 
             self._resourceKeeper = Resources(self._config)
             minutes = float(self._config.getCommonConfigDict()['logging time'])
@@ -109,16 +109,16 @@ class Controller(object):
         """
         star = self._resourceKeeper.getStarHolder().getStarByName(name)
         if star:
-            self.object.init(star['id'], star['name'], star['ra'], star['dec'])
+            self._object.init(star['id'], star['name'], star['ra'], star['dec'])
 
     def getObject(self):
-        return self.object
+        return self._object
 
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
         #source selection
         if self.objSetpointControlSelected():
-            position = self.object.getCurrentPosition()
+            position = self._object.getCurrentPosition()
             ra, dec = position['ra'], position['dec']
             self.setpointCoordinates.setValue(ra, dec)
 
@@ -151,7 +151,7 @@ class Controller(object):
 
     def scopeCanMove(self):
         canMove = True
-        if not self.object.selected():
+        if not self._object.selected():
             canMove = False
         return canMove
 
