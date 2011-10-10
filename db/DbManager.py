@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import MySQLdb
-from Exceptions import ConfigurationException
-from logger import getLog, closeLog
+from core.Exceptions import ConfigurationException
+from core.logger import openLog, closeLog
 
 
 __author__ = 'kitru'
@@ -11,7 +11,7 @@ class DbManager(object):
     handle it opening and closing, also handle db log """
 
     def __init__(self, confDict):
-        self._logger = getLog('database')
+        self._logger = openLog('database')
         self._db = self._getDbConnection(confDict)
 
     def __del__(self):

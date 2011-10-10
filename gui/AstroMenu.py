@@ -65,9 +65,9 @@ class AstroMenu(wx.MenuBar):
     def CreateObjectMenu(self, trans):
         """ Object sub items: Select object, Edit object """
         menu = wx.Menu()
-        self.selectObj = wx.MenuItem(menu, ID_SELOBJ, text=trans.get('smSelObj') + '\tctrl+o',
+        self.selectObj = wx.MenuItem(menu, ID_SELOBJ_DIALOG, text=trans.get('smSelObj') + '\tctrl+o',
                                      help=trans.get('smSelObjHelp'))
-        self.editObj = wx.MenuItem(menu, ID_EDITOBJ, text=trans.get('smEditObj') + '\tctrl+e',
+        self.editObj = wx.MenuItem(menu, ID_EDITOBJ_DIALOG, text=trans.get('smEditObj') + '\tctrl+e',
                                    help=trans.get('smEditObjHelp'))
         menu.AppendItem(self.selectObj)
         menu.AppendItem(self.editObj)
@@ -77,15 +77,15 @@ class AstroMenu(wx.MenuBar):
         """ Tools sub items: message, logs, settings """
         menu = wx.Menu()
 
-        self.message = wx.MenuItem(menu, ID_MESSAGE, text=trans.get('smMessage') + '\tctrl+m',
+        self.message = wx.MenuItem(menu, ID_MSG_DIALOG, text=trans.get('smMessage') + '\tctrl+m',
                                    help=trans.get('smMessageHelp'))
         menu.AppendItem(self.message)
 
-        self.message = wx.MenuItem(menu, ID_LOGS, text=trans.get('smLogs') + '\tctrl+l',
+        self.message = wx.MenuItem(menu, ID_LOGS_DIALOG, text=trans.get('smLogs') + '\tctrl+l',
                                    help=trans.get('smLogsHelp'))
         menu.AppendItem(self.message)
 
-        self.settings = wx.MenuItem(menu, ID_SETTINGS, text=trans.get('smSettings') + '\tctrl+s',
+        self.settings = wx.MenuItem(menu, ID_SETTINGS_DIALOG, text=trans.get('smSettings') + '\tctrl+s',
                                     help=trans.get('smSettingsHelp'))
         menu.AppendItem(self.settings)
         return menu

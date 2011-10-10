@@ -4,7 +4,7 @@ import logging
 from os.path import join
 
 from Exceptions import ConfigurationException
-from logger import  getLog, closeLog
+from logger import  openLog, closeLog
 
 from db import DbManager
 from PLCManager import PLCManager
@@ -14,7 +14,7 @@ __author__ = 'kitru'
 
 class SystemConf(object):
     def __init__(self, loggerName):
-        self.logger = getLog(loggerName)
+        self.logger = openLog(loggerName)
 
     def __del__(self):
         closeLog(self.logger)

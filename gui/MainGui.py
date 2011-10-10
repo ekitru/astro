@@ -50,13 +50,13 @@ class MainGui(wx.Frame):
         menu = AstroMenu(self._controller)
 
         self.SetMenuBar(menu)
-        self.Bind(wx.EVT_MENU, menu.OnSelectObject, id=ID_SELOBJ)
+        self.Bind(wx.EVT_MENU, menu.OnSelectObject, id=ID_SELOBJ_DIALOG)
 
-        self.Bind(wx.EVT_MENU, menu.OnEditObject, id=ID_EDITOBJ)
-        self.Bind(wx.EVT_MENU, menu.OnMessage, id=ID_MESSAGE)
+        self.Bind(wx.EVT_MENU, menu.OnEditObject, id=ID_EDITOBJ_DIALOG)
+        self.Bind(wx.EVT_MENU, menu.OnMessage, id=ID_MSG_DIALOG)
 
-        self.Bind(wx.EVT_MENU, menu.OnLogs, id=ID_LOGS)
-        self.Bind(wx.EVT_MENU, menu.OnSettings, id=ID_SETTINGS)
+        self.Bind(wx.EVT_MENU, menu.OnLogs, id=ID_LOGS_DIALOG)
+        self.Bind(wx.EVT_MENU, menu.OnSettings, id=ID_SETTINGS_DIALOG)
         self.CreateStatusBar()
 
         self.SetStatusText(codes.get('mainSuccStart'))

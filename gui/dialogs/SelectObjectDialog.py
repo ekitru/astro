@@ -1,5 +1,5 @@
 import wx
-import astronomy
+from core import astronomy
 
 from gui.dialogs.ObjectListDialog import ObjectListDialog
 

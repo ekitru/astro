@@ -1,6 +1,6 @@
 import wx
+from core import astronomy
 from gui.panels.SimplePanel import SimplePanel
-import astronomy
 
 __author__ = 'kitru'
 

@@ -1,5 +1,5 @@
 import threading
-from Exceptions import DbException
+from core.Exceptions import DbException
 
 class DBQuery(object):
     """ Simple db helper, makes easier data manipulations. Thread safe  """

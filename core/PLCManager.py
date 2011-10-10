@@ -2,13 +2,13 @@ import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 from Exceptions import ConfigurationException
-from logger import getLog, closeLog
+from logger import openLog, closeLog
 
 __author__ = 'kitru'
 
 class PLCManager(object):
     def __init__(self, confDict):
-        self.logger = getLog('plc_comm')
+        self.logger = openLog('plc_comm')
         self.logger.info('Establishing connection')
         try:
             #Connect to the slave
