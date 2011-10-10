@@ -44,6 +44,12 @@ class LogThread(object):
             self._log.setStarId(self.getStarId())
             self._log.writeToLog()
 
+    def force(self):
+        with self._mutex:
+            self._timer.cancel()
+            self._timer.join()
+            self._start()
+
     def getStarId(self):
         """ return selected object id from controller, if object is not selected return None """
         object = self._controller.getObject()
