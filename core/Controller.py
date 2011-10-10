@@ -102,6 +102,9 @@ class Controller(object):
     def getResourceKeeper(self):
         return self._resourceKeeper
 
+    def getObserver(self):
+        return self._observer
+
     def setObject(self, name):
         """ Stores new object for observer
         Attr:

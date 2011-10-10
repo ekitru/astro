@@ -60,7 +60,7 @@ class SelectObjectDialog(ObjectListDialog):
         """ Check correct values for RA and DEC """
         ra = self.RA.GetValue()
         dec = self.DEC.GetValue()
-        return astronomy.checkCoordinates(dec, ra)
+        return astronomy.checkCoordinates(ra, dec)
 
     def OnOkClicked(self, event):
         self.SelectStar()

@@ -79,6 +79,8 @@ class Object(object):
 
 
 class Observer(object):
+    """ This class imple
+    """
     def __init__(self, confDict):
         self.observer = self.getObserver(confDict)
 
@@ -181,9 +183,10 @@ def normDec(dec):
     return ephem.degrees(dec / 2)
 
 
-def checkCoordinates(dec, ra):
-    return checkHours(ra) and checkDegrees(dec)
+# Astronomy coordinates checking, coordinates can be represented as angles in hours or radians(degrees)
 
+def checkCoordinates(ra, dec):
+    return checkHours(ra) and checkDegrees(dec)
 
 def checkHours( hours):
     try:

@@ -246,4 +246,4 @@ class ManualSetpointPanel(SimplePanel):
 
     def __checkCoordinatesAndFocus(self):
         ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(),self.inFieldFoc.GetValue()
-        return astronomy.checkCoordinates(dec, ra) and self.__checkFocus(foc)
+        return astronomy.checkCoordinates(ra, dec) and self.__checkFocus(foc)
