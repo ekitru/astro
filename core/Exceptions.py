@@ -46,3 +46,15 @@ class DbException(Exception):
         Exception.__init__(self, msg)
         if logger:
             logger.error(msg)
+
+class GuiException(Exception):
+    """Exception raised if GUI return Exception.
+    Attributes:
+        msg  -- explanation of the error
+    """
+
+    def __init__(self, msg, logger=None):
+        Exception.__init__(self, msg)
+        if logger:
+            logger.error(msg)
+
