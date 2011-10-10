@@ -15,6 +15,8 @@ __author__ = 'kitru'
 class Resources(object):
     def __init__(self, config):
         self._codes = config.getTranslation()
+        self._observer = config.getObserver()
+        self._object = Object(self._observer)
         self._PLCManager = config.getPLCManager()
         self._dbManager = config.getDbManager()
         self._star = Star(self._dbManager)
@@ -31,6 +33,17 @@ class Resources(object):
 
     def getCodes(self):
         return self._codes
+
+    def getObserver(self):
+        return self._observer
+
+    def getObject(self):
+        return self._object
+
+    def setObject(self, name):
+        star = self.getStarHolder().getStarByName(name)
+        if star:
+            self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
 
     def getPLCManager(self):
         return self._PLCManager
@@ -50,9 +63,9 @@ class Resources(object):
 
 class Controller(object):
     _controlMode = True
+
     def __init__(self):
         self.__initLogger()
-        self._object = None
         self.currentCoordinates = Coordinates()  #read from PLC
         self.setpointCoordinates = Coordinates() #sent to PLC
         self.currentFocus = Focus()     #read from PLC
@@ -76,22 +89,21 @@ class Controller(object):
         try:
             logging.info('======= Program initialization =======')
             self._config = ProgramConfig('default.conf')
-            self._observer = self._config.getObserver()
-            self._object = Object(self._observer)
-
             self._resourceKeeper = Resources(self._config)
-            minutes = float(self._config.getCommonConfigDict()['logging time'])
-            self.logThread = LogThread(self, minutes)
+            self._logThread = LogThread(self, self._config)
         except ConfigurationException as ce:
-            logging.error('Erron during initialization occure: ' + ce.__str__())
+            logging.error('Error during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
+#        except Exception as error:
+#            logging.error('Unexcepted error during initialization occure: ' + error.__str__())
+#            raise InitializationException(error)
 
 
     def freeResources(self):
         try:
             logging.info('======= Free all resources: DB, MODBUS =======')
             # close database connections
-            self.logThread.stop()
+            self._logThread.stop()
             del self._resourceKeeper
         except Exception as e:
             raise ClosingException(e)
@@ -103,31 +115,29 @@ class Controller(object):
         return self._resourceKeeper
 
     def getObserver(self):
-        return self._observer
+        return self.getResourceKeeper().getObserver()
 
     def setObject(self, name):
         """ Stores new object for observer
         Attr:
             name - star name
         """
-        star = self._resourceKeeper.getStarHolder().getStarByName(name)
-        if star:
-            self._object.init(star['id'], star['name'], star['ra'], star['dec'])
+        self.getResourceKeeper().setObject(name)
 
     def getObject(self):
-        return self._object
+        return self.getResourceKeeper().getObject()
 
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
         #source selection
         if self.objSetpointControlSelected():
-            position = self._object.getCurrentPosition()
+            position = self.getObject().getCurrentPosition()
             ra, dec = position['ra'], position['dec']
             self.setpointCoordinates.setValue(ra, dec)
 
     def logNow(self):
         print('forse log to write')
-        self.logThread.force()
+        self._logThread.force()
 
 
     def pcControlSelected(self):
@@ -154,7 +164,7 @@ class Controller(object):
 
     def scopeCanMove(self):
         canMove = True
-        if not self._object.selected():
+        if not self.getObject().selected():
             canMove = False
         return canMove
 

@@ -190,25 +190,25 @@ class ManualSetpointPanel(SimplePanel):
         return inputField.SetValue(coordinate)
 
     def __incrementRa(self, ra, speed, sign):
-        ra = astronomy.hours(ra)
+        ra = astronomy.getHours(ra)
         if speed == 1:
-            ra = astronomy.hours(ra + astronomy.RA_SECOND*sign)
+            ra = astronomy.getHours(ra + astronomy.RA_SECOND*sign)
         if speed == 2:
-            ra = astronomy.hours(ra + astronomy.RA_MINUTE*sign)
+            ra = astronomy.getHours(ra + astronomy.RA_MINUTE*sign)
         if speed == 3:
-            ra = astronomy.hours(ra + astronomy.RA_HOUR*sign)
+            ra = astronomy.getHours(ra + astronomy.RA_HOUR*sign)
         if ra > astronomy.normRa(ra) or ra < astronomy.normRa(ra):
             ra = astronomy.normRa(ra)
         return str(ra)
 
     def __incrementDec(self, dec, speed, sign):
-        dec = astronomy.degrees(dec)
+        dec = astronomy.getDegrees(dec)
         if speed == 1:
-            dec = astronomy.degrees(dec + astronomy.DEC_SECOND*sign)
+            dec = astronomy.getDegrees(dec + astronomy.DEC_SECOND*sign)
         if speed == 2:
-            dec = astronomy.degrees(dec + astronomy.DEC_MINUTE*sign)
+            dec = astronomy.getDegrees(dec + astronomy.DEC_MINUTE*sign)
         if speed == 3:
-            dec = astronomy.degrees(dec + astronomy.DEC_DEGREE*sign)
+            dec = astronomy.getDegrees(dec + astronomy.DEC_DEGREE*sign)
         if dec > astronomy.normDec(dec) or dec < astronomy.normDec(dec):
             dec = astronomy.normDec(dec)
         return str(dec)

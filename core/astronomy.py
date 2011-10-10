@@ -1,68 +1,146 @@
 # -*- coding: utf-8 -*-
+from core.Exceptions import ConfigurationException
+
 import re
 from time import strftime
 import ephem
 
 __author__ = 'kitru'
 
+class Observer(ephem.Observer):
+    """ Observer presents observation point on planet surface (telescope position).
+    Position and other dislocation data get from configuration dictionary.
+    Accurate sidereal time is calculated based on observation position and current local time
+    """
+
+    def __init__(self, confDict):
+        """ Create observer based on configuration dictionary """
+        try:
+            latitude = confDict['latitude']
+            longitude = confDict['longitude']
+            elevation = confDict['elevation']
+            temp = confDict['temperature']
+            self._createObserver(elevation, latitude, longitude, temp)
+        except Exception as ex:
+            raise ConfigurationException(ex.args)
+
+    def _createObserver(self, elevation, latitude, longitude, temp):
+        self.long = ephem.degrees(str(longitude))
+        self.lat = ephem.degrees(str(latitude))
+        self.elevation = float(elevation)
+        self.temp = float(temp)  #temperature will be corrected by PLC later
+
+    def getCurrentTimes(self):
+        """ Calculates current time, julian date and sidereal time
+        Return:
+            tuple(LT, UTC, JD, LST)
+        """
+        self.updateToNow()
+        localtime = str(strftime("%Z %H:%M:%S")) #System time ZONE HOURS:MIN:SEC
+        utc = str(self.date)
+        jd = str(ephem.julian_date())
+        lst = str(self.sidereal_time()) #observer local sidereal time
+        return localtime, utc, jd, lst
+
+    def getLST(self):
+        """ Calculates current local sidereal time
+        Return:
+            LST in radians
+        """
+        self.updateToNow()
+        lst = self.sidereal_time()
+        return lst
+
+    def updateToNow(self):
+        """ Updates observer date to current date """
+        self.date = ephem.now()
+
+    def updateTemp(self, temp):
+        self.temp = float(temp)
+
+    def updatePressure(self, pressure):
+        self.pressure = pressure #TODO not very needed, not will be good to add this functionality
+
+
 class Object(object):
+    """ Observation object. Object is observing from observer position. In addition to pyephem.FixedBoby
+    Object holds system selected object and able to return current star position in the sky """
+
     def __init__(self, observer):
-        self.__observer = observer
-        self.__fixedBody = None
-        self.__name = ''
-        self.__id = None
+        """ By default selected object is not selected """
+        self._observer = observer
+        self._fixedBody = None
+        self._name = ''
+        self._id = None
 
     def init(self, id, name, ra, dec):
         """ Set new observation object
         Attr:
+            id - selected star id
             name - name for object
             ra - RA in radians
             de - DEC in radians
         """
-        self.__id = id
-        self.__name = name
-        self.__fixedBody = ephem.FixedBody()
-        self.__fixedBody._ra = ephem.hours(ra)
-        self.__fixedBody._dec = ephem.degrees(dec)
+        self._id = id
+        self._name = name
+        self._fixedBody = ephem.FixedBody()
+        self._fixedBody._ra = ephem.hours(ra)
+        self._fixedBody._dec = ephem.degrees(dec)
 
     def selected(self):
-        if self.__fixedBody:
+        """ Checks object selection
+        Return:
+            selected ? True : False
+        """
+        if self._fixedBody:
             return True
         else:
             return False
 
     def getId(self):
-        return self.__id
+        return self._id
 
     def getName(self):
-        return self.__name
+        return self._name
 
-    def getData(self):
+    def getSelectedObjectData(self):
+        """ Get common selected object data
+        Return:
+            dict(name, ra, dec)
+        """
         if self.selected():
-            ra, dec = rad2str(self.__fixedBody._ra, self.__fixedBody._dec)
-            name = self.__name
+            ra, dec = rad2str(self._fixedBody._ra, self._fixedBody._dec)
+            name = self._name
         else:
-            ra, dec, name, id = '', '', '', ''
+            ra, dec, name = '', '', ''
 
-        return {'name': name, 'ra': ra, 'dec': dec, 'id': self.__id}
+        return {'name': name, 'ra': ra, 'dec': dec}
 
     def getCurrentPosition(self):
-        """ return position in radians like {'ra','dec','alt'}. If object is not selected return empty dictionary """
-        if self.__fixedBody:
-            self.__observer.updateToNow()
-            self.__fixedBody.compute(self.__observer.observer)
-            ra, dec = rad2str(self.__fixedBody.ra, self.__fixedBody.dec)
-            alt = str(self.__fixedBody.alt)
-            ha = rad2str((self.__observer.getLST() - self.__fixedBody.ra), 0)
+        """ Calculates current object position in sky. If object is not selected return empty dictionary
+        Return:
+            dict(ra,dec,alt,ha,rise,set)
+        """
+        ra, dec, alt, ha, rise, set = '', '', '', ' ', '', ''
+        if self.selected():
+            self._observer.updateToNow()
+            self._fixedBody.compute(self._observer)
+            ra, dec = rad2str(self._fixedBody.ra, self._fixedBody.dec)
+            alt = str(self._fixedBody.alt)
             rise = self.getRisingTime()
             set = self.getSettingTime()
-        else:
-            ra, dec, alt, ha, rise, set = '', '', '', ' ', '', ''
-        return {'ra': ra, 'dec': dec, 'alt': alt, 'ha': ha[0], 'rise': rise, 'set': set}
+            ha = str(getHours(self._observer.getLST() - self._fixedBody.ra)) # LHA=LST-RA
+
+        return {'ra': ra, 'dec': dec, 'alt': alt, 'ha': ha, 'rise': rise, 'set': set}
 
     def getRisingTime(self):
+        """ Calcutes next rising time for selected object
+        Return:
+            rise time, if object rises
+            never or always, if object always up, down
+        """
         try:
-            time = self.__observer.observer.next_rising(self.__fixedBody)
+            time = self._observer.next_rising(self._fixedBody)
             return str(time).split(" ")[1]
         except ephem.NeverUpError:
             return 'never'
@@ -70,60 +148,18 @@ class Object(object):
             return 'always'
 
     def getSettingTime(self):
+        """ Calcutes next setting time for selected object
+        Return:
+            set time, if object sets
+            never or always, if object always up, down
+        """
         try:
-            time = self.__observer.observer.next_setting(self.__fixedBody)
+            time = self._observer.next_setting(self._fixedBody)
             return str(time).split(" ")[1]
         except ephem.NeverUpError:
             return 'never'
         except ephem.AlwaysUpError:
             return 'always'
-
-
-class Observer(object):
-    """ This class imple
-    """
-
-    def __init__(self, confDict):
-        self.observer = self.getObserver(confDict)
-
-    def getObserver(self, confDict):
-        """ Create observer based on configuration  """
-        latitude = confDict['latitude']
-        longitude = confDict['longitude']
-        elevation = confDict['elevation']
-        temp = confDict['temperature']
-        return self.createObserver(elevation, latitude, longitude, temp)
-
-    def createObserver(self, elevation, latitude, longitude, temp):
-        observer = ephem.Observer()
-        observer.long = ephem.degrees(str(longitude))
-        observer.lat = ephem.degrees(str(latitude))
-        observer.elevation = float(elevation)
-        observer.temp = float(temp)
-        return observer
-
-    def getCurrentTimes(self):
-        """ Return current (LT, UTC, JD, LST) """
-        self.updateToNow()
-        localtime = str(strftime("%Z %H:%M:%S")) #System time ZONE HOURS:MIN:SEC
-        utc = str(self.observer.date)
-        jd = str(ephem.julian_date())
-        lst = str(self.observer.sidereal_time()) #observer local sidereal time
-        return localtime, utc, jd, lst
-
-    def getLST(self):
-        self.updateToNow()
-        lst = self.observer.sidereal_time()
-        return lst
-
-    def updateToNow(self):
-        self.observer.date = ephem.now()
-
-    def updateTemp(self, temp):
-        self.observer.temp = float(temp)
-
-    def updatePressure(self, pressure):
-        self.observer.pressure = pressure #TODO not very needed, not will be good to add this functionality
 
 
 RA_HOUR = ephem.twopi / 24
@@ -132,16 +168,6 @@ RA_SECOND = RA_MINUTE / 60
 DEC_DEGREE = ephem.degree
 DEC_MINUTE = ephem.arcminute
 DEC_SECOND = ephem.arcsecond
-
-def hours(ra):
-    return ephem.hours(ra)
-
-
-def degrees(dec):
-    return ephem.degrees(dec)
-
-
-
 
 # Astronomy coordinates, coordinates can be represented as angles in hours or radians(degrees)
 # ICRS (International Celestial Reference System) system is used: Right Ascension (RA), declination (DEC)
@@ -235,9 +261,28 @@ def getCoordinates(ra, dec):
     Return:
        tuple(ephem.hours, ephem.degrees)
     """
+    return getHours(ra), getDegrees(dec)
+
+def getHours(ra):
+    """ Creates right ascension (ra) coordinate as ephem.angle objects
+    Attr:
+        ra - right ascension in radians (or correct string form (see pyephem,angle))
+    Return:
+       ephem.hours
+    """
     _ra = ra or 0.0
+    return ephem.hours(_ra)
+
+
+def getDegrees(dec):
+    """ Creates declination (dec) coordinate as ephem.angle objects
+    Attr:
+        dec - declination in radiand (or correct string form (see pyephem,angle))
+    Return:
+       ephem.degrees
+    """
     _dec = dec or 0.0
-    return ephem.hours(_ra), ephem.degrees(_dec)
+    return ephem.degrees(_dec)
 
 
 #Coordinatea normalization.

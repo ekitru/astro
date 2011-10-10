@@ -85,7 +85,7 @@ class ObjectPanel(SimplePanel):
         """
 
         object = controller.getObject()
-        data = object.getData()
+        data = object.getSelectedObjectData()
 
         # show object data
         self.objectName.SetLabel(data['name'])
