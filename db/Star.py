@@ -1,5 +1,6 @@
+from core import astronomy
 from db.DbQuery import DBQuery
-import astronomy
+
 
 __author__ = 'kitru'
 
