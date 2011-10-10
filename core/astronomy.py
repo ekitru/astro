@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 from time import strftime
 import ephem
@@ -81,6 +82,7 @@ class Object(object):
 class Observer(object):
     """ This class imple
     """
+
     def __init__(self, confDict):
         self.observer = self.getObserver(confDict)
 
@@ -138,57 +140,31 @@ def hours(ra):
 def degrees(dec):
     return ephem.degrees(dec)
 
-# working with coordinates
-def getCoordinates(ra, dec):
-    """ Return angles RA,DEC (topocentric position)
-    Attr:
-       ra - radians or string (hour:min:sec)
-       dec - radians or string (deg:min:sec)
-    return:
-       tuple(ephem.hours, ephem.degrees)
-    """
-    if not ra:
-        ra=0.0
-    if not dec:
-        dec=0.0
-
-    ra = ephem.hours(ra)
-    dec = ephem.degrees(dec)
-    return ra, dec
 
 
-def rad2str(ra, dec):
-    """ Convert (ra,dec) in radians to more readable form """
-    ra, dec = getCoordinates(ra, dec)
-    return str(ra), str(dec)
 
-
-def str2rad(ra, dec):
-    """ Convert (ra,dec) strings to radians  """
-    ra, dec = getCoordinates(ra, dec)
-    return ra.real, dec.real
-
-
-def normCoordinates(ra, dec):
-    return normRa(ra), normDec(dec)
-
-
-def normRa(ra):
-    return ra.norm
-
-
-def normDec(dec):
-    dec = ephem.degrees(2 * dec)
-    dec = dec.znorm
-    return ephem.degrees(dec / 2)
-
-
-# Astronomy coordinates checking, coordinates can be represented as angles in hours or radians(degrees)
+# Astronomy coordinates, coordinates can be represented as angles in hours or radians(degrees)
+# ICRS (International Celestial Reference System) system is used: Right Ascension (RA), declination (DEC)
+# For representation follow standard is used: HH:MIN:SEC and DEG:MIN:SEC
 
 def checkCoordinates(ra, dec):
+    """ Checks correct star coordinates in ICRS format:
+    right acsension (hours - HH:MIN:SEC) and declination(degrees- DEG:MIN:SEC)
+    Attr:
+        ra, dec input strings to be checked
+    Return:
+        both right and in range ? True: False
+    """
     return checkHours(ra) and checkDegrees(dec)
 
+
 def checkHours( hours):
+    """ Checks correct hour angle format:  "HOUR:MIN:SEC"
+    Attr:
+        hours input string to be checked
+    Return:
+        hours correct? True : False
+    """
     try:
         h, m, s = re.split(':', hours)
         return _checkHour(h) and _checkMin(m) and _checkSec(s)
@@ -197,6 +173,12 @@ def checkHours( hours):
 
 
 def checkDegrees(degrees):
+    """ Checks correct degree angle format:  "DEG:MIN:SEC"
+    Attr:
+        degrees input string to be checked
+    Return:
+        degrees correct? True: False
+    """
     try:
         deg, m, s = re.split(':', degrees)
         return _checkDegree(deg) and _checkMin(m) and _checkSec(s)
@@ -218,5 +200,81 @@ def _checkMin(min):
 
 def _checkSec(sec):
     return 0 <= float(sec) < 60
+
+
+# Convertion coordinates:  (RAD - STR) and (STR - RAD)
+def rad2str(ra, dec):
+    """ Convert right ascension (ra) and declination (dec) coordination to string form
+    Attr:
+        ra - right ascension in radians (or correct string form (see pyephem,angle))
+        dec - declination in radiand (or correct string form (see pyephem,angle))
+    Return:
+       tuple(string, string)
+    """
+    _ra, _dec = getCoordinates(ra, dec)
+    return str(_ra), str(_dec)
+
+
+def str2rad(ra, dec):
+    """ Convert right ascension (ra) and declination (dec) coordination to radians
+    Attr:
+        ra - right ascension in radians (or correct string form (see pyephem,angle))
+        dec - declination in radiand (or correct string form (see pyephem,angle))
+    Return:
+       tuple(float, float)
+    """
+    _ra, _dec = getCoordinates(ra, dec)
+    return _ra.real, _dec.real
+
+
+def getCoordinates(ra, dec):
+    """ Creates right ascension (ra) and declination (dec) coordinates as ephem.angle objects
+    Attr:
+        ra - right ascension in radians (or correct string form (see pyephem,angle))
+        dec - declination in radiand (or correct string form (see pyephem,angle))
+    Return:
+       tuple(ephem.hours, ephem.degrees)
+    """
+    _ra = ra or 0.0
+    _dec = dec or 0.0
+    return ephem.hours(_ra), ephem.degrees(_dec)
+
+
+#Coordinatea normalization.
+#According to ICSR standard right ascension(ra) and declination(dec) should be in ranges:
+#       ra - right ascension [0,2π)
+#       dec - declination (-π/2,π/2]
+
+def normCoordinates(ra, dec):
+    """ Right ascension and declination coordinates normalization
+    Attr:
+        ra - right ascension [0,2π)
+        dec - declination (-π/2,π/2]
+    Return:
+        tuple(ra, dec) normalized
+    """
+    return normRa(ra), normDec(dec)
+
+
+def normRa(ra):
+    """ Right ascension normalization
+    Attr:
+        ra - right ascension angle (ephem.angle)
+    Return:
+        right ascension in range [0,2π)
+    """
+    return ra.norm  # normalization to the interval [0, 2π)
+
+
+def normDec(dec):
+    """ Declination normalization
+    Attr:
+        dec - declination angle (ephem.angle)
+    Return:
+        declination in range (-π/2,π/2]
+    """
+    doubleDec = ephem.degrees(2 * dec)
+    zDec = doubleDec.znorm  # normalization to the interval (-π, π]
+    return ephem.degrees(zDec / 2)
 
 
