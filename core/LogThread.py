@@ -1,4 +1,5 @@
 import threading
+from core.Exceptions import ConfigurationException
 from db import Message, Log
 
 __author__ = 'kitru'
@@ -6,20 +7,24 @@ __author__ = 'kitru'
 class LogThread(object):
     """ Separate thread for logging stuff.
     It starts to log in separate thread as new instance will be done  or _start() method will be called
-    Timer could be stopped be calling stop() method.
-    """
-    _scale = 30 #should be 60 second in minute
+    Timer could be stopped be calling stop() method.  """
+    _scale = 10 #should be 60 second in minute
 
-    def __init__(self, controller, minutes=1):
-        self._mutex = threading.RLock()
-        self._period = minutes * self._scale
-        self._controller = controller
+    def __init__(self, controller, config):
+        try:
+            minutes = float(config.getCommonConfigDict()['logging time'])
+            self._period = minutes * self._scale
+            self._controller = controller
 
-        self._resourceKeeper = controller.getResourceKeeper()
-        self._log = Log(self._resourceKeeper.getDbManager())
-        self._message = Message(self._resourceKeeper.getDbManager())
-        self._plc = self._resourceKeeper.getPLCManager()
-        self._start()
+            self._resourceKeeper = controller.getResourceKeeper()
+            self._log = Log(self._resourceKeeper.getDbManager())
+            self._message = Message(self._resourceKeeper.getDbManager())
+            self._plc = self._resourceKeeper.getPLCManager()
+
+            self._mutex = threading.RLock()
+            self._start()
+        except Exception as ex:
+            raise ConfigurationException(ex.args)
 
     def _start(self):
         """ Starts timer to run, function is looped by itself.
