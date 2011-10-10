@@ -108,12 +108,10 @@ class Object(object):
         Return:
             dict(name, ra, dec)
         """
+        ra, dec, name = '', '', ''
         if self.selected():
             ra, dec = rad2str(self._fixedBody._ra, self._fixedBody._dec)
             name = self._name
-        else:
-            ra, dec, name = '', '', ''
-
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def getCurrentPosition(self):
@@ -162,71 +160,16 @@ class Object(object):
             return 'always'
 
 
+
+# Astronomy coordinates, coordinates can be represented as angles in hours or radians(degrees)
+# ICRS (International Celestial Reference System) system is used: Right Ascension (RA), declination (DEC)
+# For representation follow standard is used: HH:MIN:SEC and DEG:MIN:SEC
 RA_HOUR = ephem.twopi / 24
 RA_MINUTE = RA_HOUR / 60
 RA_SECOND = RA_MINUTE / 60
 DEC_DEGREE = ephem.degree
 DEC_MINUTE = ephem.arcminute
 DEC_SECOND = ephem.arcsecond
-
-# Astronomy coordinates, coordinates can be represented as angles in hours or radians(degrees)
-# ICRS (International Celestial Reference System) system is used: Right Ascension (RA), declination (DEC)
-# For representation follow standard is used: HH:MIN:SEC and DEG:MIN:SEC
-
-def checkCoordinates(ra, dec):
-    """ Checks correct star coordinates in ICRS format:
-    right acsension (hours - HH:MIN:SEC) and declination(degrees- DEG:MIN:SEC)
-    Attr:
-        ra, dec input strings to be checked
-    Return:
-        both right and in range ? True: False
-    """
-    return checkHours(ra) and checkDegrees(dec)
-
-
-def checkHours( hours):
-    """ Checks correct hour angle format:  "HOUR:MIN:SEC"
-    Attr:
-        hours input string to be checked
-    Return:
-        hours correct? True : False
-    """
-    try:
-        h, m, s = re.split(':', hours)
-        return _checkHour(h) and _checkMin(m) and _checkSec(s)
-    except Exception:
-        return False
-
-
-def checkDegrees(degrees):
-    """ Checks correct degree angle format:  "DEG:MIN:SEC"
-    Attr:
-        degrees input string to be checked
-    Return:
-        degrees correct? True: False
-    """
-    try:
-        deg, m, s = re.split(':', degrees)
-        return _checkDegree(deg) and _checkMin(m) and _checkSec(s)
-    except Exception:
-        return False
-
-
-def _checkDegree(deg):
-    return -90 < int(deg) < 90
-
-
-def _checkHour(hour):
-    return 0 <= int(hour) < 24
-
-
-def _checkMin(min):
-    return 0 <= int(min) < 60
-
-
-def _checkSec(sec):
-    return 0 <= float(sec) < 60
-
 
 # Convertion coordinates:  (RAD - STR) and (STR - RAD)
 def rad2str(ra, dec):
@@ -284,6 +227,61 @@ def getDegrees(dec):
     _dec = dec or 0.0
     return ephem.degrees(_dec)
 
+
+#Check coordinates ranges
+def checkCoordinates(ra, dec):
+    """ Checks correct star coordinates in ICRS format:
+    right acsension (hours - HH:MIN:SEC) and declination(degrees- DEG:MIN:SEC)
+    Attr:
+        ra, dec input strings to be checked
+    Return:
+        both right and in range ? True: False
+    """
+    return checkHours(ra) and checkDegrees(dec)
+
+
+def checkHours( hours):
+    """ Checks correct hour angle format:  "HOUR:MIN:SEC"
+    Attr:
+        hours input string to be checked
+    Return:
+        hours correct? True : False
+    """
+    try:
+        h, m, s = re.split(':', hours)
+        return _checkHour(h) and _checkMin(m) and _checkSec(s)
+    except Exception:
+        return False
+
+
+def checkDegrees(degrees):
+    """ Checks correct degree angle format:  "DEG:MIN:SEC"
+    Attr:
+        degrees input string to be checked
+    Return:
+        degrees correct? True: False
+    """
+    try:
+        deg, m, s = re.split(':', degrees)
+        return _checkDegree(deg) and _checkMin(m) and _checkSec(s)
+    except Exception:
+        return False
+
+
+def _checkDegree(deg):
+    return -90 < int(deg) < 90
+
+
+def _checkHour(hour):
+    return 0 <= int(hour) < 24
+
+
+def _checkMin(min):
+    return 0 <= int(min) < 60
+
+
+def _checkSec(sec):
+    return 0 <= float(sec) < 60
 
 #Coordinatea normalization.
 #According to ICSR standard right ascension(ra) and declination(dec) should be in ranges:
