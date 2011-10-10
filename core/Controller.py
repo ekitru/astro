@@ -74,10 +74,10 @@ class Controller(object):
         self.manFocus = None
 
     def __initLogger(self):
-        logPath = join('resources','logs')
+        logPath = join('resources', 'logs')
         if not os.path.exists(logPath):
             os.makedirs(logPath, mode=0711)
-        logging.basicConfig(level=logging.INFO,
+        logging.basicConfig(level=logging.NOTSET,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
                             filename=join(logPath, 'common.log'),
@@ -92,11 +92,9 @@ class Controller(object):
             self._resourceKeeper = Resources(self._config)
             self._logThread = LogThread(self, self._config)
         except ConfigurationException as ce:
-            logging.error('Error during initialization occure: ' + ce.__str__())
             raise InitializationException(ce)
-#        except Exception as error:
-#            logging.error('Unexcepted error during initialization occure: ' + error.__str__())
-#            raise InitializationException(error)
+        except Exception as e:
+            raise InitializationException(e)
 
 
     def freeResources(self):
@@ -109,6 +107,7 @@ class Controller(object):
             raise ClosingException(e)
 
     def getConfig(self):
+        """ needed for settings dialog """
         return self._config
 
     def getResourceKeeper(self):
@@ -168,6 +167,7 @@ class Controller(object):
             canMove = False
         return canMove
 
+
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
         self.setCoordinates(ra, dec)
@@ -197,6 +197,7 @@ class Focus(object):
 
     def getAsString(self):
         return str(self.focus)
+
 
 class Coordinates(object):
     def __init__(self, ra=0, dec=0):
