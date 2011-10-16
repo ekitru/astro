@@ -6,6 +6,7 @@ from core.Resources import Resources
 from Exceptions import ConfigurationException, InitializationException, ClosingException
 import astronomy
 from LogThread import LogThread
+from core.logger import getLogPath
 
 __author__ = 'kitru'
 
@@ -21,10 +22,10 @@ class Controller(object):
         self.manPosition = None
         self.manFocus = None
 
+
+
     def __initLogger(self):
-        logPath = join('resources', 'logs')
-        if not os.path.exists(logPath):
-            os.makedirs(logPath, mode=0711)
+        logPath = getLogPath()
         logging.basicConfig(level=logging.NOTSET,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',

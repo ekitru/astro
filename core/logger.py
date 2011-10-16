@@ -1,4 +1,5 @@
 import logging
+import os
 from os.path import join
 
 __author__ = 'kitru'
@@ -11,7 +12,8 @@ def openLog(name):
         new logger from  logging module
     """
     logger = logging.getLogger(name)
-    path = join('resources', 'logs', name + '.log')
+    logPath = getLogPath()
+    path = join(logPath, name + '.log')
     fileHandler = logging.FileHandler(path, mode='w')
     fileHandler.setFormatter(logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s'))
     logger.addHandler(fileHandler)
@@ -28,6 +30,12 @@ def closeLog(log):
         log.removeHandler(i)
         i.flush()
         i.close()
+
+def getLogPath():
+        logPath = join('resources', 'logs')
+        if not os.path.exists(logPath):
+            os.makedirs(logPath, mode=0711)
+        return logPath
 
 
 
