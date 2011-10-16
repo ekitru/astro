@@ -18,6 +18,9 @@ class ProgramConfig(SimpleConfig):
     #        commConfig = self.getConfigBySection('communication')
     #        return PLCManager(commConfig)
 
+    def getLogger(self):
+        return self._logger
+
     def getDbConfig(self):
         """ Get database connection configuration """
         logging.info('=== DB initialization ===')
@@ -28,10 +31,6 @@ class ProgramConfig(SimpleConfig):
         logging.info('=== Reading telescope configurations ===')
         return self.getConfigBySection('observer')
 
-
-    def getCommonConfigDict(self):
-        """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
-        return self.getConfigBySection('common')
 
     def getDefaultLanguage(self):
         """ Find default translation language from config file """
@@ -44,3 +43,7 @@ class ProgramConfig(SimpleConfig):
         dict = self.getCommonConfigDict()
         self._logger.info('Read logging time')
         return dict['Logging time']
+
+    def getCommonConfigDict(self):
+        """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
+        return self.getConfigBySection('common')

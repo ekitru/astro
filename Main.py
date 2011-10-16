@@ -26,9 +26,9 @@ if __name__ == '__main__':
         controller.initialization(resources)
         runGui(controller)
         controller.freeResources()
-#    except InitializationException as exception:
-#        print("Unexcepted error occured during resources initialization: " + exception.__str__())
-#        raise exception
+    except InitializationException as exception:
+        print("Unexcepted error occured during resources initialization: " + exception.__str__())
+        raise exception
     except GuiException as exception:
         print("GUI finished by exception: " + exception.__str__())
         raise exception

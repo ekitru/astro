@@ -13,7 +13,7 @@ class SimpleConfig(object):
         Attr:
             name - logger name
         """
-        self._logger = openLog(name + '_config')
+        self._logger = openLog('config_'+name)
 
     def __del__(self):
         """ Close logger before object closing """
@@ -26,14 +26,14 @@ class SimpleConfig(object):
         """
         try:
             self._config = ConfigParser.SafeConfigParser()
-            self._config.readfp(codecs.open(fileName+'.conf', "r", "utf8"))
+            self._config.readfp(codecs.open(fileName + '.conf', "r", "utf8"))
             return self._config
         except IOError as error:
             msg = error.args + (fileName,)
             raise ConfigurationException(msg, self._logger)
 
     def _getItemsBySection(self, section_name):
-        """   Return dictionary of selected section items      """
+        """ Return dictionary of selected section items """
         list = self._config.items(section_name)
         return dict(list)
 
@@ -42,4 +42,5 @@ class SimpleConfig(object):
             self._logger.info('Read section ' + '\"' + section_name + '\"')
             return self._getItemsBySection(section_name)
         except ConfigParser.NoSectionError as error:
-            raise ConfigurationException(error.args, self._logger)
+            msg = error.args + (section_name,)
+            raise ConfigurationException(msg, self._logger)

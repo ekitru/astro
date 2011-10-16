@@ -1,33 +1,42 @@
+from core.Exceptions import InitializationException
 from core.PLCManager import PLCManager
 from core.astronomy import Object, Observer
-from core.config.ProgramConfig import ProgramConfig
-from core.config.TranslationConfig import TranslationConfig
+
+from core.config import ProgramConfig
+from core.config import TranslationConfig
+
 from db import Message, Log, Star
 from db.DbManager import DbManager
 
 __author__ = 'kitru'
 
 class Resources(object):
+    """ Holder for all resources: DB connection, PLC connection, translation codes and so on  """
     def __init__(self):
         """ Reads common configuration file. As result after initialization
         common dictionary, codes, observer and object will be created """
-        config = ProgramConfig()
-        self._commonDict = config.getCommonConfigDict()
+        try:
+            config = ProgramConfig()
+            self._commonDict = config.getCommonConfigDict()
 
-        lang = config.getDefaultLanguage()
-        self._codes = TranslationConfig(lang)
+            lang = config.getDefaultLanguage()
+            self._codes = TranslationConfig(lang)
 
-        observerConfig = config.getObserverConfig()
-        self._observer = Observer(observerConfig)
-        self._object = Object(self._observer)
+            observerConfig = config.getObserverConfig()
+            self._observer = Observer(observerConfig)
+            self._object = Object(self._observer)
 
-        self._PLCManager = PLCManager()
+            self._PLCManager = PLCManager()
 
+            self._dbManager = DbManager(config.getDbConfig())
+            self._star = Star(self._dbManager)
+            self._log = Log(self._dbManager)
+            self._message = Message(self._dbManager)
+        except Exception as error:
+            msg = error.args
+            logger = config.getLogger()
+            raise InitializationException(msg, logger)
 
-        self._dbManager = DbManager(config.getDbConfig())
-        self._star = Star(self._dbManager)
-        self._log = Log(self._dbManager)
-        self._message = Message(self._dbManager)
 
     def __del__(self):
         del self._message
