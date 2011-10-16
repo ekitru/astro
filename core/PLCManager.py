@@ -2,24 +2,27 @@ import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 from Exceptions import ConfigurationException
+from core.config.CommConfig import CommConfig
 from logger import openLog, closeLog
 
 __author__ = 'kitru'
 
 class PLCManager(object):
-    def __init__(self, confDict):
-        self.logger = openLog('plc_comm')
-        self.logger.info('Establishing connection')
+    def __init__(self):
         try:
+            commConfig = CommConfig()
+            self._logger = openLog('plc_comm')
+            self._logger.info('Establishing connection')
             #Connect to the slave
+            confDict = commConfig.getConnectionConfig()
             self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=int(confDict['port']))
             self.ID = confDict['slave id']
 #            self.master._do_open()
-            self.logger.info('Connection established')
+            self._logger.info('Connection established')
         except modbus_tk.modbus.ModbusError as error:
-            raise ConfigurationException(error.args, self.logger)
+            raise ConfigurationException(error.args, self._logger)
         except Exception as error:
-            raise ConfigurationException(error.args, self.logger)
+            raise ConfigurationException(error.args, self._logger)
 
         self.mockCurRA = 0.231
         self.mockCurDEC = -0.0123
@@ -30,7 +33,7 @@ class PLCManager(object):
         self.mockPCMode = True
 
     def __del__(self):
-        closeLog(self.logger)
+        closeLog(self._logger)
 
     def test(self):
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 100, output_value=xrange(12))
@@ -57,7 +60,7 @@ class PLCManager(object):
 
 
     def close(self):
-        self.logger.info("Close Communication connection")
+        self._logger.info("Close Communication connection")
         self.master.close()
 
 

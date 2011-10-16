@@ -10,9 +10,10 @@ class LogThread(object):
     Timer could be stopped be calling stop() method.  """
     _scale = 10 #should be 60 second in minute
 
-    def __init__(self, controller, config):
+    def __init__(self, controller):
         try:
-            minutes = float(config.getCommonConfigDict()['logging time'])
+#            minutes = float(config.getCommonConfigDict()['logging time'])
+            minutes = 1
             self._period = minutes * self._scale
             self._controller = controller
 

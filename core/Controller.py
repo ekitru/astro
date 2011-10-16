@@ -1,65 +1,13 @@
 import os
 from posixpath import join
 import logging
-from db import  Message, Log
-from db import Star
+from core.Resources import Resources
 
 from Exceptions import ConfigurationException, InitializationException, ClosingException
-from Configs import ProgramConfig
-from astronomy import Object
 import astronomy
 from LogThread import LogThread
 
 __author__ = 'kitru'
-
-class Resources(object):
-    def __init__(self, config):
-        self._codes = config.getTranslation()
-        self._observer = config.getObserver()
-        self._object = Object(self._observer)
-        self._PLCManager = config.getPLCManager()
-        self._dbManager = config.getDbManager()
-        self._star = Star(self._dbManager)
-        self._log = Log(self._dbManager)
-        self._message = Message(self._dbManager)
-
-    def __del__(self):
-        del self._message
-        del self._log
-        del self._star
-        del self._dbManager
-        del self._PLCManager
-        del self._codes
-
-    def getCodes(self):
-        return self._codes
-
-    def getObserver(self):
-        return self._observer
-
-    def getObject(self):
-        return self._object
-
-    def setObject(self, name):
-        star = self.getStarHolder().getStarByName(name)
-        if star:
-            self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
-
-    def getPLCManager(self):
-        return self._PLCManager
-
-    def getDbManager(self):
-        return self._dbManager
-
-    def getStarHolder(self):
-        return self._star
-
-    def getLogHolder(self):
-        return self._log
-
-    def getMessageHolder(self):
-        return self._message
-
 
 class Controller(object):
     _controlMode = True
@@ -83,18 +31,19 @@ class Controller(object):
                             filename=join(logPath, 'common.log'),
                             filemode='w')
 
-    def initialization(self):
+    def initialization(self, resources):
         """ Initialization for all components
         Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
-            self._config = ProgramConfig('default.conf')
-            self._resourceKeeper = Resources(self._config)
-            self._logThread = LogThread(self, self._config)
-        except ConfigurationException as ce:
-            raise InitializationException(ce)
-        except Exception as e:
-            raise InitializationException(e)
+            self._resourceKeeper = resources
+            self._logThread = LogThread(self)
+#        except ConfigurationException as ce:
+#            raise InitializationException(ce)
+#        except Exception as e:
+#            raise InitializationException(e)
+        except ImportError:
+            pass
 
 
     def freeResources(self):
@@ -108,7 +57,7 @@ class Controller(object):
 
     def getConfig(self):
         """ needed for settings dialog """
-        return self._config
+        return self.getResourceKeeper().getConfig()
 
     def getResourceKeeper(self):
         return self._resourceKeeper
