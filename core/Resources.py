@@ -16,25 +16,25 @@ class Resources(object):
         """ Reads common configuration file. As result after initialization
         common dictionary, codes, observer and object will be created """
         try:
-            config = ProgramConfig()
-            self._commonDict = config.getCommonConfigDict()
+            self._config = ProgramConfig()
+            self._commonDict = self._config.getCommonConfigDict()
 
-            lang = config.getDefaultLanguage()
+            lang = self._config.getDefaultLanguage()
             self._codes = TranslationConfig(lang)
 
-            observerConfig = config.getObserverConfig()
+            observerConfig = self._config.getObserverConfig()
             self._observer = Observer(observerConfig)
             self._object = Object(self._observer)
 
             self._PLCManager = PLCManager()
 
-            self._dbManager = DbManager(config.getDbConfig())
+            self._dbManager = DbManager(self._config.getDbConfig())
             self._star = Star(self._dbManager)
             self._log = Log(self._dbManager)
             self._message = Message(self._dbManager)
         except Exception as error:
             msg = error.args
-            logger = config.getLogger()
+            logger = self._config.getLogger()
             raise InitializationException(msg, logger)
 
 
@@ -45,6 +45,10 @@ class Resources(object):
         del self._dbManager
         del self._PLCManager
         del self._codes
+
+
+    def getConfig(self):
+        return  self._config
 
     def getCodes(self):
         return self._codes
