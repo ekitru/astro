@@ -5,6 +5,8 @@ from Exceptions import ConfigurationException
 from core.config.CommConfig import CommConfig
 from logger import openLog, closeLog
 
+COORD_SCALE = 1000000
+
 __author__ = 'kitru'
 
 class PLCManager(object):
@@ -17,7 +19,7 @@ class PLCManager(object):
             confDict = commConfig.getConnectionConfig()
             self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=int(confDict['port']))
             self.ID = confDict['slave id']
-#            self.master._do_open()
+            #            self.master._do_open()
             self._logger.info('Connection established')
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self._logger)
@@ -35,6 +37,70 @@ class PLCManager(object):
     def __del__(self):
         closeLog(self._logger)
 
+    def _mergeNumber(self, words):
+        """ Merge two 16bit numbers into single 32 bit: words[0] - R16H, words[1] - R16L
+        Attr:
+            tuple of two number
+        Return:
+            32bit long number
+        """
+        nible1 = words[0] << 16
+        nible2 = words[1]
+        number = nible1 | nible2
+        return number
+
+    def _splitNumber(self, number):
+        """ Split  32bit long number into two 16bit numbers: words[0] - R16H, words[1] - R16L
+        Attr:
+            32bit long number
+        Return:
+            tuple of two 16bit number
+        """
+        regA = number >> 16
+        regB = number & 0xffff
+        return (regA, regB)
+
+    def reaNumber32bit(self, addr):
+        """ Reads 32bit number as long from PLC. Due to 16bit limitation of Modbus protocol, number=addr<<16 && (addr+1).
+        Attr:
+            addr - starting address, 2 words will be readed
+        Return:
+            long number
+        """
+        words = self.master.execute(self.ID, cst.READ_HOLDING_REGISTERS, addr, 2)
+        number = self._mergeNumber(words)
+        return number
+
+    def writeNumber32bit(self, addr, number):
+        """ Writes 32bit number to PLC. Due to 16bit limitation of Modbus protocol, number=addr<<16 && (addr+1).
+        Attr:
+            addr - starting address, 2 words are used
+            number - long number
+        """
+        words = self._splitNumber(number)
+        self.master.execute(self.ID, cst.WRITE_MULTIPLE_REGISTERS, addr, output_value=words)
+
+
+    def readCoordinate(self, addr):
+        """  Coordinate is scaled by 10^8
+        Attr:
+            addr - starting address, 2 words will be readed
+        Return:
+            coordinate in radians as float number
+        """
+        number = self.reaNumber32bit(addr)
+        return (float(number) / COORD_SCALE)
+
+    def writeCoordinate(self, addr, number):
+        """  Coordinate is scaled by 10^8
+        Attr:
+            addr - starting address, 2 words will be used
+            number - coordinate in radians
+        """
+        number = number * COORD_SCALE
+        self.writeNumber32bit(addr, number)
+
+
     def test(self):
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 100, output_value=xrange(12))
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 100, 12)
@@ -51,7 +117,7 @@ class PLCManager(object):
         """
         return self.mockCurFoc, self.mockTaskFoc #TODO make real in future
 
-    def setPosition(self, (ra,dec)):
+    def setPosition(self, (ra, dec)):
         self.mockTaskRA = ra
         self.mockTaskDEC = dec
 
