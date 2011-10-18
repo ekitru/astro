@@ -2,10 +2,11 @@ import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
 from Exceptions import ConfigurationException
+from core.astronomy import rad2str
 from core.config.CommConfig import CommConfig
 from logger import openLog, closeLog
 
-COORD_SCALE = 1000000
+COORD_SCALE = 100000000
 
 __author__ = 'kitru'
 
@@ -17,9 +18,10 @@ class PLCManager(object):
             self._logger.info('Establishing connection')
             #Connect to the slave
             confDict = commConfig.getConnectionConfig()
+            print(confDict)
             self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=int(confDict['port']))
-            self.ID = confDict['slave id']
-            #            self.master._do_open()
+            self.ID = int(confDict['slave id'])
+            self.master._do_open()
             self._logger.info('Connection established')
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self._logger)
@@ -58,7 +60,7 @@ class PLCManager(object):
         """
         regA = number >> 16
         regB = number & 0xffff
-        return (regA, regB)
+        return int(regA), int(regB)
 
     def reaNumber32bit(self, addr):
         """ Reads 32bit number as long from PLC. Due to 16bit limitation of Modbus protocol, number=addr<<16 && (addr+1).
@@ -97,7 +99,7 @@ class PLCManager(object):
             addr - starting address, 2 words will be used
             number - coordinate in radians
         """
-        number = number * COORD_SCALE
+        number = int(number * COORD_SCALE)
         self.writeNumber32bit(addr, number)
 
 
@@ -110,7 +112,12 @@ class PLCManager(object):
 
     def getPosition(self):
         """ Return current and aim positions from PLC in radians """
-        return (self.mockCurRA, self.mockCurDEC), (self.mockTaskRA, self.mockTaskDEC) #TODO make real in future
+        curRa =  self.readCoordinate(1020)
+        curDec = self.readCoordinate(1030)
+        taskRa =  self.readCoordinate(1050)
+        taskDec = self.readCoordinate(1060)
+
+        return rad2str(curRa, curDec), rad2str(taskRa, taskDec)
 
     def getFocus(self):
         """ Return current and aim focus from PLC in radians
