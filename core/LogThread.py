@@ -68,8 +68,7 @@ class LogThread(object):
 
     def getCurrentRaDec(self):
         """ current telescope positions are taken directly from plc """
-        position = self._plc.getPosition()
-        return position[0]
+        return self._plc.getCurrentPosition()
 
     def getCurrentFocus(self):
         """ current telescope positions are taken directly from plc """

@@ -1,10 +1,15 @@
 import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
+
 from Exceptions import ConfigurationException
+
 from core.astronomy import rad2str
 from core.config.CommConfig import CommConfig
 from logger import openLog, closeLog
+
+import ctypes
+
 
 COORD_SCALE = 100000000
 
@@ -18,7 +23,6 @@ class PLCManager(object):
             self._logger.info('Establishing connection')
             #Connect to the slave
             confDict = commConfig.getConnectionConfig()
-            print(confDict)
             self.master = modbus_tcp.TcpMaster(host=confDict['host'], port=int(confDict['port']))
             self.ID = int(confDict['slave id'])
             self.master._do_open()
@@ -46,10 +50,10 @@ class PLCManager(object):
         Return:
             32bit long number
         """
-        nible1 = words[0] << 16
-        nible2 = words[1]
+        nible1 = (words[0]&0xffff) << 16
+        nible2 = (words[1]&0xffff)
         number = nible1 | nible2
-        return number
+        return ctypes.c_int32(number).value
 
     def _splitNumber(self, number):
         """ Split  32bit long number into two 16bit numbers: words[0] - R16H, words[1] - R16L
@@ -58,11 +62,11 @@ class PLCManager(object):
         Return:
             tuple of two 16bit number
         """
-        regA = number >> 16
+        regA = (number >> 16) & 0xffff
         regB = number & 0xffff
         return int(regA), int(regB)
 
-    def reaNumber32bit(self, addr):
+    def readNumber32bit(self, addr):
         """ Reads 32bit number as long from PLC. Due to 16bit limitation of Modbus protocol, number=addr<<16 && (addr+1).
         Attr:
             addr - starting address, 2 words will be readed
@@ -90,7 +94,7 @@ class PLCManager(object):
         Return:
             coordinate in radians as float number
         """
-        number = self.reaNumber32bit(addr)
+        number = self.readNumber32bit(addr)
         return (float(number) / COORD_SCALE)
 
     def writeCoordinate(self, addr, number):
@@ -99,25 +103,31 @@ class PLCManager(object):
             addr - starting address, 2 words will be used
             number - coordinate in radians
         """
-        number = int(number * COORD_SCALE)
+        number = long(number * COORD_SCALE)
         self.writeNumber32bit(addr, number)
 
 
     def test(self):
-        self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 100, output_value=xrange(12))
+        self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 80, output_value=xrange(40))
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 100, 12)
 
         self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 44, output_value=xrange(20))
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 60, 1)
 
     def getPosition(self):
-        """ Return current and aim positions from PLC in radians """
-        curRa =  self.readCoordinate(1020)
+        """ Return current and setpoint positions from PLC as strings"""
+        curRa = self.readCoordinate(1020)
         curDec = self.readCoordinate(1030)
-        taskRa =  self.readCoordinate(1050)
+        taskRa = self.readCoordinate(1050)
         taskDec = self.readCoordinate(1060)
 
         return rad2str(curRa, curDec), rad2str(taskRa, taskDec)
+
+    def getCurrentPosition(self):
+        """ Return current telescope position in radians """
+        curRa = self.readCoordinate(1020)
+        curDec = self.readCoordinate(1030)
+        return curRa, curDec
 
     def getFocus(self):
         """ Return current and aim focus from PLC in radians
