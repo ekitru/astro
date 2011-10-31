@@ -114,6 +114,14 @@ class Object(object):
             name = self._name
         return {'name': name, 'ra': ra, 'dec': dec}
 
+    def getCurrentCoordinates(self):
+        ra, dec = '',''
+        if self.selected():
+            self._observer.updateToNow()
+            self._fixedBody.compute(self._observer)
+            ra, dec = rad2str(self._fixedBody.ra, self._fixedBody.dec)
+        return {'ra':ra, 'dec':dec}
+
     def getCurrentPosition(self):
         """ Calculates current object position in sky. If object is not selected return empty dictionary
         Return:
