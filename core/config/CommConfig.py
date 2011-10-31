@@ -15,7 +15,13 @@ class CommConfig(SimpleConfig):
 
     def getConnectionConfig(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """
-        logging.info('=== Read communication configuratio ===')
+        logging.info('=== Read communication configuration ===')
         return self.getConfigBySection('connection')
+
+    def getAxesAddresses(self):
+        """ Addresses with axes possitions. may raise Configuration Exception  """
+        logging.info('=== Read position addresses ===')
+        return self.getConfigBySection('axes')
+
 
 

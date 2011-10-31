@@ -10,6 +10,7 @@ class AstroMenu(wx.MenuBar):
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
         self._controller = controller
+        self._resources = controller.getResourceKeeper()
         self._codes = controller.getResourceKeeper().getCodes()
 
         objMenu = self.CreateObjectMenu(self._codes)
@@ -21,7 +22,10 @@ class AstroMenu(wx.MenuBar):
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
         event.Skip(False)
-        ret = self.showDial(SelectObjectDialog)
+        dialog = SelectObjectDialog(self, self._resources)
+        ret = dialog.ShowModal()
+        dialog.Destroy()
+
         if ret == wx.ID_OK:
             print('selected')
             self._controller.logNow()

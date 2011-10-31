@@ -13,6 +13,7 @@ class MainGui(wx.Frame):
                                       size=(706, 388))
         #        InspectionTool().Show()
         self._controller = controller
+        self._resources = controller.getResourceKeeper()
 
         codes = controller.getResourceKeeper().getCodes()
         panelArgs = {"parent": self, "codes": codes}
@@ -22,7 +23,7 @@ class MainGui(wx.Frame):
         self.positioningPanel = PositionPanel(**panelArgs)
         self.telescopePanel = TelescopePanel(**panelArgs)
         self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, **panelArgs)
-        self.controlModePanel = ControlModePanel(**panelArgs)
+        self.controlModePanel = ControlModePanel(self, codes, self._controller.getResourceKeeper())
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -69,9 +70,9 @@ class MainGui(wx.Frame):
     def update(self, event):
         """ Updates panels view """
         self._controller.updateSetPoint()
-        self.objectPanel.update(self._controller)
-        self.timeDatePanel.update(self._controller)
-        self.positioningPanel.update(self._controller)
+        self.objectPanel.update(self._resources)
+        self.timeDatePanel.update(self._resources)
+        self.positioningPanel.update(self._resources)
         self.manualSetpointPanel.update(self._controller)
         self.controlModePanel.update(self._controller)
         self.Fit()

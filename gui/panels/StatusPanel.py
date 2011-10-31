@@ -3,8 +3,8 @@ from gui.panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
 
-class PositionPanel(SimplePanel):
-    """This panel represents telescope position: current and end coordinates
+class StatusPanel(SimplePanel):
+    """This panel represents current telescope status
     Attributes:
         codes - Translation codes
     """
@@ -42,19 +42,20 @@ class PositionPanel(SimplePanel):
 
         self.SetSizer(comSizer)
 
-    def update(self, resources):
-        plc = resources.getPLCManager()
+    def update(self, controller):
+        plc = controller.getResourceKeeper().getPLCManager()
 
         currentCoordinates = plc.getPosition()[0]
         setpointCoordinates = plc.getPosition()[1]
-        focus = plc.getFocus()
 
+        currentFocus =  controller.currentFocus
+        setpointFocus = controller.setpointFocus
 
         self.curRA.SetLabel(str(currentCoordinates[0]))
         self.curDEC.SetLabel(str(currentCoordinates[1]))
-        self.curFocus.SetLabel(str(focus[0]))
+        self.curFocus.SetLabel(currentFocus.getAsString())
 
         self.taskRA.SetLabel(str(setpointCoordinates[0]))
         self.taskDEC.SetLabel(str(setpointCoordinates[1]))
-        self.taskFocus.SetLabel(str(focus[1]))
+        self.taskFocus.SetLabel(setpointFocus.getAsString())
   

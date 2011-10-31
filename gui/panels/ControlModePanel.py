@@ -1,4 +1,5 @@
 import wx
+from core.astronomy import str2rad
 from gui.panels.SimplePanel import SimplePanel
 
 __author__ = 'anisand'
@@ -9,15 +10,15 @@ class ControlModePanel(SimplePanel):
         codes - Translation codes
     """
     _setpointControlMode = 1
-    def __init__(self, parent, id=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self,parent,id)
+    def __init__(self, parent, codes, resources):
+        SimplePanel.__init__(self,parent)
 
-        self.codes = codes
+        self._resources = resources
 
-        self.rbObjectSetpoint = wx.RadioButton(self, wx.ID_ANY, self.codes.get('pCtrlObjSP'))
-        self.rbManualSetpoint = wx.RadioButton(self, wx.ID_ANY, self.codes.get('pCtrlManSP'))
-        self.rbRemoteControl = wx.RadioButton(self, wx.ID_ANY, self.codes.get('pCtrlRemCtrl'))
-        self.butMove = self.CreateButton(label=self.codes.get('pCtrlMov'))
+        self.rbObjectSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlObjSP'))
+        self.rbManualSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlManSP'))
+        self.rbRemoteControl = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlRemCtrl'))
+        self.butMove = self.CreateButton(label=codes.get('pCtrlMov'))
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         column1 = wx.BoxSizer(wx.VERTICAL)
@@ -47,10 +48,12 @@ class ControlModePanel(SimplePanel):
         return
 
     def OnButtonMove(self, event):
-        #if self.controller.PLCManager.mockPCMode:
-        #    self.controller.PLCManager.mockPCMode = False
-        #else:
-        #    self.controller.PLCManager.mockPCMode = True
+        object = self._resources.getObject()
+        print(object.getData())
+        data = object.getData()
+        ra,dec = str2rad(data['ra'],data['dec'])
+        plc = self._resources.getPLCManager()
+        plc.setSetpointPosition(ra,dec)
         return
 
     def update(self, controller):

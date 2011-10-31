@@ -10,17 +10,16 @@ class LogThread(object):
     Timer could be stopped be calling stop() method.  """
     _scale = 10 #should be 60 second in minute
 
-    def __init__(self, controller):
+    def __init__(self, resources):
         try:
 #            minutes = float(config.getCommonConfigDict()['logging time'])
             minutes = 1
             self._period = minutes * self._scale
-            self._controller = controller
 
-            self._resourceKeeper = controller.getResourceKeeper()
-            self._log = Log(self._resourceKeeper.getDbManager())
-            self._message = Message(self._resourceKeeper.getDbManager())
-            self._plc = self._resourceKeeper.getPLCManager()
+            self._resources = resources
+            self._log = Log(self._resources.getDbManager())
+            self._message = Message(self._resources.getDbManager())
+            self._plc = self._resources.getPLCManager()
 
             self._mutex = threading.RLock()
             self._start()
@@ -58,7 +57,7 @@ class LogThread(object):
 
     def getStarId(self):
         """ return selected object id from controller, if object is not selected return None """
-        object = self._controller.getObject()
+        object = self._resources.getObject()
         return object.getId()
 
     def getMsgId(self):

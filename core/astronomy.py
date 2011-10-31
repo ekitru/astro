@@ -103,7 +103,7 @@ class Object(object):
     def getName(self):
         return self._name
 
-    def getSelectedObjectData(self):
+    def getData(self):
         """ Get common selected object data
         Return:
             dict(name, ra, dec)

@@ -80,12 +80,12 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.objSettingTime, flag=wx.ALL | wx.ALIGN_CENTER)
         return sizer
 
-    def update(self, controller):
+    def update(self, resources):
         """Updates Objects name and coordinates
         """
 
-        object = controller.getObject()
-        data = object.getSelectedObjectData()
+        object = resources.getObject()
+        data = object.getData()
 
         # show object data
         self.objectName.SetLabel(data['name'])

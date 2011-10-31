@@ -37,8 +37,8 @@ class Controller(object):
         Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
-            self._resourceKeeper = resources
-            self._logThread = LogThread(self)
+            self._resources = resources
+            self._logThread = LogThread(resources)
 #        except ConfigurationException as ce:
 #            raise InitializationException(ce)
 #        except Exception as e:
@@ -52,52 +52,35 @@ class Controller(object):
             logging.info('======= Free all resources: DB, MODBUS =======')
             # close database connections
             self._logThread.stop()
-            del self._resourceKeeper
+            del self._resources
         except Exception as e:
             raise ClosingException(e)
 
-    def getConfig(self):
-        """ needed for settings dialog """
-        return self.getResourceKeeper().getConfig()
-
     def getResourceKeeper(self):
-        return self._resourceKeeper
-
-    def getObserver(self):
-        return self.getResourceKeeper().getObserver()
-
-    def setObject(self, name):
-        """ Stores new object for observer
-        Attr:
-            name - star name
-        """
-        self.getResourceKeeper().setObject(name)
-
-    def getObject(self):
-        return self.getResourceKeeper().getObject()
+        return self._resources
 
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
         #source selection
         if self.objSetpointControlSelected():
-            position = self.getObject().getCurrentPosition()
+            position = self._resources.getObject().getCurrentPosition()
             ra, dec = position['ra'], position['dec']
             self.setpointCoordinates.setValue(ra, dec)
 
     def logNow(self):
-        print('forse log to write')
+        """ Force to log message and start new timer  """
         self._logThread.force()
 
 
     def pcControlSelected(self):
         """  Returns True if status flag read from PLC equals "1" (PC control selected)
              Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
-        return self._resourceKeeper.getPLCManager().isPCControl()
+        return self._resources.getPLCManager().isPCControl()
 
     def remoteControlSelected(self):
         """  Returns True if status flag read from PLC equals "0" (REMOTE control selected)
              Returns False if status flag read from PLC equals "1" (PC control selected)"""
-        return not self._resourceKeeper.getPLCManager().isPCControl()
+        return not self._resources.getPLCManager().isPCControl()
 
     def objSetpointControlSelected(self):
         """ Returns True if AUTO control selected
@@ -112,26 +95,23 @@ class Controller(object):
         self._controlMode = False
 
     def scopeCanMove(self):
-        canMove = True
-        if not self.getObject().selected():
-            canMove = False
-        return canMove
+        return True #TODO add more complex logic here
 
 
 class SetPoint(object):
     def __init__(self, ra=0, dec=0):
-        self.setCoordinates(ra, dec)
+        self.set(ra, dec)
 
-    def setCoordinates(self, ra, dec):
+    def set(self, ra, dec):
         """ can take coordinates in RAD or string (HH:MIN:SEC) """
         ra, dec = astronomy.getCoordinates(ra, dec)
-        self.ra, self.dec = astronomy.normCoordinates(ra, dec)
+        self._ra, self._dec = astronomy.normCoordinates(ra, dec)
 
-    def getCoordinates(self):
-        return self.ra, self.dec
+    def get(self):
+        return self._ra, self._dec
 
     def getCoordinatesAsString(self):
-        return astronomy.rad2str(self.ra, self.dec)
+        return astronomy.rad2str(self._ra, self._dec)
 
 
 class Focus(object):

@@ -27,6 +27,10 @@ class PLCManager(object):
             self.ID = int(confDict['slave id'])
             self.master._do_open()
             self._logger.info('Connection established')
+
+            self._logger.info('Start to reading addresses')
+            self.axes =  commConfig.getAxesAddresses()
+
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self._logger)
         except Exception as error:
@@ -94,7 +98,7 @@ class PLCManager(object):
         Return:
             coordinate in radians as float number
         """
-        number = self.readNumber32bit(addr)
+        number = self.readNumber32bit(int(addr))
         return (float(number) / COORD_SCALE)
 
     def writeCoordinate(self, addr, number):
@@ -103,8 +107,8 @@ class PLCManager(object):
             addr - starting address, 2 words will be used
             number - coordinate in radians
         """
-        number = long(number * COORD_SCALE)
-        self.writeNumber32bit(addr, number)
+        number = long(float(number) * COORD_SCALE)
+        self.writeNumber32bit(int(addr), number)
 
 
     def test(self):
@@ -115,23 +119,39 @@ class PLCManager(object):
         print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 60, 1)
 
     def getPosition(self):
-        """ Return current and setpoint positions from PLC as strings"""
-        curRa = self.readCoordinate(1020)
-        curDec = self.readCoordinate(1030)
-        taskRa = self.readCoordinate(1050)
-        taskDec = self.readCoordinate(1060)
+        """ Get current ant setpoint position from PLC as strings
+        Return:
+            tuple((str(curRA),str(curDEC)),(str(taskRA),str(taskDEC)))"""
+        curRa,  curDec = self.getCurrentPosition()
+        taskDec, taskRa = self.getSetpointPosition()
 
         return rad2str(curRa, curDec), rad2str(taskRa, taskDec)
 
     def getCurrentPosition(self):
         """ Return current telescope position in radians """
-        curRa = self.readCoordinate(1020)
-        curDec = self.readCoordinate(1030)
+        curRa = self.readCoordinate(self.axes['ra_cur'])
+        curDec = self.readCoordinate(self.axes['dec_cur'])
         return curRa, curDec
 
-    def getFocus(self):
-        """ Return current and aim focus from PLC in radians
+    def getSetpointPosition(self):
+        taskRa = self.readCoordinate(self.axes['ra_task'])
+        taskDec = self.readCoordinate(self.axes['dec_task'])
+        return taskDec, taskRa
+
+    def setSetpointPosition(self, ra, dec):
+        """ Store new setpoint position for telescope
+        Attr:
+            ra -  in radians
+            dec - in radians
         """
+        self.writeCoordinate(self.axes['ra_task'], ra)
+        self.writeCoordinate(self.axes['dec_task'], dec)
+
+
+    def getFocus(self):
+        """ Get current ant setpoint for focus from PLC as strings
+        Return:
+            tuple(str(curFocus), str(taskFocus))"""
         return self.mockCurFoc, self.mockTaskFoc #TODO make real in future
 
     def setPosition(self, (ra, dec)):

@@ -6,10 +6,10 @@ from gui.dialogs.ObjectListDialog import ObjectListDialog
 __author__ = 'kitru'
 
 class SelectObjectDialog(ObjectListDialog):
-    def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dSelObj_title', controller.getResourceKeeper())
+    def __init__(self, parent, resouces):
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dSelObj_title', resouces)
 
-        self._controller = controller
+        self._resources = resouces
         self.text = wx.TextCtrl(self, size=(120, -1))
         self.text.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
@@ -84,7 +84,7 @@ class SelectObjectDialog(ObjectListDialog):
             return
 
         if self._starHolder.starExists(self.starName):
-            self._controller.setObject(self.starName)
+            self._resources.setObject(self.starName)
             self.EndModal(wx.ID_OK)
         else:
             confirm = wx.MessageDialog(self, caption=self.starName, message=self.codes.get('dSelObj_addQues'),
@@ -92,6 +92,6 @@ class SelectObjectDialog(ObjectListDialog):
             if confirm.ShowModal() == wx.ID_YES:
                 confirm.Destroy()
                 self._starHolder.saveStar(self.starName, self.RA.GetValue(), self.DEC.GetValue())
-                self._controller.setObject(self.starName)
+                self._resources.setObject(self.starName)
                 self.EndModal(wx.ID_OK)
   
