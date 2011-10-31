@@ -139,21 +139,23 @@ class ManualSetpointPanel(SimplePanel):
         self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
         self.__setSetpointSpeed(1)
 
-    def makePanelVisible(self, controller):
+    def isVisible(self, controller):
         autoControl = controller.objSetpointControlSelected()
         if autoControl:
-            self.Hide()
+            return False
         else:
-            self.Show()
+            return True
 
     def update(self, controller):
-        self.makePanelVisible(controller)  #Show panel, if manual controll is selected
-
-        if self.__checkCoordinatesAndFocus():  #if coordinates are correct
-            ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
-            self._setpoint.setPosition(ra, dec)
-            self._setpoint.setFocus(foc)
-
+        if self.isVisible(controller):  #Show panel, if manual controll is selected
+            self.Show()
+            if self.__checkCoordinatesAndFocus():  #if coordinates are correct
+                print('update setpoint')
+                ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
+                self._setpoint.setPosition(ra, dec)
+                self._setpoint.setFocus(foc)
+        else:
+            self.Hide()
 
     def __handleToggleLogic(self, but1, but2, but3):
         if but1.GetValue():
