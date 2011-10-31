@@ -81,8 +81,7 @@ class ObjectPanel(SimplePanel):
         return sizer
 
     def update(self, resources):
-        """Updates Objects name and coordinates
-        """
+        """Updates Objects name and coordinates """
 
         object = resources.getObject()
 
