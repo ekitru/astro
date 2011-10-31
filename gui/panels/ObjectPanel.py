@@ -85,9 +85,9 @@ class ObjectPanel(SimplePanel):
         """
 
         object = resources.getObject()
-        data = object.getData()
 
         # show object data
+        data = object.getData()
         self.objectName.SetLabel(data['name'])
         self.objectOrigRA.SetLabel(data['ra'])
         self.objectOrigDEC.SetLabel(data['dec'])
@@ -99,4 +99,3 @@ class ObjectPanel(SimplePanel):
         self.objHourAngle.SetLabel(position['ha'])
         self.objRisingTime.SetLabel(position['rise'])
         self.objSettingTime.SetLabel(position['set'])
-  
