@@ -70,6 +70,24 @@ class PLCManager(object):
         regB = number & 0xffff
         return int(regA), int(regB)
 
+    def readNumber16bit(self, addr):
+        """ Reads 16bit number as long from PLC.
+        Attr:
+            addr - address
+        Return:
+            long number
+        """
+        return self.master.execute(self.ID, cst.READ_HOLDING_REGISTERS, long(addr), 1)[0]
+
+    def writeNumber16bit(self, addr, number):
+        """ Writes 16bit number to PLC.
+        Attr:
+            addr - address
+            number - long number
+        """
+        self.master.execute(self.ID, cst.WRITE_MULTIPLE_REGISTERS, long(addr), output_value=(long(number),))
+
+
     def readNumber32bit(self, addr):
         """ Reads 32bit number as long from PLC. Due to 16bit limitation of Modbus protocol, number=addr<<16 && (addr+1).
         Attr:
@@ -77,7 +95,7 @@ class PLCManager(object):
         Return:
             long number
         """
-        words = self.master.execute(self.ID, cst.READ_HOLDING_REGISTERS, addr, 2)
+        words = self.master.execute(self.ID, cst.READ_HOLDING_REGISTERS, long(addr), 2)
         number = self._mergeNumber(words)
         return number
 
@@ -88,7 +106,7 @@ class PLCManager(object):
             number - long number
         """
         words = self._splitNumber(number)
-        self.master.execute(self.ID, cst.WRITE_MULTIPLE_REGISTERS, addr, output_value=words)
+        self.master.execute(self.ID, cst.WRITE_MULTIPLE_REGISTERS, long(addr), output_value=words)
 
 
     def readCoordinate(self, addr):
@@ -98,7 +116,7 @@ class PLCManager(object):
         Return:
             coordinate in radians as float number
         """
-        number = self.readNumber32bit(int(addr))
+        number = self.readNumber32bit(addr)
         return (float(number) / COORD_SCALE)
 
     def writeCoordinate(self, addr, number):
@@ -108,15 +126,7 @@ class PLCManager(object):
             number - coordinate in radians
         """
         number = long(float(number) * COORD_SCALE)
-        self.writeNumber32bit(int(addr), number)
-
-
-    def test(self):
-        self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 80, output_value=xrange(40))
-        print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 100, 12)
-
-        self.master.execute(1, cst.WRITE_MULTIPLE_REGISTERS, 44, output_value=xrange(20))
-        print self.master.execute(1, cst.READ_HOLDING_REGISTERS, 60, 1)
+        self.writeNumber32bit(addr, number)
 
     def getPosition(self):
         """ Get current ant setpoint position from PLC as strings
@@ -128,12 +138,13 @@ class PLCManager(object):
         return rad2str(curRa, curDec), rad2str(taskRa, taskDec)
 
     def getCurrentPosition(self):
-        """ Return current telescope position in radians """
+        """ Returns current telescope position in radians """
         curRa = self.readCoordinate(self.axes['ra_cur'])
         curDec = self.readCoordinate(self.axes['dec_cur'])
         return curRa, curDec
 
     def getSetpointPosition(self):
+        """ Returns setpoint telescope position in radians """
         taskRa = self.readCoordinate(self.axes['ra_task'])
         taskDec = self.readCoordinate(self.axes['dec_task'])
         return taskDec, taskRa
@@ -147,25 +158,21 @@ class PLCManager(object):
         self.writeCoordinate(self.axes['ra_task'], ra)
         self.writeCoordinate(self.axes['dec_task'], dec)
 
-
     def getFocus(self):
-        """ Get current ant setpoint for focus from PLC as strings
+        """ Get current and setpoint for focus from PLC as strings
         Return:
             tuple(str(curFocus), str(taskFocus))"""
-        return self.mockCurFoc, self.mockTaskFoc #TODO make real in future
-
-    def setPosition(self, (ra, dec)):
-        self.mockTaskRA = ra
-        self.mockTaskDEC = dec
+        cur = self.readNumber16bit(self.axes['focus_cur'])
+        task = self.readNumber16bit(self.axes['focus_task'])
+        return cur, task
 
     def setFocus(self, focus):
-        self.mockTaskFoc = focus
-
+        """ Set new focus value """
+        self.writeNumber16bit(self.axes['focus_task'], focus)
 
     def close(self):
         self._logger.info("Close Communication connection")
         self.master.close()
-
 
     def isPCControl(self):
         """  Returns True if status flag read from PLC equals "1" (PC CONTROL selected)

@@ -53,9 +53,13 @@ class ControlModePanel(SimplePanel):
 #        data = object.getData()
 #        ra,dec = str2rad(data['ra'],data['dec'])
 
+        setpoint = self._resources.getSetPoint()
+
+        data = setpoint.getRawData()
 
         plc = self._resources.getPLCManager()
-        plc.setSetpointPosition(ra,dec)
+        plc.setSetpointPosition(data['ra'], data['dec'])
+        plc.setFocus(data['focus'])
         return
 
     def update(self, controller):

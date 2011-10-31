@@ -27,7 +27,6 @@ class AstroMenu(wx.MenuBar):
         dialog.Destroy()
 
         if ret == wx.ID_OK:
-            print('selected')
             self._controller.logNow()
 
     def OnEditObject(self, event):

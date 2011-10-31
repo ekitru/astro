@@ -1,10 +1,7 @@
-import os
 from posixpath import join
 import logging
-from core.Resources import Resources
 
-from Exceptions import ConfigurationException, InitializationException, ClosingException
-import astronomy
+from Exceptions import   ClosingException
 from LogThread import LogThread
 from core.logger import getLogPath
 
