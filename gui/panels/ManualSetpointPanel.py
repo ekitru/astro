@@ -49,12 +49,10 @@ class ManualSetpointPanel(SimplePanel):
         buttons.AddMany([self.butSelHour, self.butSelMin, self.butSelSec])
         return buttons
 
-    def __init__(self, parent, controller, id=wx.ID_ANY, codes=None):
+    def __init__(self, parent, resources, id=wx.ID_ANY, codes=None):
         SimplePanel.__init__(self, parent)
 
-        self.controller = controller
-        self.setpoint = controller.setpointCoordinates
-        self.focus = controller.setpointFocus
+        self._setpoint = resources.getSetPoint()
 
         captions = self.CreateCaptionPanel(codes)
         fields = self.CreateFieldsPanel()
@@ -85,9 +83,10 @@ class ManualSetpointPanel(SimplePanel):
 
     def OnShow(self, event):
         if event.GetShow():
-            self.inFieldRA.SetValue(self.setpoint.getAsString()[0])
-            self.inFieldDEC.SetValue(self.setpoint.getAsString()[1])
-            self.inFieldFoc.SetValue(self.focus.getAsString())
+            data = self._setpoint.getData()
+            self.inFieldRA.SetValue(data['ra'])
+            self.inFieldDEC.SetValue(data['dec'])
+            self.inFieldFoc.SetValue(data['focus'])
 
     def OnButtonUp(self, event):
         sign = 1
@@ -152,8 +151,8 @@ class ManualSetpointPanel(SimplePanel):
 
         if self.__checkCoordinatesAndFocus():  #if coordinates are correct
             ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
-            self.controller.setpointCoordinates.setValue(str(ra), str(dec))
-            self.controller.setpointFocus.setValue(float(foc))
+            self._setpoint.setPosition(ra, dec)
+            self._setpoint.setFocus(foc)
 
 
     def __handleToggleLogic(self, but1, but2, but3):

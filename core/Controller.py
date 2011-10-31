@@ -15,10 +15,7 @@ class Controller(object):
 
     def __init__(self):
         self.__initLogger()
-        self.currentCoordinates = Coordinates()  #read from PLC
-        self.setpointCoordinates = Coordinates() #sent to PLC
-        self.currentFocus = Focus()     #read from PLC
-        self.setpointFocus = Focus()    #sent to PLC
+
         self.manPosition = None
         self.manFocus = None
 
@@ -62,10 +59,11 @@ class Controller(object):
     def updateSetPoint(self):
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
         #source selection
-        if self.objSetpointControlSelected():
-            position = self._resources.getObject().getCurrentPosition()
-            ra, dec = position['ra'], position['dec']
-            self.setpointCoordinates.setValue(ra, dec)
+        pass
+#        if self.objSetpointControlSelected():
+#            position = self._resources.getObject().getCurrentPosition()
+#            ra, dec = position['ra'], position['dec']
+#            self.setpointCoordinates.setValue(ra, dec)
 
     def logNow(self):
         """ Force to log message and start new timer  """
@@ -96,57 +94,3 @@ class Controller(object):
 
     def scopeCanMove(self):
         return True #TODO add more complex logic here
-
-
-class SetPoint(object):
-    def __init__(self, ra=0, dec=0):
-        self.set(ra, dec)
-
-    def set(self, ra, dec):
-        """ can take coordinates in RAD or string (HH:MIN:SEC) """
-        ra, dec = astronomy.getCoordinates(ra, dec)
-        self._ra, self._dec = astronomy.normCoordinates(ra, dec)
-
-    def get(self):
-        return self._ra, self._dec
-
-    def getCoordinatesAsString(self):
-        return astronomy.rad2str(self._ra, self._dec)
-
-
-class Focus(object):
-    def __init__(self, focus=0.0):
-        self.setValue(focus)
-
-    def setValue(self, focus):
-        """setValue(float)"""
-        self.focus = focus
-
-    def getValue(self):
-        return self.focus
-
-    def getAsString(self):
-        return str(self.focus)
-
-
-class Coordinates(object):
-    def __init__(self, ra=0, dec=0):
-        self.setValue(ra, dec)
-
-    def setValue(self, ra, dec):
-        """ can take coordinates in RAD or string (HH:MIN:SEC) """
-        ra, dec = astronomy.getCoordinates(ra, dec)
-        self.ra, self.dec = astronomy.normCoordinates(ra, dec)
-
-    def getValue(self):
-        return self.ra, self.dec
-
-    def getAsString(self):
-        return astronomy.rad2str(self.ra, self.dec)
-
-
-
-
-
-
-

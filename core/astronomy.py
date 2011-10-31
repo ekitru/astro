@@ -159,6 +159,36 @@ class Object(object):
         except ephem.AlwaysUpError:
             return 'always'
 
+class SetPoint(object):
+    def __init__(self, ra=0, dec=0, focus=0):
+        self._ra = float(ra)
+        self._dec = float(dec)
+        self._focus = float(focus)
+
+    def setPosition(self, ra, dec):
+        """ Set setpoint position
+        Attr:
+            ra, dec - coordinates in RAD or string (HH:MIN:SEC) """
+        ra, dec = getCoordinates(str(ra), str(dec))
+        self._ra, self._dec = normCoordinates(ra, dec)
+
+    def setFocus(self, focus):
+        """ Set setpoint focus
+        Attr:
+            focus - focus as float """
+        self._focus = float(focus)
+
+    def getData(self):
+        data = dict()
+        data['ra'],data['dec'] = rad2str(self._ra, self._dec)
+        data['focus'] = str(self._focus)
+        return data
+
+    def getRawData(self):
+        data = dict()
+        data['ra'],data['dec'] = self._ra, self._dec
+        data['focus'] = self._focus
+        return data
 
 
 # Astronomy coordinates, coordinates can be represented as angles in hours or radians(degrees)

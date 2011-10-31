@@ -22,7 +22,7 @@ class MainGui(wx.Frame):
         self.timeDatePanel = TimeDatePanel(**panelArgs)
         self.positioningPanel = PositionPanel(**panelArgs)
         self.telescopePanel = TelescopePanel(**panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(controller=self._controller, **panelArgs)
+        self.manualSetpointPanel = ManualSetpointPanel(resources=self._resources, **panelArgs)
         self.controlModePanel = ControlModePanel(self, codes, self._controller.getResourceKeeper())
 
         leftColon = wx.BoxSizer(wx.VERTICAL)

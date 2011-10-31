@@ -48,10 +48,12 @@ class ControlModePanel(SimplePanel):
         return
 
     def OnButtonMove(self, event):
-        object = self._resources.getObject()
-        print(object.getData())
-        data = object.getData()
-        ra,dec = str2rad(data['ra'],data['dec'])
+#        object = self._resources.getObject()
+#        print(object.getData())
+#        data = object.getData()
+#        ra,dec = str2rad(data['ra'],data['dec'])
+
+
         plc = self._resources.getPLCManager()
         plc.setSetpointPosition(ra,dec)
         return

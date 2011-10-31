@@ -1,6 +1,6 @@
 from core.Exceptions import InitializationException
 from core.PLCManager import PLCManager
-from core.astronomy import Object, Observer
+from core.astronomy import Object, Observer, SetPoint
 
 from core.config import ProgramConfig
 from core.config import TranslationConfig
@@ -25,6 +25,8 @@ class Resources(object):
             observerConfig = self._config.getObserverConfig()
             self._observer = Observer(observerConfig)
             self._object = Object(self._observer)
+
+            self._setpoint = SetPoint()
 
             self._PLCManager = PLCManager()
 
@@ -58,6 +60,9 @@ class Resources(object):
 
     def getObject(self):
         return self._object
+
+    def getSetPoint(self):
+        return  self._setpoint
 
     def setObject(self, name):
         star = self.getStarHolder().getStarByName(name)
