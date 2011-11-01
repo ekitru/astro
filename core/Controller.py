@@ -53,22 +53,6 @@ class Controller(object):
     def getResourceKeeper(self):
         return self._resources
 
-    def updateSetPoint(self):
-        #print('setpoint', self._resources.getSetPoint().getData())
-        object = self._resources.getObject()
-        #print('object', self._resources.getObject().getData())
-        position = object.getCurrentCoordinates()
-        #print('position', position)
-        self._resources.getSetPoint().setPosition(position['ra'], position['dec'])
-
-        #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change
-        #source selection
-        pass
-#        if self.objSetpointControlSelected():
-#            position = self._resources.getObject().getCurrentPosition()
-#            ra, dec = position['ra'], position['dec']
-#            self.setpointCoordinates.setValue(ra, dec)
-
     def logNow(self):
         """ Force to log message and start new timer  """
         self._logThread.force()
@@ -89,12 +73,6 @@ class Controller(object):
             Returns False if MANUAL control selected
         """
         return self._controlMode
-
-    def selObjSetpointControl(self):
-        self._controlMode = True
-
-    def selManSetpointControl(self):
-        self._controlMode = False
 
     def scopeCanMove(self):
         return True #TODO add more complex logic here
