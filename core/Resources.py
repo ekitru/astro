@@ -77,13 +77,10 @@ class Resources(object):
         return  self._setPoint
 
     def updateSetPoint(self):
-        print('Update setpoint')
         object = self.getObject()
-        position = object.getCurrentCoordinates()
-        print('current star', object.getData())
-        print('current position', position)
-        self.getSetPoint().setPosition(position['ra'], position['dec'])
-        print('setpoint',self.getSetPoint().getData())
+        if object.selected():
+            position = object.getCurrentCoordinates()
+            self.getSetPoint().setPosition(position['ra'], position['dec'])
 
     def getPLCManager(self):
         return self._PLCManager

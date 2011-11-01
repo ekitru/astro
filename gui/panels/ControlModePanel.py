@@ -66,6 +66,12 @@ class ControlModePanel(SimplePanel):
             plc.setFocus(data['focus'])
 
     def update(self, controller):
+        if self.rbObjectSetpoint.GetValue():
+            self._resources.updateSetPoint()
+
+        if self.rbManualSetpoint.GetValue():
+            self._controls.updateSetPoint()
+
         if controller.remoteControlSelected():
             self.rbRemoteControl.SetValue(True)
         else:
