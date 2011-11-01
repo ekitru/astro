@@ -19,11 +19,12 @@ class MainGui(wx.Frame):
         panelArgs = {"parent": self, "codes": codes}
 
         self.objectPanel = ObjectPanel(**panelArgs)
-        self.timeDatePanel = TimeDatePanel(**panelArgs)
         self.positioningPanel = PositionPanel(**panelArgs)
-        self.telescopePanel = TelescopePanel(**panelArgs)
         self.manualSetpointPanel = ManualSetpointPanel(resources=self._resources, **panelArgs)
         self.controlModePanel = ControlModePanel(self, codes, self._controller.getResourceKeeper())
+
+        self.timeDatePanel = TimeDatePanel(**panelArgs)
+        self.telescopePanel = TelescopePanel(self, self._resources)
         self.statusPanel = StatusPanel(self, self._resources)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
@@ -78,6 +79,7 @@ class MainGui(wx.Frame):
         self.manualSetpointPanel.update(self._controller)
         self.controlModePanel.update(self._controller)
         self.statusPanel.update(self._resources)
+        self.telescopePanel.update(self._resources)
         self.Fit()
         self.Show()
         event.Skip(False)

@@ -111,6 +111,7 @@ class PLCManager(object):
             self._logger.info('Connection established')
             self._axes =  commConfig.getAxesAddresses()
             self._status = commConfig.getStatusAddresses()
+            self._state = commConfig.getStateAddresses()
 
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self._logger)
@@ -192,7 +193,6 @@ class PLCManager(object):
 
 
     def readTelescopeStatus(self):
-        self._status
         ret = dict()
         for key in self._status:
             state =  self._conn.readFlag(self._status[key])
@@ -202,6 +202,18 @@ class PLCManager(object):
                 state = 'Off'
 
             ret[key]=state
+        return ret
+
+    def readTelescopeMode(self):
+        ret = dict()
+
+        serviceMode = self._conn.readNumber16bit(self._state['service_mode'])
+        serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online' , '2': 'pState_service'}
+        ret['pState_service_mode']=serviceModes[str(serviceMode)]
+
+        controlMode = self._conn.readNumber16bit(self._state['control_mode'])
+        controlModes = {'0':'pState_nobody' ,'1': 'pState_PC' , '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
+        ret['pState_control_mode']=controlModes[str(controlMode)]
 
         return ret
 

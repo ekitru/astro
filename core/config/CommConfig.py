@@ -23,6 +23,11 @@ class CommConfig(SimpleConfig):
         logging.info('=== Read position addresses ===')
         return self.getConfigBySection('axes')
 
+    def getStateAddresses(self):
+        """ Addresses with state words, may raise Configuration Exception """
+        logging.info('=== Read status addresses ===')
+        return self.getConfigBySection('state')
+
     def getStatusAddresses(self):
         """ Addresses with status words, may raise Configuration Exception """
         logging.info('=== Read status addresses ===')

@@ -4,22 +4,29 @@ from gui.panels.SimplePanel import SimplePanel
 __author__ = 'kitru'
 
 
-class TelescopePanel(SimplePanel):    #TODO decide, what to do with it, temp mock
-    def __init__(self, parent, id=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent, id)
-        sizer = wx.GridSizer(4, 2, 5, 10)
+class TelescopePanel(SimplePanel):
+    def __init__(self, parent, resources):
+        SimplePanel.__init__(self, parent)
 
-        sizer.Add(self.CreateCaption(codes.get("Temp in tube")), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateCaption("25.2"), flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateCaption("Temp under tube"), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateCaption("21.2"), flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateCaption("chair pos"), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateCaption("home"), flag=wx.ALL | wx.CENTER)
-        sizer.Add(self.CreateCaption("Kupol"), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.CreateCaption("somewhere"), flag=wx.ALL | wx.CENTER)
+        codes = resources.getCodes()
+        status = resources.getPLCManager().readTelescopeMode()
+        self._statuses = dict()
+        sizer = wx.GridSizer(0, 2, 5, 5)
+        for key in status:
+            field = self.CreateField()
+            sizer.Add(self.CreateCaption(codes.get(key)), flag=wx.ALL | wx.CENTER | wx.ALIGN_RIGHT)
+            sizer.Add(field, flag = wx.ALL | wx.CENTER | wx.ALIGN_CENTER)
+            self._statuses[key]=field
 
-        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label='Telescope'), wx.VERTICAL)
+        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pTelescope')), wx.VERTICAL)
         comSizer.Add(sizer, flag=wx.ALL, border=10)
         self.SetSizer(comSizer)
+
+    def update(self, resources):
+        codes = resources.getCodes()
+        status = resources.getPLCManager().readTelescopeMode()
+        for key in status:
+            field  = self._statuses[key]
+            field.SetLabel(codes.get(status[key]))
 
   
