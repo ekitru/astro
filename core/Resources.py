@@ -72,7 +72,7 @@ class Resources(object):
             self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
 
     def getSetPoint(self):
-        return  self._setpoint
+        return  self._setPoint
 
     def getPLCManager(self):
         return self._PLCManager
