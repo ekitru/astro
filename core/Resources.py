@@ -40,8 +40,10 @@ class Resources(object):
             raise InitializationException(msg, logger)
 
     def initSetPoint(self):
+        print('init setpoint')
         ra, dec = self._PLCManager.getSetpointPosition()
         focus = self._PLCManager.getFocus()[1]
+        print('get positions', ra,dec,focus)
         return SetPoint(ra, dec, focus)
 
 
@@ -73,6 +75,15 @@ class Resources(object):
 
     def getSetPoint(self):
         return  self._setPoint
+
+    def updateSetPoint(self):
+        print('Update setpoint')
+        object = self.getObject()
+        position = object.getCurrentCoordinates()
+        print('current star', object.getData())
+        print('current position', position)
+        self.getSetPoint().setPosition(position['ra'], position['dec'])
+        print('setpoint',self.getSetPoint().getData())
 
     def getPLCManager(self):
         return self._PLCManager
