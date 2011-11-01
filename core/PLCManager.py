@@ -155,7 +155,7 @@ class PLCManager(object):
         Return:
             tuple((str(curRA),str(curDEC)),(str(taskRA),str(taskDEC)))"""
         curRa,  curDec = self.getCurrentPosition()
-        taskDec, taskRa = self.getSetpointPosition()
+        taskRa, taskDec = self.getSetpointPosition()
 
         return rad2str(curRa, curDec), rad2str(taskRa, taskDec)
 
@@ -169,7 +169,7 @@ class PLCManager(object):
         """ Returns setpoint telescope position in radians """
         taskRa = self.readCoordinate(self._axes['ra_task'])
         taskDec = self.readCoordinate(self._axes['dec_task'])
-        return taskDec, taskRa
+        return taskRa, taskDec
 
     def setSetpointPosition(self, ra, dec):
         """ Store new setpoint position for telescope
