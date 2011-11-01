@@ -73,7 +73,6 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         """ Updates panels view """
-        self._controller.updateSetPoint()
         self.objectPanel.update(self._resources)
         self.timeDatePanel.update(self._resources)
         self.positioningPanel.update(self._resources)
