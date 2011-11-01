@@ -8,54 +8,26 @@ class StatusPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
-    def __init__(self, parent, id=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent, id)
+    def __init__(self, parent, resources):
+        SimplePanel.__init__(self, parent)
 
-        pPosSizer = wx.GridSizer(4, 3, 5, 10)
+        codes = resources.getCodes()
+        status = resources.getPLCManager().readTelescopeStatus()
 
-        self.curRA = self.CreateField()
-        self.taskRA = self.CreateField()
-        self.curDEC = self.CreateField()
-        self.taskDEC = self.CreateField()
-        self.curFocus = self.CreateField()
-        self.taskFocus = self.CreateField()
+        self._statuses = dict()
+        sizer = wx.GridSizer(0, 2, 5, 5)
+        for key in status:
+            field = self.CreateField()
+            sizer.Add(self.CreateCaption(codes.get(key)), flag=wx.ALL | wx.CENTER | wx.ALIGN_RIGHT)
+            sizer.Add(field, flag = wx.ALL | wx.CENTER | wx.ALIGN_CENTER)
+            self._statuses[key]=field
 
-        pPosSizer.Add(self.CreateField())
-        pPosSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-        pPosSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
-
-        pPosSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        pPosSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
-        pPosSizer.Add(self.taskRA, flag=wx.ALL | wx.ALIGN_CENTER)
-
-        pPosSizer.Add(self.CreateCaption(codes.get('pPosDEC')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        pPosSizer.Add(self.curDEC, flag=wx.ALL | wx.ALIGN_CENTER)
-        pPosSizer.Add(self.taskDEC, flag=wx.ALL | wx.ALIGN_CENTER)
-
-        pPosSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        pPosSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
-        pPosSizer.Add(self.taskFocus, flag=wx.ALL | wx.ALIGN_CENTER)
-
-        #Positioning panel sizer
-        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
-        comSizer.Add(pPosSizer, flag=wx.ALL, border=10)
-
+        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pStatus')), wx.VERTICAL)
+        comSizer.Add(sizer, flag=wx.ALL | wx.EXPAND, border=10)
         self.SetSizer(comSizer)
 
-    def update(self, controller):
-        plc = controller.getResourceKeeper().getPLCManager()
-
-        currentCoordinates = plc.getPosition()[0]
-        setpointCoordinates = plc.getPosition()[1]
-
-        currentFocus =  controller.currentFocus
-        setpointFocus = controller.setpointFocus
-
-        self.curRA.SetLabel(str(currentCoordinates[0]))
-        self.curDEC.SetLabel(str(currentCoordinates[1]))
-        self.curFocus.SetLabel(currentFocus.getAsString())
-
-        self.taskRA.SetLabel(str(setpointCoordinates[0]))
-        self.taskDEC.SetLabel(str(setpointCoordinates[1]))
-        self.taskFocus.SetLabel(setpointFocus.getAsString())
-  
+    def update(self, resources):
+        status = resources.getPLCManager().readTelescopeStatus()
+        for key in status:
+            field  =self._statuses[key]
+            field.SetLabel(status[key])

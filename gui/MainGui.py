@@ -24,6 +24,7 @@ class MainGui(wx.Frame):
         self.telescopePanel = TelescopePanel(**panelArgs)
         self.manualSetpointPanel = ManualSetpointPanel(resources=self._resources, **panelArgs)
         self.controlModePanel = ControlModePanel(self, codes, self._controller.getResourceKeeper())
+        self.statusPanel = StatusPanel(self, self._resources)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -36,6 +37,7 @@ class MainGui(wx.Frame):
         rightColon = wx.BoxSizer(wx.VERTICAL)
         rightColon.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
         rightColon.Add(self.telescopePanel, flag=wx.ALL | wx.EXPAND)
+        rightColon.Add(self.statusPanel, flag=wx.ALL | wx.EXPAND)
 
         grid = wx.FlexGridSizer(1, 2, 10, 10)
         grid.Add(leftColon, flag=wx.ALL | wx.EXPAND)
@@ -75,6 +77,7 @@ class MainGui(wx.Frame):
         self.positioningPanel.update(self._resources)
         self.manualSetpointPanel.update(self._controller)
         self.controlModePanel.update(self._controller)
+        self.statusPanel.update(self._resources)
         self.Fit()
         self.Show()
         event.Skip(False)

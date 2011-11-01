@@ -54,11 +54,11 @@ class Controller(object):
         return self._resources
 
     def updateSetPoint(self):
-        print('setpoint', self._resources.getSetPoint().getData())
+        #print('setpoint', self._resources.getSetPoint().getData())
         object = self._resources.getObject()
-        print('object', self._resources.getObject().getData())
+        #print('object', self._resources.getObject().getData())
         position = object.getCurrentCoordinates()
-        print('position', position)
+        #print('position', position)
         self._resources.getSetPoint().setPosition(position['ra'], position['dec'])
 
         #TODO depend on mode (pc or plc, manual or auto) the coordinate source should change

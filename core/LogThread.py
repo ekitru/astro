@@ -52,7 +52,7 @@ class LogThread(object):
     def force(self):
         with self._mutex:
             self._timer.cancel()
-            self._timer.join()
+#            self._timer.join() #TODO discover, some times thread is not started yet
             self._start()
 
     def getStarId(self):
