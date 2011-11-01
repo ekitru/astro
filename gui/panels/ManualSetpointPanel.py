@@ -29,6 +29,7 @@ class ManualSetpointPanel(SimplePanel):
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pSetpoint')), wx.VERTICAL)
         comSizer.Add(sizer, flag=wx.EXPAND | wx.ALL, border=10)
         self.SetSizer(comSizer)
+        self.Hide()
 
         self.Bind(wx.EVT_SHOW, self.OnShow)
         self.Bind(wx.EVT_BUTTON, self.OnButtonUp, self.butIncRA)
@@ -147,7 +148,7 @@ class ManualSetpointPanel(SimplePanel):
             return True
 
     def update(self, controller):
-        self.Show(self.isVisible(controller))
+        #self.Show(self.isVisible(controller))
         if self._checkCoordinatesAndFocus():  #if coordinates are correct
             ra, dec, focus = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
             self._setpoint.setPosition(ra, dec)

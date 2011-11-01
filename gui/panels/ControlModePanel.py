@@ -10,24 +10,31 @@ class ControlModePanel(SimplePanel):
         codes - Translation codes
     """
     _setpointControlMode = 1
-    def __init__(self, parent, codes, resources):
+    def __init__(self, parent, codes, resources, controls):
+        """ Attr:
+            codes - translation codes
+            resouces - program resources
+            controls - ManualSetPointPanel """
         SimplePanel.__init__(self,parent)
 
         self._resources = resources
+        self._controls = controls
 
         self.rbObjectSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlObjSP'))
         self.rbManualSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlManSP'))
         self.rbRemoteControl = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlRemCtrl'))
+        self.rbRemoteControl.Disable()
         self.butMove = self.CreateButton(label=codes.get('pCtrlMov'))
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         column1 = wx.BoxSizer(wx.VERTICAL)
-        column2 = wx.BoxSizer(wx.VERTICAL)
         column1.Add(self.rbObjectSetpoint)
         column1.Add(self.rbManualSetpoint)
         column1.Add(self.rbRemoteControl)
 
+        column2 = wx.BoxSizer(wx.VERTICAL)
         column2.Add(self.butMove)
+
         sizer.Add(column1)
         sizer.AddSpacer(40)
         sizer.Add(column2)
@@ -39,10 +46,11 @@ class ControlModePanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.butMove)
 
     def OnObjSetpointRadBut(self, event):
-        self._setpointControlMode = 1
+        self._controls.Hide()
 
     def OnManSetpointRadBut(self, event):
-        self._setpointControlMode = 0
+        self._controls.Show()
+        self.GetParent().Fit()
 
     def OnRemoteCtrlRadBut(self, event):
         return
@@ -56,23 +64,10 @@ class ControlModePanel(SimplePanel):
             plc.setFocus(data['focus'])
 
     def update(self, controller):
-        if self._setpointControlMode == 1:
-            controller.selObjSetpointControl()
-        else:
-            controller.selManSetpointControl()
-
         if controller.remoteControlSelected():
-            self.rbObjectSetpoint.Disable()
-            self.rbManualSetpoint.Disable()
-            self.rbRemoteControl.Enable()
             self.rbRemoteControl.SetValue(True)
-            self._setpointControlMode = 1
-        if controller.pcControlSelected():
+        else:
             self.rbRemoteControl.Disable()
-            self.rbObjectSetpoint.Enable()
-            self.rbManualSetpoint.Enable()
-            self.butMove.Disable()
-            if self.rbRemoteControl.GetValue():
-                self.rbObjectSetpoint.SetValue(True)
-            if controller.scopeCanMove() or not self._setpointControlMode == 1:
-                self.butMove.Enable()
+            self.rbRemoteControl.SetValue(False)
+
+        self.Fit()
