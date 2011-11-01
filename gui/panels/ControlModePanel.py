@@ -48,19 +48,12 @@ class ControlModePanel(SimplePanel):
         return
 
     def OnButtonMove(self, event):
-#        object = self._resources.getObject()
-#        print(object.getData())
-#        data = object.getData()
-#        ra,dec = str2rad(data['ra'],data['dec'])
-
-        setpoint = self._resources.getSetPoint()
-
-        data = setpoint.getRawData()
-
+        data = self._resources.getSetPoint().getRawData()
         plc = self._resources.getPLCManager()
+
         plc.setSetpointPosition(data['ra'], data['dec'])
-        plc.setFocus(data['focus'])
-        return
+        if data['focus']:
+            plc.setFocus(data['focus'])
 
     def update(self, controller):
         if self._setpointControlMode == 1:

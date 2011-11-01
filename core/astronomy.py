@@ -170,7 +170,7 @@ class Object(object):
             return 'always'
 
 class SetPoint(object):
-    def __init__(self, ra=0, dec=0, focus=0):
+    def __init__(self, ra=0, dec=0, focus=None):
         self._ra = float(ra)
         self._dec = float(dec)
         self._focus = float(focus)
@@ -188,6 +188,9 @@ class SetPoint(object):
             focus - focus as float """
         self._focus = float(focus)
 
+    def getFocus(self):
+        return self._focus
+
     def getData(self):
         data = dict()
         data['ra'],data['dec'] = rad2str(self._ra, self._dec)
@@ -196,8 +199,7 @@ class SetPoint(object):
 
     def getRawData(self):
         data = dict()
-        data['ra'],data['dec'] = self._ra, self._dec
-        data['focus'] = self._focus
+        data['ra'],data['dec'], data['focus'] = self._ra, self._dec, self._focus
         return data
 
 

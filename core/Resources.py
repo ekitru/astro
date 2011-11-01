@@ -12,6 +12,7 @@ __author__ = 'kitru'
 
 class Resources(object):
     """ Holder for all resources: DB connection, PLC connection, translation codes and so on  """
+
     def __init__(self):
         """ Reads common configuration file. As result after initialization
         common dictionary, codes, observer and object will be created """
@@ -26,9 +27,8 @@ class Resources(object):
             self._observer = Observer(observerConfig)
             self._object = Object(self._observer)
 
-            self._setpoint = SetPoint()
-
             self._PLCManager = PLCManager()
+            self._setPoint =self.initSetPoint()
 
             self._dbManager = DbManager(self._config.getDbConfig())
             self._star = Star(self._dbManager)
@@ -38,6 +38,11 @@ class Resources(object):
             msg = error.args
             logger = self._config.getLogger()
             raise InitializationException(msg, logger)
+
+    def initSetPoint(self):
+        ra, dec = self._PLCManager.getSetpointPosition()
+        focus = self._PLCManager.getFocus()[0]
+        return SetPoint(ra, dec, focus)
 
 
     def __del__(self):
@@ -61,13 +66,13 @@ class Resources(object):
     def getObject(self):
         return self._object
 
-    def getSetPoint(self):
-        return  self._setpoint
-
     def setObject(self, name):
         star = self.getStarHolder().getStarByName(name)
         if star:
             self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
+
+    def getSetPoint(self):
+        return  self._setpoint
 
     def getPLCManager(self):
         return self._PLCManager
