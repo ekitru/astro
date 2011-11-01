@@ -47,6 +47,7 @@ class ControlModePanel(SimplePanel):
 
     def OnObjSetpointRadBut(self, event):
         self._controls.Hide()
+        self._resources.updateSetPoint()
 
     def OnManSetpointRadBut(self, event):
         self._controls.Show()
@@ -56,9 +57,10 @@ class ControlModePanel(SimplePanel):
         return
 
     def OnButtonMove(self, event):
+        event.Skip()
         data = self._resources.getSetPoint().getRawData()
+        print(data)
         plc = self._resources.getPLCManager()
-
         plc.setSetpointPosition(data['ra'], data['dec'])
         if data['focus']:
             plc.setFocus(data['focus'])
@@ -67,7 +69,4 @@ class ControlModePanel(SimplePanel):
         if controller.remoteControlSelected():
             self.rbRemoteControl.SetValue(True)
         else:
-            self.rbRemoteControl.Disable()
             self.rbRemoteControl.SetValue(False)
-
-        self.Fit()

@@ -21,7 +21,7 @@ class MainGui(wx.Frame):
         self.objectPanel = ObjectPanel(**panelArgs)
         self.positioningPanel = PositionPanel(**panelArgs)
         self.manualSetpointPanel = ManualSetpointPanel(resources=self._resources, **panelArgs)
-        self.controlModePanel = ControlModePanel(self, codes, self._controller.getResourceKeeper(), self.manualSetpointPanel)
+        self.controlModePanel = ControlModePanel(self, codes, self._resources, self.manualSetpointPanel)
 
         self.timeDatePanel = TimeDatePanel(**panelArgs)
         self.telescopePanel = TelescopePanel(self, self._resources)

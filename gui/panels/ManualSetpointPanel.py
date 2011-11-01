@@ -148,7 +148,8 @@ class ManualSetpointPanel(SimplePanel):
             return True
 
     def update(self, controller):
-        #self.Show(self.isVisible(controller))
+        data = self._setpoint.getRawData()
+        print(data)
         if self._checkCoordinatesAndFocus():  #if coordinates are correct
             ra, dec, focus = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
             self._setpoint.setPosition(ra, dec)
