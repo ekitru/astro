@@ -110,12 +110,12 @@ class ManualSetpointPanel(SimplePanel):
 
     def OnButtonIncFoc(self, event):
         sign = 1
-        speed = None
+        speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self._incrementFocus, self.inFieldFoc, speed, sign)
 
     def OnButtonDecFoc(self, event):
         sign = -1
-        speed = None
+        speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self._incrementFocus, self.inFieldFoc, speed, sign)
 
     def OnButtonSelHour(self, event):
