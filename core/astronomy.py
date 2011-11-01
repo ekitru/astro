@@ -56,7 +56,7 @@ class Observer(ephem.Observer):
         self.date = ephem.now()
 
     def updateTemp(self, temp):
-        self.temp = float(temp)
+        self.temp = float(temp) #TODO implement this
 
     def updatePressure(self, pressure):
         self.pressure = pressure #TODO not very needed, not will be good to add this functionality
@@ -127,17 +127,18 @@ class Object(object):
         Return:
             dict(ra,dec,alt,ha,rise,set)
         """
-        ra, dec, alt, ha, rise, set = '', '', '', ' ', '', ''
+        ra, dec, alt, az,  ha, rise, set = '', '', '', ' ', '', '', ''
         if self.selected():
             self._observer.updateToNow()
             self._fixedBody.compute(self._observer)
             ra, dec = rad2str(self._fixedBody.ra, self._fixedBody.dec)
             alt = str(self._fixedBody.alt)
+            az = str(self._fixedBody.az)
             rise = self.getRisingTime()
             set = self.getSettingTime()
             ha = str(getHours(self._observer.getLST() - self._fixedBody.ra)) # LHA=LST-RA
 
-        return {'ra': ra, 'dec': dec, 'alt': alt, 'ha': ha, 'rise': rise, 'set': set}
+        return {'ra': ra, 'dec': dec, 'alt': alt, 'az':az, 'ha': ha, 'rise': rise, 'set': set}
 
     def getRisingTime(self):
         """ Calcutes next rising time for selected object
@@ -146,8 +147,9 @@ class Object(object):
             never or always, if object always up, down
         """
         try:
-            time = self._observer.next_rising(self._fixedBody)
-            return str(time).split(" ")[1]
+            time = ephem.localtime(self._observer.next_rising(self._fixedBody))
+
+            return str(time.strftime('%H:%M:%S'))
         except ephem.NeverUpError:
             return 'never'
         except ephem.AlwaysUpError:
@@ -160,8 +162,8 @@ class Object(object):
             never or always, if object always up, down
         """
         try:
-            time = self._observer.next_setting(self._fixedBody)
-            return str(time).split(" ")[1]
+            time = ephem.localtime(self._observer.next_setting(self._fixedBody))
+            return str(time.strftime('%H:%M:%S'))
         except ephem.NeverUpError:
             return 'never'
         except ephem.AlwaysUpError:
