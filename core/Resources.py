@@ -41,7 +41,7 @@ class Resources(object):
 
     def initSetPoint(self):
         ra, dec = self._PLCManager.getSetpointPosition()
-        focus = self._PLCManager.getFocus()[0]
+        focus = self._PLCManager.getFocus()[1]
         return SetPoint(ra, dec, focus)
 
 
