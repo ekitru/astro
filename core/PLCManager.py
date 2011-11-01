@@ -57,7 +57,8 @@ class ModBusManager(object):
         Return:
             long number
         """
-        return self._master.execute(self.ID, cst.READ_HOLDING_REGISTERS, long(addr), 1)[0]
+        number =  self._master.execute(self.ID, cst.READ_HOLDING_REGISTERS, long(addr), 1)[0]
+        return ctypes.c_int16(number).value
 
     def writeNumber16bit(self, addr, number):
         """ Writes 16bit number to PLC.
@@ -215,6 +216,12 @@ class PLCManager(object):
         controlModes = {'0':'pState_nobody' ,'1': 'pState_PC' , '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
         ret['pState_control_mode']=controlModes[str(controlMode)]
 
+        return ret
+
+    def readTemperature(self):
+        ret=dict()
+        ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope'])/10.0)
+        ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome'])/10.0)
         return ret
 
     def close(self):
