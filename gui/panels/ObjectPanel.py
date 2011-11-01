@@ -65,6 +65,7 @@ class ObjectPanel(SimplePanel):
             codes - translation codes
         """
         self.objAltitude = self.CreateCoordinateField()
+        self.objAzimuth = self.CreateCoordinateField()
         self.objHourAngle = self.CreateCoordinateField()
         self.objRisingTime = self.CreateField()
         self.objSettingTime = self.CreateField()
@@ -74,10 +75,13 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.objAltitude, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.CreateCaption(codes.get('pObjRise')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objRisingTime, flag=wx.ALL | wx.ALIGN_CENTER)
-        sizer.Add(self.CreateCaption(codes.get('pObjHA')), flag=wx.ALL | wx.ALIGN_RIGHT)
-        sizer.Add(self.objHourAngle, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('pObjAZIMUTH')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objAzimuth, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.CreateCaption(codes.get('pObjSet')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objSettingTime, flag=wx.ALL | wx.ALIGN_CENTER)
+
+        sizer.Add(self.CreateCaption(codes.get('pObjHA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objHourAngle, flag=wx.ALL | wx.ALIGN_CENTER)
         return sizer
 
     def update(self, resources):
@@ -95,6 +99,7 @@ class ObjectPanel(SimplePanel):
         self.objectCurrRA.SetLabel(position['ra'])
         self.objectCurrDEC.SetLabel(position['dec'])
         self.objAltitude.SetLabel(position['alt'])
+        self.objAzimuth.SetLabel(position['az'])
         self.objHourAngle.SetLabel(position['ha'])
         self.objRisingTime.SetLabel(position['rise'])
         self.objSettingTime.SetLabel(position['set'])
