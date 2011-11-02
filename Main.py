@@ -21,8 +21,8 @@ def runGui(controller):
 
 if __name__ == '__main__':
     try:
-        resources = getResources()
         controller = Controller()
+        resources = getResources()
         controller.initialization(resources)
         runGui(controller)
         controller.freeResources()

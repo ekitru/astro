@@ -20,7 +20,7 @@ class Controller(object):
 
     def __initLogger(self):
         logPath = getLogPath()
-        logging.basicConfig(level=logging.NOTSET,
+        logging.basicConfig(level=logging.INFO,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
                             filename=join(logPath, 'common.log'),
