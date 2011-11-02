@@ -34,7 +34,7 @@ def closeLog(log):
 def getLogPath():
         logPath = join('resources', 'logs')
         if not os.path.exists(logPath):
-            os.makedirs(logPath, mode=0711)
+            os.makedirs(logPath, mode=0777)
         return logPath
 
 
