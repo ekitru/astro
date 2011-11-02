@@ -1,15 +1,19 @@
 Needed modules:
-    wxPython
-    modbus_tk
 
-python-wxgtk2.8
-python-wxtools
-python-wxversion
+wxPython:
+    python-wxgtk2.8
+    python-wxtools
+    python-wxversion
 
-modbus-tk : python setup.py install
+modbus-tk :
+    apt-get install python-setuptools
+    python setup.py install
 
-apt-get install python-dev
-easy_install pyephem
+PyEphem:
+    apt-get install python-dev
+    easy_install pyephem
 
-apt-get install python-mysqldb
+MySQL db:
+    apt-get install
+    apt-get install python-mysqldb
 
