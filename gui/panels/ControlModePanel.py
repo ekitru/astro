@@ -25,7 +25,8 @@ class ControlModePanel(SimplePanel):
         self.rbManualSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlManSP'))
         self.rbRemoteControl = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlRemCtrl'))
         self.rbRemoteControl.Disable()
-        self.butMove = self.CreateButton(label=codes.get('pCtrlMov'))
+        self.butStart = self.CreateButton(label=codes.get('pCtrlStart'))
+        self.butStop = self.CreateButton(label=codes.get('pCtrlStop'))
 
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         column1 = wx.BoxSizer(wx.VERTICAL)
@@ -33,8 +34,9 @@ class ControlModePanel(SimplePanel):
         column1.Add(self.rbManualSetpoint)
         column1.Add(self.rbRemoteControl)
 
-        column2 = wx.BoxSizer(wx.VERTICAL)
-        column2.Add(self.butMove)
+        column2 = wx.BoxSizer(wx.HORIZONTAL)
+        column2.Add(self.butStart)
+        column2.Add(self.butStop)
 
         sizer.Add(column1)
         sizer.AddSpacer(40)
@@ -43,7 +45,8 @@ class ControlModePanel(SimplePanel):
 
         self.Bind(wx.EVT_RADIOBUTTON, self.OnObjSetpointRadBut, id=self.rbObjectSetpoint.GetId())
         self.Bind(wx.EVT_RADIOBUTTON, self.OnManSetpointRadBut, id=self.rbManualSetpoint.GetId())
-        self.Bind(wx.EVT_BUTTON, self.OnButtonMove, self.butMove)
+        self.Bind(wx.EVT_BUTTON, self.OnBtnStart, self.butStart)
+        self.Bind(wx.EVT_BUTTON, self.OnBtnStop, self.butStop)
 
     def OnObjSetpointRadBut(self, event):
         self.takeControl()
@@ -60,7 +63,7 @@ class ControlModePanel(SimplePanel):
         plc = self._resources.getPLCManager()
         plc.takeControl()
 
-    def OnButtonMove(self, event):
+    def OnBtnStart(self, event):
         event.Skip()
         data = self._resources.getSetPoint().getRawData()
         plc = self._resources.getPLCManager()
@@ -69,6 +72,12 @@ class ControlModePanel(SimplePanel):
             plc.setFocus(data['focus'])
 
         plc.startMoving()
+
+    def OnBtnStop(self, event):
+        event.Skip()
+        plc = self._resources.getPLCManager()
+        plc.stopMoving()
+
 
     def update(self, controller):
         mode = self._resources.getPLCManager().readControlMode()
