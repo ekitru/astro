@@ -25,6 +25,7 @@ class SimpleConfig(object):
             fileName - configuration file name
         """
         try:
+            self._logger.info('Read configuration file: ' + fileName)
             self._config = ConfigParser.SafeConfigParser()
             self._config.readfp(codecs.open(fileName + '.conf', "r", "utf8"))
             return self._config

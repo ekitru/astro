@@ -13,7 +13,8 @@ class TranslationConfig(SimpleConfig):
             self._getTranslationConfig(lang)
             self._codes = self.getConfigBySection('codes')
         except Exception as ex:
-            raise ConfigurationException(ex.args, self._logger)
+            msg = ex.args + (lang,)
+            raise ConfigurationException(msg, self._logger)
 
     def get(self, key):
         if key.lower() in self._codes:
@@ -26,7 +27,6 @@ class TranslationConfig(SimpleConfig):
         """
         Return SafeConfigParser from name.conf file
         """
-        self._logger.info('=== Reading translation page  ===')   #Read selected language translation
         self._logger.info('Read translations for ' + language)
         return self.readConfiguration(join('resources', 'trans', language))
 
