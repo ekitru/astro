@@ -4,6 +4,7 @@ from core.astronomy import Object, Observer, SetPoint
 
 from core.config import ProgramConfig
 from core.config import TranslationConfig
+from core.logger import openLog
 
 from db import Message, Log, Star
 from db.DbManager import DbManager
@@ -17,8 +18,8 @@ class Resources(object):
         """ Reads common configuration file. As result after initialization
         common dictionary, codes, observer and object will be created """
         try:
+            self._logger = openLog("resources")
             self._config = ProgramConfig()
-            self._commonDict = self._config.getCommonConfigDict()
 
             lang = self._config.getDefaultLanguage()
             self._codes = TranslationConfig(lang)
@@ -28,29 +29,27 @@ class Resources(object):
             self._object = Object(self._observer)
 
             self._PLCManager = PLCManager()
-            self._setPoint =self.initSetPoint()
+            self._setPoint = self._initSetPoint()
 
             self._dbManager = DbManager(self._config.getDbConfig())
-            self._star = Star(self._dbManager)
-            self._log = Log(self._dbManager)
-            self._message = Message(self._dbManager)
+            self._dbStar = Star(self._dbManager)
+            self._dbLog = Log(self._dbManager)
+            self._dbMessage = Message(self._dbManager)
         except Exception as error:
-            msg = error.args
-            logger = self._config.getLogger()
-            raise InitializationException(msg, logger)
+            raise InitializationException(error.args, self._logger)
 
-    def initSetPoint(self):
-        print('init setpoint')
+    def _initSetPoint(self):
+        self._logger.info('Init SetPoint object')
         ra, dec = self._PLCManager.getSetpointPosition()
         focus = self._PLCManager.getFocus()[1]
-        print('get positions', ra,dec,focus)
         return SetPoint(ra, dec, focus)
 
 
     def __del__(self):
-        del self._message
-        del self._log
-        del self._star
+        self._logger.info('Closing resources')
+        del self._dbMessage
+        del self._dbLog
+        del self._dbStar
         del self._dbManager
         del self._PLCManager
         del self._codes
@@ -69,6 +68,7 @@ class Resources(object):
         return self._object
 
     def setObject(self, name):
+        self._logger.info('Set new object: ', name)
         star = self.getStarHolder().getStarByName(name)
         if star:
             self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
@@ -89,11 +89,11 @@ class Resources(object):
         return self._dbManager
 
     def getStarHolder(self):
-        return self._star
+        return self._dbStar
 
     def getLogHolder(self):
-        return self._log
+        return self._dbLog
 
     def getMessageHolder(self):
-        return self._message
+        return self._dbMessage
   

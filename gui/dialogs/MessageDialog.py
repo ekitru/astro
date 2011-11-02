@@ -4,10 +4,10 @@ __author__ = 'kitru'
 
 class MessageDialog(wx.Dialog):
     def __init__(self, parent, id, controller):
-        codes = controller.getResourceKeeper().getCodes()
+        codes = controller.getResources().getCodes()
         wx.Dialog.__init__(self, parent, id, codes.get('dMsg_title'), style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 
-        self.message = controller.getResourceKeeper().getMessageHolder()
+        self.message = controller.getResources().getMessageHolder()
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.text = wx.TextCtrl(self, size=(250, 70), style=wx.MULTIPLE)
         self.text.SetValue(self.message.getLastMsg())

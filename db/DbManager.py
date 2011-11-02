@@ -24,10 +24,10 @@ class DbManager(object):
             config - SafeConfigParser object
         """
         try:
-            self._logger.info('Establishing connection')
+            self._logger.info('Establishing DB connection')
             db = MySQLdb.connect(confDict['host'], confDict['user'], confDict['password'], confDict['database'],
                                  port=int(confDict['port']), charset="utf8", use_unicode=True)
-            self._logger.info('Connection established')
+            self._logger.info('DB connection established')
             return db
         except Exception as error:
             raise ConfigurationException(error.args, self._logger)

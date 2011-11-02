@@ -24,12 +24,13 @@ def closeLog(log):
     Attr:
         log logger object to be closed
     """
-    log.info("close "+log.name+" log")
-    x = list(log.handlers)
-    for i in x:
-        log.removeHandler(i)
-        i.flush()
-        i.close()
+    if log:
+        log.info("Close "+log.name+" log")
+        x = list(log.handlers)
+        for i in x:
+            log.removeHandler(i)
+            i.flush()
+            i.close()
 
 def getLogPath():
         logPath = join('resources', 'logs')

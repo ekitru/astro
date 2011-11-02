@@ -5,7 +5,7 @@ import modbus_tk.modbus_tcp as modbus_tcp
 from Exceptions import ConfigurationException
 
 from core.astronomy import rad2str
-from core.config.CommConfig import CommConfig
+from core.config.CommunicationConfig import CommunicationConfig
 from logger import openLog, closeLog
 
 import ctypes
@@ -107,29 +107,20 @@ PC_CONTROL = 1
 class PLCManager(object):
     def __init__(self):
         try:
-            commConfig = CommConfig()
-            self._logger = openLog('plc_comm')
+            commConfig = CommunicationConfig()
+            self._logger = openLog('plc_manager')
             self._logger.info('Establishing connection')
-            #Connect to the slave
             confDict = commConfig.getConnectionConfig()
             self._conn = ModBusManager(confDict)
             self._logger.info('Connection established')
+
             self._axes =  commConfig.getAxesAddresses()
             self._status = commConfig.getStatusAddresses()
             self._state = commConfig.getStateAddresses()
-
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self._logger)
         except Exception as error:
             raise ConfigurationException(error.args, self._logger)
-
-        self.mockCurRA = 0.231
-        self.mockCurDEC = -0.0123
-        self.mockCurFoc = 0.3
-        self.mockTaskRA = 0.301
-        self.mockTaskDEC = -0.0102
-        self.mockTaskFoc = 0.1
-        self.mockPCMode = True
 
     def __del__(self):
         closeLog(self._logger)
@@ -249,9 +240,4 @@ class PLCManager(object):
     def close(self):
         self._logger.info("Close Communication connection")
         self.master.close()
-
-    def isPCControl(self):
-        """  Returns True if status flag read from PLC equals "1" (PC CONTROL selected)
-             Returns False if status flag read from PLC equals "0" (REMOTE CONTROL selected)"""
-        return self.mockPCMode #TODO real implementation
 

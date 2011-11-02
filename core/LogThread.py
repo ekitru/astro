@@ -1,3 +1,4 @@
+import logging
 import threading
 from core.Exceptions import ConfigurationException
 from db import Message, Log
@@ -8,19 +9,18 @@ class LogThread(object):
     """ Separate thread for logging stuff.
     It starts to log in separate thread as new instance will be done  or _start() method will be called
     Timer could be stopped be calling stop() method.  """
-    _scale = 10 #should be 60 second in minute
 
     def __init__(self, resources):
         try:
-#            minutes = float(config.getCommonConfigDict()['logging time'])
-            minutes = 1
-            self._period = minutes * self._scale
-
+            logging.info('Starting logging thread')
             self._resources = resources
-            self._log = Log(self._resources.getDbManager())
-            self._message = Message(self._resources.getDbManager())
+            db = self._resources.getDbManager()
+            self._log = Log(db)
+            self._message = Message(db)
+
             self._plc = self._resources.getPLCManager()
 
+            self._period = resources.getConfig().getLoggingTime()
             self._mutex = threading.RLock()
             self._start()
         except Exception as ex:
@@ -52,7 +52,7 @@ class LogThread(object):
     def force(self):
         with self._mutex:
             self._timer.cancel()
-#            self._timer.join() #TODO discover, some times thread is not started yet
+            #            self._timer.join() #TODO discover, some times thread is not started yet
             self._start()
 
     def getStarId(self):

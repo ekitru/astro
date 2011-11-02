@@ -9,11 +9,6 @@ from gui.MainGui import MainGui
 
 __author__ = 'kitru'
 
-def getResources():
-    resources = Resources()
-    return resources
-
-
 def runGui(controller):
     app = wx.App(False)
     MainGui(None, 'AstroLab', controller)
@@ -22,8 +17,7 @@ def runGui(controller):
 if __name__ == '__main__':
     try:
         controller = Controller()
-        resources = getResources()
-        controller.initialization(resources)
+        controller.initialization()
         runGui(controller)
         controller.freeResources()
     except InitializationException as exception:

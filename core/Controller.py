@@ -3,20 +3,15 @@ import logging
 
 from Exceptions import   ClosingException
 from LogThread import LogThread
+from core.Resources import Resources
+from core.Exceptions import ConfigurationException, InitializationException
 from core.logger import getLogPath
 
 __author__ = 'kitru'
 
 class Controller(object):
-    _controlMode = True
-
     def __init__(self):
         self.__initLogger()
-
-        self.manPosition = None
-        self.manFocus = None
-
-
 
     def __initLogger(self):
         logPath = getLogPath()
@@ -26,53 +21,33 @@ class Controller(object):
                             filename=join(logPath, 'common.log'),
                             filemode='w')
 
-    def initialization(self, resources):
+    def initialization(self):
         """ Initialization for all components
         Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
-            self._resources = resources
-            self._logThread = LogThread(resources)
-#        except ConfigurationException as ce:
-#            raise InitializationException(ce)
-#        except Exception as e:
-#            raise InitializationException(e)
-        except ImportError:
-            pass
+            self._resources = Resources()
+            self._logThread = LogThread(self._resources)
+        except ConfigurationException as ce:
+            logging.info('Error during initialization occure', ce)
+            raise InitializationException(ce)
+        except Exception as e:
+            logging.info('Error during initialization occure', e)
+            raise InitializationException(e)
 
 
     def freeResources(self):
+        """ free all resources, close all connections """
         try:
-            logging.info('======= Free all resources: DB, MODBUS =======')
-            # close database connections
+            logging.info('======= Program closing =======')
             self._logThread.stop()
             del self._resources
         except Exception as e:
             raise ClosingException(e)
 
-    def getResourceKeeper(self):
+    def getResources(self):
         return self._resources
 
-    def logNow(self):
+    def forceLog(self):
         """ Force to log message and start new timer  """
         self._logThread.force()
-
-
-    def pcControlSelected(self):
-        """  Returns True if status flag read from PLC equals "1" (PC control selected)
-             Returns False if status flag read from PLC equals "0" (REMOTE control selected)"""
-        return self._resources.getPLCManager().isPCControl()
-
-    def remoteControlSelected(self):
-        """  Returns True if status flag read from PLC equals "0" (REMOTE control selected)
-             Returns False if status flag read from PLC equals "1" (PC control selected)"""
-        return not self._resources.getPLCManager().isPCControl()
-
-    def objSetpointControlSelected(self):
-        """ Returns True if AUTO control selected
-            Returns False if MANUAL control selected
-        """
-        return self._controlMode
-
-    def scopeCanMove(self):
-        return True #TODO add more complex logic here

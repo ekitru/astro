@@ -8,9 +8,9 @@ __author__ = 'kitru'
 
 class EditObjectDialog(ObjectListDialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller.getResourceKeeper())
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller.getResources())
         self._controller = controller
-        self.codes = controller.getResourceKeeper().getCodes()
+        self.codes = controller.getResources().getCodes()
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
         findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_CENTER)
@@ -47,7 +47,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
     def OnListItemActivated(self, event):
         star = self.GetSelectedStar()
-        dialog = UpdateStarDialog(self, self._controller.getResourceKeeper(), star)
+        dialog = UpdateStarDialog(self, self._controller.getResources(), star)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -68,7 +68,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
             event.Skip()
 
     def OnAddClicked(self, event):
-        dialog = AddStarDialog(self, self._controller.getResourceKeeper())
+        dialog = AddStarDialog(self, self._controller.getResources())
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)

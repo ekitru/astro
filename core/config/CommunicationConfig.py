@@ -4,13 +4,12 @@ from core.config.SimpleConfig import SimpleConfig
 
 __author__ = 'kitru'
 
-class CommConfig(SimpleConfig):
+class CommunicationConfig(SimpleConfig):
     """Get configuration from file for PLC  """
 
     def __init__(self):
         name = 'plc';
         SimpleConfig.__init__(self, name)
-        self._logger.info('Read configuration file: ' + name)
         self.readConfiguration(name)
 
     def getConnectionConfig(self):

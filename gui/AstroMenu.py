@@ -10,8 +10,8 @@ class AstroMenu(wx.MenuBar):
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
         self._controller = controller
-        self._resources = controller.getResourceKeeper()
-        self._codes = controller.getResourceKeeper().getCodes()
+        self._resources = controller.getResources()
+        self._codes = controller.getResources().getCodes()
 
         objMenu = self.CreateObjectMenu(self._codes)
         toolsMenu = self.CreateToolsMenu(self._codes)
@@ -27,7 +27,7 @@ class AstroMenu(wx.MenuBar):
         dialog.Destroy()
 
         if ret == wx.ID_OK:
-            self._controller.logNow()
+            self._controller.forceLog()
 
     def OnEditObject(self, event):
         """ Working with DB objects: add, update, delete """
@@ -40,7 +40,7 @@ class AstroMenu(wx.MenuBar):
         ret = self.showDial(MessageDialog)
         if ret == wx.ID_OK:
             print('updated msg')
-            self._controller.logNow()
+            self._controller.forceLog()
 
     def OnLogs(self, event):
         """ Shows observation logs """

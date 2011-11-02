@@ -13,9 +13,9 @@ class MainGui(wx.Frame):
                                       size=(706, 388))
         #        InspectionTool().Show()
         self._controller = controller
-        self._resources = controller.getResourceKeeper()
+        self._resources = controller.getResources()
 
-        codes = controller.getResourceKeeper().getCodes()
+        codes = controller.getResources().getCodes()
         panelArgs = {"parent": self, "codes": codes}
 
         self.objectPanel = ObjectPanel(**panelArgs)
