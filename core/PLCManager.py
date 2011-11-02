@@ -98,7 +98,11 @@ class ModBusManager(object):
         """
         return self._master.execute(self.ID, cst.READ_COILS, long(addr), 1)[0]
 
+    def writeFlag(self, addr, value):
+        """ Writes boolean flag  """
+        self._master.execute(self.ID, cst.WRITE_SINGLE_COIL, long(addr), output_value=value)
 
+PC_CONTROL = 1
 
 class PLCManager(object):
     def __init__(self):
@@ -184,13 +188,13 @@ class PLCManager(object):
         """ Get current and setpoint for focus from PLC as strings
         Return:
             tuple(str(curFocus), str(taskFocus))"""
-        cur = self._conn.readNumber16bit(self._axes['focus_cur'])
-        task = self._conn.readNumber16bit(self._axes['focus_task'])
+        cur = self._conn.readNumber16bit(self._axes['focus_cur'])/10.0
+        task = self._conn.readNumber16bit(self._axes['focus_task'])/10.0
         return cur, task
 
     def setFocus(self, focus):
         """ Set new focus value """
-        self._conn.writeNumber16bit(self._axes['focus_task'], focus)
+        self._conn.writeNumber16bit(self._axes['focus_task'], focus*10.0)
 
 
     def readTelescopeStatus(self):
@@ -208,21 +212,39 @@ class PLCManager(object):
     def readTelescopeMode(self):
         ret = dict()
 
-        serviceMode = self._conn.readNumber16bit(self._state['service_mode'])
+        serviceMode = self.readServiceMode()
         serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online' , '2': 'pState_service'}
         ret['pState_service_mode']=serviceModes[str(serviceMode)]
 
-        controlMode = self._conn.readNumber16bit(self._state['control_mode'])
+        controlMode = self.readControlMode()
         controlModes = {'0':'pState_nobody' ,'1': 'pState_PC' , '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
         ret['pState_control_mode']=controlModes[str(controlMode)]
 
         return ret
+
+    def readServiceMode(self):
+        return self._conn.readNumber16bit(self._state['service_mode'])
+
+    def readControlMode(self):
+        return self._conn.readNumber16bit(self._state['control_mode'])
+
+    def takeControl(self):
+        self._conn.writeNumber16bit(self._state['take_control'], PC_CONTROL)
+
+    def startMoving(self):
+        print('start moving')
+        self._conn.writeFlag(self._state['move_stop'], 1)
+
+    def stopMoving(self):
+        print('stop moving')
+        self._conn.writeFlag(self._state['move_stop'], 0)
 
     def readTemperature(self):
         ret=dict()
         ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope'])/10.0)
         ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome'])/10.0)
         return ret
+
 
     def close(self):
         self._logger.info("Close Communication connection")
