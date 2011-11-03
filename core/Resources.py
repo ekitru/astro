@@ -68,7 +68,7 @@ class Resources(object):
         return self._object
 
     def setObject(self, name):
-        self._logger.info('Set new object: ', name)
+        self._logger.info('Set new object: ' + name)
         star = self.getStarHolder().getStarByName(name)
         if star:
             self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
