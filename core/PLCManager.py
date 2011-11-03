@@ -203,6 +203,7 @@ class PLCManager(object):
     def readTelescopeMode(self):
         ret = dict()
 
+
         serviceMode = self.readServiceMode()
         serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online' , '2': 'pState_service'}
         ret['pState_service_mode']=serviceModes[str(serviceMode)]
