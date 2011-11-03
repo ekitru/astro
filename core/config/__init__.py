@@ -1,7 +1,7 @@
-from core.config import TranslationConfig, ProgramConfig, CommConfig
+from core.config import TranslationConfig, ProgramConfig, CommunicationConfig
 
 __author__ = 'kitru'
 
 TranslationConfig = TranslationConfig.TranslationConfig
 ProgramConfig = ProgramConfig.ProgramConfig
-CommConfig = CommConfig.CommConfig
+CommunicationConfig = CommunicationConfig.CommunicationConfig
