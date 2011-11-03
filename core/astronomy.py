@@ -115,19 +115,22 @@ class Object(object):
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def getCurrentCoordinates(self):
-        ra, dec = '',''
+        """ Returns current object position
+        Return:
+            ra, dec - radians """
+        ra, dec = '', ''
         if self.selected():
             self._observer.updateToNow()
             self._fixedBody.compute(self._observer)
-            ra, dec = rad2str(self._fixedBody.ra, self._fixedBody.dec)
-        return {'ra':ra, 'dec':dec}
+            ra, dec = self._fixedBody.ra, self._fixedBody.dec
+        return {'ra': ra, 'dec': dec}
 
     def getCurrentPosition(self):
         """ Calculates current object position in sky. If object is not selected return empty dictionary
         Return:
             dict(ra,dec,alt,ha,rise,set)
         """
-        ra, dec, alt, az,  ha, rise, set = '', '', '', ' ', '', '', ''
+        ra, dec, alt, az, ha, rise, set = '', '', '', ' ', '', '', ''
         if self.selected():
             self._observer.updateToNow()
             self._fixedBody.compute(self._observer)
@@ -138,7 +141,7 @@ class Object(object):
             set = self.getSettingTime()
             ha = str(getHours(self._observer.getLST() - self._fixedBody.ra)) # LHA=LST-RA
 
-        return {'ra': ra, 'dec': dec, 'alt': alt, 'az':az, 'ha': ha, 'rise': rise, 'set': set}
+        return {'ra': ra, 'dec': dec, 'alt': alt, 'az': az, 'ha': ha, 'rise': rise, 'set': set}
 
     def getRisingTime(self):
         """ Calcutes next rising time for selected object
@@ -148,7 +151,6 @@ class Object(object):
         """
         try:
             time = ephem.localtime(self._observer.next_rising(self._fixedBody))
-
             return str(time.strftime('%H:%M:%S'))
         except ephem.NeverUpError:
             return 'never'
@@ -169,7 +171,9 @@ class Object(object):
         except ephem.AlwaysUpError:
             return 'always'
 
+
 class SetPoint(object):
+    """ Holding set point position: Ra, Dec, Ha, Focus. This values will be used for sending setpoint to PLC """
     def __init__(self, ra=0, dec=0, focus=None):
         self._ra = float(ra)
         self._dec = float(dec)
@@ -186,20 +190,25 @@ class SetPoint(object):
         """ Set setpoint focus
         Attr:
             focus - focus as float """
-        self._focus = float(focus)
+        if focus:
+            self._focus = float(focus)
+        else:
+            self._focus = None
 
     def getFocus(self):
         return self._focus
 
     def getData(self):
+        """ Get position as strings """
         data = dict()
-        data['ra'],data['dec'] = rad2str(self._ra, self._dec)
+        data['ra'], data['dec'] = rad2str(self._ra, self._dec)
         data['focus'] = str(self._focus)
         return data
 
     def getRawData(self):
+        """ get setpoint in radians """
         data = dict()
-        data['ra'],data['dec'], data['focus'] = self._ra, self._dec, self._focus
+        data['ra'], data['dec'], data['focus'] = self._ra, self._dec, self._focus
         return data
 
 
@@ -247,6 +256,7 @@ def getCoordinates(ra, dec):
        tuple(ephem.hours, ephem.degrees)
     """
     return getHours(ra), getDegrees(dec)
+
 
 def getHours(ra):
     """ Creates right ascension (ra) coordinate as ephem.angle objects
