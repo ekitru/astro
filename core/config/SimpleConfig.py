@@ -13,7 +13,7 @@ class SimpleConfig(object):
         Attr:
             name - logger name
         """
-        self._logger = openLog('config_'+name)
+        self._logger = openLog('config_' + name)
 
     def __del__(self):
         """ Close logger before object closing """

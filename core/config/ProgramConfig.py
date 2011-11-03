@@ -1,4 +1,3 @@
-import logging
 from core.config.SimpleConfig import SimpleConfig
 
 __author__ = 'kitru'
@@ -39,7 +38,7 @@ class ProgramConfig(SimpleConfig):
         """ Find logging time """
         dict = self.getCommonConfigDict()
         self._logger.info('Read logging time')
-        return float(dict['logging time'])*60
+        return float(dict['logging time']) * 60
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """

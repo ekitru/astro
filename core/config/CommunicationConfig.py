@@ -5,10 +5,11 @@ from core.config.SimpleConfig import SimpleConfig
 __author__ = 'kitru'
 
 class CommunicationConfig(SimpleConfig):
-    """Get configuration from file for PLC  """
+    """Get configuration file for PLC  """
 
     def __init__(self):
-        name = 'plc';
+        """  Reads plc ocnfiguration file and opens new logger  """
+        name = 'plc'
         SimpleConfig.__init__(self, name)
         self.readConfiguration(name)
 
