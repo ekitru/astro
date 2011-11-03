@@ -42,15 +42,11 @@ class TelescopePanel(SimplePanel):
     def update(self, resources):
         codes = resources.getCodes()
 
-        status = resources.getPLCManager().readTelescopeConnStatus()
-        self._readStatuses(codes, status)
-
-        status = resources.getPLCManager().readTelescopeMovingStatus()
-        self._readStatuses(codes, status)
-
-        status = resources.getPLCManager().readTelescopeMode()
-        self._readStatuses(codes, status)
-
-        status = resources.getPLCManager().readTemperature()
-        self._readStatuses(codes, status)
+        status = []
+        status.append(resources.getPLCManager().readTelescopeConnStatus())
+        status.append(resources.getPLCManager().readTelescopeMovingStatus())
+        status.append(resources.getPLCManager().readTelescopeMode())
+        status.append(resources.getPLCManager().readTemperature() )
+        for st in status:
+            self._readStatuses(codes, st)
   

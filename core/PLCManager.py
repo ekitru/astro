@@ -203,13 +203,13 @@ class PLCManager(object):
     def readTelescopeConnStatus(self):
         ret = dict()
 
-        print(self._conn.readNumber16bit(self._state['comm_check']))
+#        print(self._conn.readNumber16bit(self._state['comm_check']))
         if self._conn.readNumber16bit(self._state['comm_check'])==1:
             ret['pCommCheck1']= 'ON'
         else:
             ret['pCommCheck1']= 'OFF'
 
-        print(self._conn.readNumber16bit(self._state['comm_add_check']))
+#        print(self._conn.readNumber16bit(self._state['comm_add_check']))
         if self._conn.readNumber16bit(self._state['comm_add_check'])==1:
             ret['pCommCheck2'] = 'ON'
         else:
