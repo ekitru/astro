@@ -200,10 +200,43 @@ class PLCManager(object):
             ret[key]=state
         return ret
 
-    def readTelescopeMode(self):
+    def readTelescopeConnStatus(self):
         ret = dict()
 
+        print(self._conn.readNumber16bit(self._state['comm_check']))
+        if self._conn.readNumber16bit(self._state['comm_check'])==1:
+            ret['pCommCheck1']= 'ON'
+        else:
+            ret['pCommCheck1']= 'OFF'
 
+        print(self._conn.readNumber16bit(self._state['comm_add_check']))
+        if self._conn.readNumber16bit(self._state['comm_add_check'])==1:
+            ret['pCommCheck2'] = 'ON'
+        else:
+            ret['pCommCheck2'] = 'OFF'
+
+        return ret
+
+    def readTelescopeMovingStatus(self):
+        ret = dict()
+
+#        print(self._conn.readFlag(self._state['move_stop']))
+        if self._conn.readFlag(self._state['move_stop']):
+            ret['pMoveStop']= 'pMoving'
+        else:
+            ret['pMoveStop']= 'pStopping'
+
+#        print(self._conn.readFlag(self._state['moveable']))
+        if self._conn.readFlag(self._state['moveable']):
+            ret['pMoveable'] = 'pMoveableTrue'
+        else:
+            ret['pMoveable'] = 'pMoveableFalse'
+
+        return ret
+
+
+    def readTelescopeMode(self):
+        ret = dict()
         serviceMode = self.readServiceMode()
         serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online' , '2': 'pState_service'}
         ret['pState_service_mode']=serviceModes[str(serviceMode)]
