@@ -50,7 +50,7 @@ class AstroMenu(wx.MenuBar):
     def OnSettings(self, event):
         """ Give opportunities to change program default setups, like language or connection parameters """
         event.Skip(False)
-        dialog = SettingsDialog(self, wx.ID_ANY, self._codes, self._controller)
+        dialog = SettingsDialog(self, self._codes)
         dialog.ShowModal()
         dialog.Destroy()
 
