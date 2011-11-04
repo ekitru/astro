@@ -51,3 +51,7 @@ class Controller(object):
     def forceLog(self):
         """ Force to log message and start new timer  """
         self._logThread.force()
+
+    def updateLogTime(self, time):
+        """ update logging period, time in minutes """
+        self._logThread.updatePeriod(time*60)

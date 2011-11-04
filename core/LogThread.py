@@ -55,6 +55,10 @@ class LogThread(object):
             #            self._timer.join() #TODO discover, some times thread is not started yet
             self._start()
 
+    def updatePeriod(self, time):
+        """ Update logging period, period in seconds """
+        self._period = time
+
     def getStarId(self):
         """ return selected object id from controller, if object is not selected return None """
         object = self._resources.getObject()

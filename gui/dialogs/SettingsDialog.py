@@ -7,14 +7,16 @@ __author__ = 'kitru'
 class SettingsDialog(wx.Dialog, SimplePanel):
     """ Very simple dialog to set up logging time and select languages """
 
-    def __init__(self, parent, codes):
+    def __init__(self, parent, codes, controller):
         wx.Dialog.__init__(self, parent, title=codes.get('dLogs_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
-        self._config = self.read
+
+        self._controller = controller
+        self._config = self.getConfig()
+
         commonDict = self._config.getCommonConfigDict()
 
         self._langBox = self.CreateLangBox(commonDict)
-
         self._logTime = self.CreateLogTime(commonDict)
 
         controls = wx.FlexGridSizer(2, 2, 5, 10)
@@ -63,7 +65,12 @@ class SettingsDialog(wx.Dialog, SimplePanel):
         time = self.checkLimits(time)
         lang = self._langBox.GetValue()
         lang = lang.strip()
-        print(time, lang)
+
+        self._config.setDefaultLanguage(lang)
+        self._config.setLoggingTime(time)
+        self._controller.updateLogTime(time)
+        self._config.saveConfig()
+        self.EndModal(wx.ID_OK)
 
     def checkLimits(self, time):
         if not time.isnumeric():

@@ -89,5 +89,8 @@ class ControlModePanel(SimplePanel):
         if self.rbManualSetpoint.GetValue():
             self._controls.updateSetPoint()
 
+        if self._resources.getPLCManager().readTelescopeMovingStatus()['pMoveable']!='pMoveableTrue':
+            self.butStart.Disable()
+
     def _isRemoveControl(self, mode):
         return mode != 1

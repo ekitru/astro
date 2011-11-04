@@ -5,16 +5,14 @@ __author__ = 'kitru'
 class ProgramConfig(SimpleConfig):
     """ Get program configuration from default.conf file  """
 
-    def __init__(self):
-        configFileName = 'default'
-        SimpleConfig.__init__(self, configFileName)
-        self.readConfiguration(configFileName)
+    _configFileName = 'default'
 
-    #    def getPLCManager(self):
-    #        """ Get communication configuration from config file. If communication section is missing raise  Configuration Exception  """
-    #        logging.info('=== Communication initialization ===')
-    #        commConfig = self.getConfigBySection('communication')
-    #        return PLCManager(commConfig)
+    def __init__(self):
+        SimpleConfig.__init__(self, self._configFileName)
+        self.readConfiguration(self._configFileName)
+
+    def saveConfig(self):
+        self.saveConfiguration(self._configFileName)
 
     def getLogger(self):
         return self._logger
@@ -34,11 +32,22 @@ class ProgramConfig(SimpleConfig):
         self._logger.info('Read default translation codes')
         return dict['default translation']
 
+    def setDefaultLanguage(self, lang):
+        """ Set new default language """
+        self._logger.info('Write new defult langguage ' + lang)
+        self._config.set('common', 'default translation', lang)
+
     def getLoggingTime(self):
         """ Find logging time """
         dict = self.getCommonConfigDict()
         self._logger.info('Read logging time')
         return float(dict['logging time']) * 60
+
+    def setLoggingTime(self, time):
+        """ Set new logging time """
+        self._logger.info('Write new logging time ' + time)
+        self._config.set('common', 'logging time', time)
+
 
     def getCommonConfigDict(self):
         """ Get common configuration from config file. If common section is missing raise  Configuration Exception  """

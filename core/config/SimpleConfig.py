@@ -33,6 +33,14 @@ class SimpleConfig(object):
             msg = error.args + (fileName,)
             raise ConfigurationException(msg, self._logger)
 
+    def saveConfiguration(self, fileName):
+        try:
+            self._logger.info('Write configuration file: ' + fileName)
+            self._config.write(codecs.open(fileName + '.conf', "w", "utf8"))
+        except IOError as error:
+            msg = error.args + (fileName,)
+            raise ConfigurationException(msg, self._logger)
+
     def _getItemsBySection(self, section_name):
         """ Return dictionary of selected section items """
         list = self._config.items(section_name)
