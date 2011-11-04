@@ -91,6 +91,7 @@ class ControlModePanel(SimplePanel):
 
         if self._resources.getPLCManager().readTelescopeMovingStatus()['pMoveable']!='pMoveableTrue':
             self.butStart.Disable()
-
+        else:
+            self.butStart.Enable()
     def _isRemoveControl(self, mode):
         return mode != 1
