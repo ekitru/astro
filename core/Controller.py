@@ -54,4 +54,4 @@ class Controller(object):
 
     def updateLogTime(self, time):
         """ update logging period, time in minutes """
-        self._logThread.updatePeriod(time*60)
+        self._logThread.updatePeriod(int(time)*60)
