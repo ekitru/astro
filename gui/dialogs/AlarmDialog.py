@@ -21,7 +21,7 @@ class AlarmDialog(wx.Dialog, SimplePanel):
             self._statuses[key]=field
 
         buttons = wx.FlexGridSizer(1, 1, 5, 10)
-        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('tAlarm_cancel')), flag=wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM)
+        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dAlarm_cancel')), flag=wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(alarmSizer)
