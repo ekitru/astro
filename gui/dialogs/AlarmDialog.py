@@ -11,7 +11,7 @@ class AlarmDialog(wx.Dialog, SimplePanel):
         wx.Dialog.__init__(self, parent, title=codes.get('dAlarm_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 
-        alarmSizer = wx.GridSizer(0, 2, 5, 5)
+        alarmSizer = wx.FlexGridSizer(0, 2, 5, 5)
         status = resources.getPLCManager().readAlarms()
         self._statuses = dict()
         for key in status:
@@ -20,12 +20,12 @@ class AlarmDialog(wx.Dialog, SimplePanel):
             alarmSizer.Add(field, flag = wx.ALL | wx.CENTER | wx.ALIGN_CENTER)
             self._statuses[key]=field
 
-        buttons = wx.FlexGridSizer(1, 1, 5, 10)
-        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dAlarm_cancel')), flag=wx.ALIGN_RIGHT | wx.ALIGN_BOTTOM)
+        buttons = wx.BoxSizer(wx.VERTICAL)
+        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dAlarm_cancel')), flag=wx.ALIGN_RIGHT)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(alarmSizer)
-        sizer.Add(buttons)
+        sizer.Add(alarmSizer, flag = wx.LEFT | wx.RIGHT | wx.TOP,  border = 10)
+        sizer.Add(buttons, flag=wx.ALL | wx.EXPAND, border = 10 )
         self.SetSizer(sizer)
         self.SetFocus()
         self.Fit()
