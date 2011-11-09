@@ -254,6 +254,23 @@ class PLCManager(object):
 
         return ret
 
+    def readTemperature(self):
+        ret = dict()
+        ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope']) / 10.0)
+        ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome']) / 10.0)
+        return ret
+
+    def readAlarmStatus(self):
+        try:
+            state = self._conn.readFlag(self._status['alarmCommon2'])
+        except Exception as ex:
+            print(ex)
+        state = 1
+        if state == 1:
+            return 'Fault'
+        else:
+            return 'Normal'
+
     def readServiceMode(self):
         return self._conn.readNumber16bit(self._state['service_mode'])
 
@@ -270,12 +287,6 @@ class PLCManager(object):
     def stopMoving(self):
         print('stop moving')
         self._conn.writeFlag(self._state['move_stop'], 0)
-
-    def readTemperature(self):
-        ret = dict()
-        ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope']) / 10.0)
-        ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome']) / 10.0)
-        return ret
 
     def close(self):
         self._logger.info("Close Communication connection")

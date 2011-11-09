@@ -85,6 +85,6 @@ class LogThread(object):
         return temp['pState_tempT'], temp['pState_tempD']
 
     def getAlarmStatus(self):
-        return 'fa'
-#        return self._plc.readAlarmStatus()
+#        return 'fa'
+        return self._plc.readAlarmStatus()
 
