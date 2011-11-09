@@ -47,6 +47,7 @@ class LogThread(object):
             self._log.setCurrentRaDec(*self.getCurrentRaDec())
             self._log.setCurrentFocus(self.getCurrentFocus())
             self._log.setStarId(self.getStarId())
+            self._log.setTemperature(*self.getTemperature())
             self._log.writeToLog()
 
     def force(self):
@@ -78,8 +79,9 @@ class LogThread(object):
         focus = self._plc.getFocus()
         return focus[0]
 
-    def getTemperature(self, temp_in, temp_out):
-        pass #PLC
+    def getTemperature(self):
+        temp = self._plc.readTemperature()
+        return temp['pState_tempT'], temp['pState_tempD']
 
     def getAlarmStatus(self, word):
         pass
