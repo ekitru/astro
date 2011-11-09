@@ -8,7 +8,7 @@ class SettingsDialog(wx.Dialog, SimplePanel):
     """ Very simple dialog to set up logging time and select languages """
 
     def __init__(self, parent, codes, controller):
-        wx.Dialog.__init__(self, parent, title=codes.get('dLogs_title'),
+        wx.Dialog.__init__(self, parent, title=codes.get('dSet_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 
         self._controller = controller
@@ -20,18 +20,18 @@ class SettingsDialog(wx.Dialog, SimplePanel):
         self._logTime = self.CreateLogTime(commonDict)
 
         controls = wx.FlexGridSizer(2, 2, 5, 10)
-        controls.Add(self.CreateCaption(codes.get('tSet_lang')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        controls.Add(self.CreateCaption(codes.get('dSet_lang')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         controls.Add(self._langBox, flag=wx.ALL | wx.EXPAND | wx.CENTER)
-        controls.Add(self.CreateCaption(codes.get('tSet_logtime')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
+        controls.Add(self.CreateCaption(codes.get('dSet_logtime')), flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         controls.Add(self._logTime, flag=wx.ALL | wx.EXPAND | wx.CENTER)
 
         buttons = wx.FlexGridSizer(1, 2, 5, 10)
-        buttons.Add(wx.Button(self, wx.ID_APPLY, label=codes.get('tSet_apply')), flag=wx.ALIGN_LEFT | wx.ALIGN_BOTTOM)
-        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('tSet_cancel')), flag=wx.ALIGN_LEFT | wx.ALIGN_BOTTOM)
+        buttons.Add(wx.Button(self, wx.ID_APPLY, label=codes.get('dSet_apply')), flag=wx.ALIGN_LEFT | wx.ALIGN_BOTTOM)
+        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dSet_cancel')), flag=wx.ALIGN_LEFT | wx.ALIGN_BOTTOM)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(controls)
-        sizer.Add(buttons)
+        sizer.Add(controls, flag=wx.ALL, border = 10)
+        sizer.Add(buttons, flag = wx.LEFT | wx.RIGHT | wx.BOTTOM, border=10)
         self.SetSizer(sizer)
         self.SetFocus()
         self.Fit()
