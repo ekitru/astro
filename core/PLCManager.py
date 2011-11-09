@@ -15,7 +15,6 @@ COORD_SCALE = 100000000
 
 __author__ = 'kitru'
 
-
 class ModBusManager(object):
     def __init__(self, config):
         self._confDict = config
@@ -34,8 +33,8 @@ class ModBusManager(object):
         Return:
             32bit long number
         """
-        nible1 = (words[0]&0xffff) << 16
-        nible2 = (words[1]&0xffff)
+        nible1 = (words[0] & 0xffff) << 16
+        nible2 = (words[1] & 0xffff)
         number = nible1 | nible2
         return ctypes.c_int32(number).value
 
@@ -57,7 +56,7 @@ class ModBusManager(object):
         Return:
             long number
         """
-        number =  self._master.execute(self.ID, cst.READ_HOLDING_REGISTERS, long(addr), 1)[0]
+        number = self._master.execute(self.ID, cst.READ_HOLDING_REGISTERS, long(addr), 1)[0]
         return ctypes.c_int16(number).value
 
     def writeNumber16bit(self, addr, number):
@@ -114,7 +113,7 @@ class PLCManager(object):
             self._conn = ModBusManager(confDict)
             self._logger.info('Connection established')
 
-            self._axes =  commConfig.getAxesAddresses()
+            self._axes = commConfig.getAxesAddresses()
             self._status = commConfig.getStatusAddresses()
             self._state = commConfig.getStateAddresses()
         except modbus_tk.modbus.ModbusError as error:
@@ -149,7 +148,7 @@ class PLCManager(object):
         """ Get current ant setpoint position from PLC as strings
         Return:
             tuple((str(curRA),str(curDEC)),(str(taskRA),str(taskDEC)))"""
-        curRa,  curDec = self.getCurrentPosition()
+        curRa, curDec = self.getCurrentPosition()
         taskRa, taskDec = self.getSetpointPosition()
 
         return rad2str(curRa, curDec), rad2str(taskRa, taskDec)
@@ -179,38 +178,36 @@ class PLCManager(object):
         """ Get current and setpoint for focus from PLC as strings
         Return:
             tuple(str(curFocus), str(taskFocus))"""
-        cur = self._conn.readNumber16bit(self._axes['focus_cur'])/10.0
-        task = self._conn.readNumber16bit(self._axes['focus_task'])/10.0
+        cur = self._conn.readNumber16bit(self._axes['focus_cur']) / 10.0
+        task = self._conn.readNumber16bit(self._axes['focus_task']) / 10.0
         return cur, task
 
     def setFocus(self, focus):
         """ Set new focus value """
-        self._conn.writeNumber16bit(self._axes['focus_task'], focus*10.0)
+        self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
 
 
     def readTelescopeStatus(self):
         ret = dict()
         for key in self._status:
-            state =  self._conn.readFlag(self._status[key])
+            state = self._conn.readFlag(self._status[key])
             if state == 1:
                 state = 'On'
             else:
                 state = 'Off'
 
-            ret[key]=state
+            ret[key] = state
         return ret
 
     def readTelescopeConnStatus(self):
         ret = dict()
 
-#        print(self._conn.readNumber16bit(self._state['comm_check']))
-        if self._conn.readNumber16bit(self._state['comm_check'])==1:
-            ret['pCommCheck1']= 'ON'
+        if self._conn.readNumber16bit(self._state['comm_check']) == 1:
+            ret['pCommCheck1'] = 'ON'
         else:
-            ret['pCommCheck1']= 'OFF'
+            ret['pCommCheck1'] = 'OFF'
 
-#        print(self._conn.readNumber16bit(self._state['comm_add_check']))
-        if self._conn.readNumber16bit(self._state['comm_add_check'])==1:
+        if self._conn.readNumber16bit(self._state['comm_add_check']) == 1:
             ret['pCommCheck2'] = 'ON'
         else:
             ret['pCommCheck2'] = 'OFF'
@@ -220,13 +217,11 @@ class PLCManager(object):
     def readTelescopeMovingStatus(self):
         ret = dict()
 
-#        print(self._conn.readFlag(self._state['move_stop']))
         if self._conn.readFlag(self._state['move_stop']):
-            ret['pMoveStop']= 'pMoving'
+            ret['pMoveStop'] = 'pMoving'
         else:
-            ret['pMoveStop']= 'pStopping'
+            ret['pMoveStop'] = 'pStopping'
 
-#        print(self._conn.readFlag(self._state['moveable']))
         if self._conn.readFlag(self._state['moveable']):
             ret['pMoveable'] = 'pMoveableTrue'
         else:
@@ -238,12 +233,12 @@ class PLCManager(object):
     def readTelescopeMode(self):
         ret = dict()
         serviceMode = self.readServiceMode()
-        serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online' , '2': 'pState_service'}
-        ret['pState_service_mode']=serviceModes[str(serviceMode)]
+        serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online', '2': 'pState_service'}
+        ret['pState_service_mode'] = serviceModes[str(serviceMode)]
 
         controlMode = self.readControlMode()
-        controlModes = {'0':'pState_nobody' ,'1': 'pState_PC' , '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
-        ret['pState_control_mode']=controlModes[str(controlMode)]
+        controlModes = {'0': 'pState_nobody', '1': 'pState_PC', '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
+        ret['pState_control_mode'] = controlModes[str(controlMode)]
 
         return ret
 
@@ -265,11 +260,10 @@ class PLCManager(object):
         self._conn.writeFlag(self._state['move_stop'], 0)
 
     def readTemperature(self):
-        ret=dict()
-        ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope'])/10.0)
-        ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome'])/10.0)
+        ret = dict()
+        ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope']) / 10.0)
+        ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome']) / 10.0)
         return ret
-
 
     def close(self):
         self._logger.info("Close Communication connection")
