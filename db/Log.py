@@ -36,7 +36,7 @@ class Log(DBQuery):
 
     def readLog(self, starName=None, startDate=None, endDate=None):
         """ Read log, result can be filtered by star name or logging period """
-        select = "SELECT l.`id`,l.`time`, s.`name`, s.`ra`,s.`dec`, m.`text`, l.`ra`, l.`dec`, l.`temp_in`, l.`temp_out`, l.`status` FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
+        select = "SELECT l.`id`,l.`time`, s.`name`, s.`ra`,s.`dec`, m.`text`, l.`ra`, l.`dec`, l.`focus`, l.`temp_in`, l.`temp_out`, l.`status` FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
         condition = self.conditionConstruct(starName, startDate, endDate)
         rows = self.selectAll(select, where=condition)
         list = []
@@ -74,7 +74,7 @@ class Log(DBQuery):
         #Parameters from PLC
         self._ra = None
         self._dec = None
-        self._focus = None
+        self._focus = 123
         self._temp_in = None
         self._temp_out = None
         self._status = None #alarm status word
