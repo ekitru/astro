@@ -62,6 +62,7 @@ class MainGui(wx.Frame):
 
         self.Bind(wx.EVT_MENU, menu.OnLogs, id=ID_LOGS_DIALOG)
         self.Bind(wx.EVT_MENU, menu.OnSettings, id=ID_SETTINGS_DIALOG)
+        self.Bind(wx.EVT_MENU, menu.OnAlarms, id=ID_ALARMS_DIALOG)
         self.CreateStatusBar()
 
         self.SetStatusText(codes.get('mainSuccStart'))

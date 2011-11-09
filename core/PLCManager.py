@@ -101,21 +101,23 @@ class ModBusManager(object):
         """ Writes boolean flag  """
         self._master.execute(self.ID, cst.WRITE_SINGLE_COIL, long(addr), output_value=value)
 
+
 PC_CONTROL = 1
 
 class PLCManager(object):
     def __init__(self):
         try:
-            commConfig = CommunicationConfig()
+            configs = CommunicationConfig()
             self._logger = openLog('plc_manager')
             self._logger.info('Establishing connection')
-            confDict = commConfig.getConnectionConfig()
+            confDict = configs.getConnectionConfig()
             self._conn = ModBusManager(confDict)
             self._logger.info('Connection established')
 
-            self._axes = commConfig.getAxesAddresses()
-            self._status = commConfig.getStatusAddresses()
-            self._state = commConfig.getStateAddresses()
+            self._axes = configs.getAxesAddresses()
+            self._status = configs.getStatusAddresses()
+            self._state = configs.getStateAddresses()
+            self._alarms = configs.getAlarms()
         except modbus_tk.modbus.ModbusError as error:
             raise ConfigurationException(error.args, self._logger)
         except Exception as error:
@@ -198,6 +200,16 @@ class PLCManager(object):
 
             ret[key] = state
         return ret
+
+    def readAlarms(self):
+        ret = dict()
+        for key in self._alarms:
+            state = self._conn.readFlag(self._alarms[key])
+            if state == 1:
+                ret[key] = 'On'
+
+        return ret
+
 
     def readTelescopeConnStatus(self):
         ret = dict()
