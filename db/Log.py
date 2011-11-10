@@ -20,6 +20,7 @@ class Log(DBQuery):
     def _addRecord(self):
         sql = self._getSQL()
         args = self._getArgs()
+        print(sql,args)
         self.insert(sql, args)
 
     def _getSQL(self):
@@ -36,7 +37,7 @@ class Log(DBQuery):
 
     def readLog(self, starName=None, startDate=None, endDate=None):
         """ Read log, result can be filtered by star name or logging period """
-        select = "SELECT l.`id`,l.`time`, s.`name`, s.`ra`,s.`dec`, m.`text`, l.`ra`, l.`dec`, l.`temp_in`, l.`temp_out`, l.`status` FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
+        select = "SELECT l.`id`,l.`time`, s.`name`, s.`ra`,s.`dec`, m.`text`, l.`ra`, l.`dec`, l.`focus`, l.`temp_in`, l.`temp_out`, l.`status` FROM `log` l LEFT JOIN `star` s ON l.star_id=s.id LEFT JOIN `message` m ON l.msg_id=m.id"
         condition = self.conditionConstruct(starName, startDate, endDate)
         rows = self.selectAll(select, where=condition)
         list = []
@@ -48,8 +49,10 @@ class Log(DBQuery):
             data['sRa'], data['sDec'] = astronomy.rad2str(row[3], row[4])
             data['msg'] = row[5]
             data['ra'], data['dec'] = astronomy.rad2str(row[6], row[7])
-            data['temp_in'], data['temp_out'] = row[8], row[9]
-            data['status'] = row[10]
+            data['focus'] = row[8]
+            data['temp_in'], data['temp_out'] = row[9], row[10]
+            data['status'] = row[11]
+            print('get from DB', data)
             list.append(data)
         return list
 
@@ -74,10 +77,10 @@ class Log(DBQuery):
         #Parameters from PLC
         self._ra = None
         self._dec = None
-        self._focus = None
+        self._focus = 123
         self._temp_in = None
         self._temp_out = None
-        self._status = None #alarm status word
+        self._status = None
 
     def setStarId(self, id):
         self._star_id = id

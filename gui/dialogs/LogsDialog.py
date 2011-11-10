@@ -79,9 +79,10 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 5, unicode(log['msg']))
             self._list.SetStringItem(index, 6, str(log['ra']))
             self._list.SetStringItem(index, 7, str(log['dec']))
-            self._list.SetStringItem(index, 8, str(log['temp_in']))
-            self._list.SetStringItem(index, 9, str(log['temp_out']))
-            self._list.SetStringItem(index, 10, str(log['status']))
+            self._list.SetStringItem(index, 8, str(log['focus']))
+            self._list.SetStringItem(index, 9, str(log['temp_in']))
+            self._list.SetStringItem(index, 10, str(log['temp_out']))
+            self._list.SetStringItem(index, 11, str(log['status']))
 
     def getStartDay(self, dateTime):
         """ Return first second of the day """
