@@ -1,8 +1,5 @@
 import wx
-from core.astronomy import str2rad
 from gui.panels.SimplePanel import SimplePanel
-
-__author__ = 'anisand'
 
 class ControlModePanel(SimplePanel):
     """This panel presents means to control the telescope and change its control mode.
@@ -89,9 +86,10 @@ class ControlModePanel(SimplePanel):
         if self.rbManualSetpoint.GetValue():
             self._controls.updateSetPoint()
 
-        if self._resources.getPLCManager().readTelescopeMovingStatus()['pMoveable']!='pMoveableTrue':
+        if self._resources.getPLCManager().readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
             self.butStart.Disable()
         else:
             self.butStart.Enable()
+
     def _isRemoveControl(self, mode):
         return mode != 1
