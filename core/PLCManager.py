@@ -167,7 +167,7 @@ class PLCManager(object):
         taskDec = self.readCoordinate(self._axes['dec_task'])
         return taskRa, taskDec
 
-    def setSetpointPosition(self, ra, dec):
+    def setSetpointPosition(self, ra, dec, ha, st):
         """ Store new setpoint position for telescope
         Attr:
             ra -  in radians
@@ -175,6 +175,8 @@ class PLCManager(object):
         """
         self.writeCoordinate(self._axes['ra_task'], ra)
         self.writeCoordinate(self._axes['dec_task'], dec)
+        self.writeCoordinate(self._axes['ha_task'], ha)
+        self.writeCoordinate(self._axes['st_task'], st)
 
     def getFocus(self):
         """ Get current and setpoint for focus from PLC as strings

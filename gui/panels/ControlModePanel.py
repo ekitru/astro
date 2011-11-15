@@ -1,4 +1,6 @@
 import wx
+import ephem
+from core.astronomy import getHours, getDegrees
 from gui.panels.SimplePanel import SimplePanel
 
 class ControlModePanel(SimplePanel):
@@ -63,8 +65,12 @@ class ControlModePanel(SimplePanel):
     def OnBtnStart(self, event):
         event.Skip()
         data = self._resources.getSetPoint().getRawData()
+        data['st'] = ephem.hours(self._resources.getObserver().getLST()).real
+        data['ha'] = data['st']-data['ra']
+        print('=====  send ha and lst', data['ha'], data['st'])
+        print('RA',getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
         plc = self._resources.getPLCManager()
-        plc.setSetpointPosition(data['ra'], data['dec'])
+        plc.setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
         if data['focus']:
             plc.setFocus(data['focus'])
 
