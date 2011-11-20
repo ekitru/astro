@@ -149,7 +149,7 @@ class ManualSetpointPanel(SimplePanel):
 
     def update(self, controller):
         data = self._setpoint.getRawData()
-        print(data)
+        #print(data)
 
     def updateSetPoint(self):
         if self._checkCoordinatesAndFocus():  #if coordinates are correct
