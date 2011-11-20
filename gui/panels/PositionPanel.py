@@ -43,7 +43,7 @@ class PositionPanel(SimplePanel):
         self.SetSizer(comSizer)
 
     def update(self, resources):
-        plc = resources.getPLCManager()
+        plc = resources.plcManager
 
         currentCoordinates = plc.getPosition()[0]
         setpointCoordinates = plc.getPosition()[1]

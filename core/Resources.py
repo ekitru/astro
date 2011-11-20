@@ -22,44 +22,41 @@ class Resources(object):
             self._config = ProgramConfig()
 
             lang = self._config.getDefaultLanguage()
-            self._codes = TranslationConfig(lang)
+            self.codes = TranslationConfig(lang)
 
             observerConfig = self._config.getObserverConfig()
             self._observer = Observer(observerConfig)
             self._object = Object(self._observer)
 
-            self._PLCManager = PLCManager()
+            self.plcManager = PLCManager()
             self._setPoint = self._initSetPoint()
 
             self._dbManager = DbManager(self._config.getDbConfig())
-            self._dbStar = Star(self._dbManager)
-            self._dbLog = Log(self._dbManager)
-            self._dbMessage = Message(self._dbManager)
+            self.dbStar = Star(self._dbManager)
+            self.dbLog = Log(self._dbManager)
+            self.dbMessage = Message(self._dbManager)
         except Exception as error:
             raise InitializationException(error.args, self._logger)
 
     def _initSetPoint(self):
         self._logger.info('Init SetPoint object')
-        ra, dec = self._PLCManager.getSetpointPosition()
-        focus = self._PLCManager.getFocus()[1]
+        ra, dec = self.plcManager.getSetpointPosition()
+        focus = self.plcManager.getFocus()[1]
         return SetPoint(ra, dec, focus)
 
 
     def __del__(self):
         self._logger.info('Closing resources')
-        del self._dbMessage
-        del self._dbLog
-        del self._dbStar
+        del self.dbMessage
+        del self.dbLog
+        del self.dbStar
         del self._dbManager
-        del self._PLCManager
-        del self._codes
+        del self.plcManager
+        del self.codes
 
 
     def getConfig(self):
         return  self._config
-
-    def getCodes(self):
-        return self._codes
 
     def getObserver(self):
         return self._observer
@@ -69,7 +66,7 @@ class Resources(object):
 
     def setObject(self, name):
         self._logger.info('Set new object: ' + name)
-        star = self.getStarHolder().getStarByName(name)
+        star = self.dbStar.getStarByName(name)
         if star:
             self.getObject().init(star['id'], star['name'], star['ra'], star['dec'])
 
@@ -82,18 +79,5 @@ class Resources(object):
             position = object.getCurrentCoordinates()
             self.getSetPoint().setPosition(position['ra'], position['dec'])
 
-    def getPLCManager(self):
-        return self._PLCManager
-
     def getDbManager(self):
         return self._dbManager
-
-    def getStarHolder(self):
-        return self._dbStar
-
-    def getLogHolder(self):
-        return self._dbLog
-
-    def getMessageHolder(self):
-        return self._dbMessage
-  

@@ -18,7 +18,7 @@ class LogThread(object):
             self._log = Log(db)
             self._message = Message(db)
 
-            self._plc = self._resources.getPLCManager()
+            self._plc = self._resources.plcManager
 
             self._period = resources.getConfig().getLoggingTime()
             self._mutex = threading.RLock()

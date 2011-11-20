@@ -8,9 +8,9 @@ __author__ = 'kitru'
 
 class EditObjectDialog(ObjectListDialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller.getResources())
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller.resources)
         self._controller = controller
-        self.codes = controller.getResources().getCodes()
+        self.codes = controller.resources.codes
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
         findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_CENTER)
@@ -47,7 +47,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
     def OnListItemActivated(self, event):
         star = self.GetSelectedStar()
-        dialog = UpdateStarDialog(self, self._controller.getResources(), star)
+        dialog = UpdateStarDialog(self, self._controller.resources, star)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -68,7 +68,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
             event.Skip()
 
     def OnAddClicked(self, event):
-        dialog = AddStarDialog(self, self._controller.getResources())
+        dialog = AddStarDialog(self, self._controller.resources)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -83,9 +83,9 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
 class AddStarDialog(wx.Dialog):
     def __init__(self, parent, resource):
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=resource.getCodes().get('dAddObj_title'), style=wx.CAPTION)
-        self.starManager = resource.getStarHolder()
-        self.codes = resource.getCodes()
+        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=resource.codes.get('dAddObj_title'), style=wx.CAPTION)
+        self.starManager = resource.dbStar
+        self.codes = resource.codes
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.name.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))

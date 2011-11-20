@@ -10,8 +10,8 @@ class AstroMenu(wx.MenuBar):
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
         self._controller = controller
-        self._resources = controller.getResources()
-        self._codes = controller.getResources().getCodes()
+        self._resources = controller.resources
+        self._codes = self._resources.codes
 
         objMenu = self.CreateObjectMenu(self._codes)
         toolsMenu = self.CreateToolsMenu(self._codes)

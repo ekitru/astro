@@ -40,9 +40,9 @@ class ObjectListDialog(wx.Dialog):
     """
 
     def __init__(self, parent, id, title, resources):
-        wx.Dialog.__init__(self, parent, id, resources.getCodes().get(title), style=wx.CAPTION)
-        self._starHolder = resources.getStarHolder()
-        self.codes = resources.getCodes()
+        wx.Dialog.__init__(self, parent, id, resources.codes.get(title), style=wx.CAPTION)
+        self._starHolder = resources.dbStar
+        self.codes = resources.codes
 
         self.starName = ""
         self.list = StarList(self, self.codes)

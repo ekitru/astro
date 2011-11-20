@@ -9,8 +9,8 @@ __author__ = 'kitru'
 
 class LogsDialog(wx.Dialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        resources = controller.getResources()
-        codes = resources.getCodes()
+        resources = controller.resources
+        codes = resources.codes
         wx.Dialog.__init__(self, parent, title=codes.get('dLogs_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 

@@ -104,9 +104,9 @@ class Object(object):
         return self._name
 
     def getData(self):
-        """ Get common selected object data
+        """ Get common selected object data in HH:MM:SEC format
         Return:
-            dict(name, ra, dec)
+            dict(name, str(ra), str(dec))
         """
         ra, dec, name = '', '', ''
         if self.selected():

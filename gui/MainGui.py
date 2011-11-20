@@ -12,20 +12,20 @@ class MainGui(wx.Frame):
         super(MainGui, self).__init__(parent, title=title,
                                       size=(706, 388))
         #        InspectionTool().Show()
-        self._controller = controller
-        self._resources = controller.getResources()
+        self.controller = controller
+        self.resources = controller.resources
 
-        codes = controller.getResources().getCodes()
+        codes = controller.resources.codes
         panelArgs = {"parent": self, "codes": codes}
 
         self.objectPanel = ObjectPanel(**panelArgs)
         self.positioningPanel = PositionPanel(**panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(resources=self._resources, **panelArgs)
-        self.controlModePanel = ControlModePanel(self, codes, self._resources, self.manualSetpointPanel)
+        self.manualSetpointPanel = ManualSetpointPanel(resources=self.resources, **panelArgs)
+        self.controlModePanel = ControlModePanel(self, codes, self.resources, self.manualSetpointPanel)
 
         self.timeDatePanel = TimeDatePanel(**panelArgs)
-        self.telescopePanel = TelescopePanel(self, self._resources)
-        self.statusPanel = StatusPanel(self, self._resources)
+        self.telescopePanel = TelescopePanel(self, self.resources)
+        self.statusPanel = StatusPanel(self, self.resources)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -52,7 +52,7 @@ class MainGui(wx.Frame):
 
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
         self.timer.Start(2000)
-        menu = AstroMenu(self._controller)
+        menu = AstroMenu(self.controller)
 
         self.SetMenuBar(menu)
         self.Bind(wx.EVT_MENU, menu.OnSelectObject, id=ID_SELOBJ_DIALOG)
@@ -74,12 +74,12 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         """ Updates panels view """
-        self.objectPanel.update(self._resources)
-        self.timeDatePanel.update(self._resources)
-        self.positioningPanel.update(self._resources)
-        self.manualSetpointPanel.update(self._controller)
-        self.controlModePanel.update(self._controller)
-        self.statusPanel.update(self._resources)
-        self.telescopePanel.update(self._resources)
+        self.objectPanel.update(self.resources)
+        self.timeDatePanel.update(self.resources)
+        self.positioningPanel.update(self.resources)
+        self.manualSetpointPanel.update(self.controller)
+        self.controlModePanel.update(self.controller)
+        self.statusPanel.update(self.resources)
+        self.telescopePanel.update(self.resources)
         self.Fit()
         self.Show()

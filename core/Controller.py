@@ -26,8 +26,8 @@ class Controller(object):
         Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
-            self._resources = Resources()
-            self._logThread = LogThread(self._resources)
+            self.resources = Resources()
+            self.logThread = LogThread(self.resources)
         except ConfigurationException as ce:
             logging.info('Error during initialization occure', ce)
             raise InitializationException(ce)
@@ -40,18 +40,15 @@ class Controller(object):
         """ free all resources, close all connections """
         try:
             logging.info('======= Program closing =======')
-            self._logThread.stop()
-            del self._resources
+            self.logThread.stop()
+            del self.resources
         except Exception as e:
             raise ClosingException(e)
 
-    def getResources(self):
-        return self._resources
-
     def forceLog(self):
         """ Force to log message and start new timer  """
-        self._logThread.force()
+        self.logThread.force()
 
     def updateLogTime(self, time):
         """ update logging period, time in minutes """
-        self._logThread.updatePeriod(int(time)*60)
+        self.logThread.updatePeriod(int(time)*60)

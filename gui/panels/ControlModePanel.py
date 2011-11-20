@@ -59,7 +59,7 @@ class ControlModePanel(SimplePanel):
         self.GetParent().Fit()
 
     def takeControl(self):
-        plc = self._resources.getPLCManager()
+        plc = self._resources.plcManager
         plc.takeControl()
 
     def OnBtnStart(self, event):
@@ -69,7 +69,7 @@ class ControlModePanel(SimplePanel):
         data['ha'] = data['st']-data['ra']
         print('=====  send ha and lst', data['ha'], data['st'])
         print('RA',getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
-        plc = self._resources.getPLCManager()
+        plc = self._resources.plcManager
         plc.setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
         if data['focus']:
             plc.setFocus(data['focus'])
@@ -78,12 +78,12 @@ class ControlModePanel(SimplePanel):
 
     def OnBtnStop(self, event):
         event.Skip()
-        plc = self._resources.getPLCManager()
+        plc = self._resources.plcManager
         plc.stopMoving()
 
 
     def update(self, controller):
-        mode = self._resources.getPLCManager().readControlMode()
+        mode = self._resources.plcManager.readControlMode()
         self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
 
         if self.rbObjectSetpoint.GetValue():
@@ -92,7 +92,7 @@ class ControlModePanel(SimplePanel):
         if self.rbManualSetpoint.GetValue():
             self._controls.updateSetPoint()
 
-        if self._resources.getPLCManager().readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
+        if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
             self.butStart.Disable()
         else:
             self.butStart.Enable()

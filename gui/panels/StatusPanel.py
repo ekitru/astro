@@ -11,10 +11,10 @@ class StatusPanel(SimplePanel):
     def __init__(self, parent, resources):
         SimplePanel.__init__(self, parent)
 
-        codes = resources.getCodes()
+        codes = resources.codes
         sizer = wx.GridSizer(0, 2, 5, 5)
 
-        status = resources.getPLCManager().readTelescopeStatus()
+        status = resources.plcManager.readTelescopeStatus()
         self._statuses = dict()
         for key in status:
             field = self.CreateField()
@@ -27,7 +27,7 @@ class StatusPanel(SimplePanel):
         self.SetSizer(comSizer)
 
     def update(self, resources):
-        status = resources.getPLCManager().readTelescopeStatus()
+        status = resources.plcManager.readTelescopeStatus()
         for key in status:
             field  =self._statuses[key]
             field.SetLabel(status[key])

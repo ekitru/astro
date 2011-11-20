@@ -15,7 +15,7 @@ class ManualSetpointPanel(SimplePanel):
         SimplePanel.__init__(self, parent)
 
         self._setpoint = resources.getSetPoint()
-        self._focus = resources.getPLCManager().getFocus()[0]
+        self._focus = resources.plcManager.getFocus()[0]
 
         captions = self.CreateCaptionPanel(codes)
         fields = self.CreateFieldsPanel()

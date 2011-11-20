@@ -7,20 +7,20 @@ class TelescopePanel(SimplePanel):
     def __init__(self, parent, resources):
         SimplePanel.__init__(self, parent)
 
-        codes = resources.getCodes()
+        codes = resources.codes
         sizer = wx.GridSizer(0, 2, 5, 10)
         self._statuses = dict()
 
-        status = resources.getPLCManager().readTelescopeConnStatus()
+        status = resources.plcManager.readTelescopeConnStatus()
         self.addFields(codes, sizer, status)
 
-        status = resources.getPLCManager().readTelescopeMovingStatus()
+        status = resources.plcManager.readTelescopeMovingStatus()
         self.addFields(codes, sizer, status)
 
-        status = resources.getPLCManager().readTelescopeMode()
+        status = resources.plcManager.readTelescopeMode()
         self.addFields(codes, sizer, status)
 
-        status = resources.getPLCManager().readTemperature()
+        status = resources.plcManager.readTemperature()
         self.addFields(codes, sizer, status)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pTelescope')), wx.VERTICAL)
@@ -40,13 +40,13 @@ class TelescopePanel(SimplePanel):
             field.SetLabel(codes.get(status[key]))
 
     def update(self, resources):
-        codes = resources.getCodes()
+        codes = resources.codes
 
         status = []
-        status.append(resources.getPLCManager().readTelescopeConnStatus())
-        status.append(resources.getPLCManager().readTelescopeMovingStatus())
-        status.append(resources.getPLCManager().readTelescopeMode())
-        status.append(resources.getPLCManager().readTemperature() )
+        status.append(resources.plcManager.readTelescopeConnStatus())
+        status.append(resources.plcManager.readTelescopeMovingStatus())
+        status.append(resources.plcManager.readTelescopeMode())
+        status.append(resources.plcManager.readTemperature() )
         for st in status:
             self._readStatuses(codes, st)
   
