@@ -101,6 +101,10 @@ class ModBusManager(object):
         """ Writes boolean flag  """
         self._master.execute(self.ID, cst.WRITE_SINGLE_COIL, long(addr), output_value=value)
 
+    def readTemp(self, addr):
+        """ Read temperatuer from PLC """
+        return self.readNumber16bit(long(addr)) / 10.0
+
 
 PC_CONTROL = 1
 
@@ -245,24 +249,29 @@ class PLCManager(object):
 
 
     def readTelescopeMode(self):
-        ret = dict()
-        serviceMode = self.readServiceMode()
+        """ Get current telescope  service and control modes
+        Return:
+            dict(pState_service_mode,pState_control_mode)
+        """
+        return {'pState_service_mode':self.readServiceMode() ,'pState_control_mode':self.readControlMode()}
+
+    def readServiceMode(self):
+        serviceMode =  self._conn.readNumber16bit(self._state['service_mode'])
         serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online', '2': 'pState_service'}
-        ret['pState_service_mode'] = serviceModes[str(serviceMode)]
+        return serviceModes[str(serviceMode)]
 
-        controlMode = self.readControlMode()
+    def readControlMode(self):
+        controlMode =  self._conn.readNumber16bit(self._state['control_mode'])
         controlModes = {'0': 'pState_nobody', '1': 'pState_PC', '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
-        ret['pState_control_mode'] = controlModes[str(controlMode)]
-
-        return ret
+        return controlModes[str(controlMode)]
 
     def readTemperature(self):
         ret = dict()
-        ret['pState_tempT'] = str(self._conn.readNumber16bit(self._state['temp_telescope']) / 10.0)
-        ret['pState_tempD'] = str(self._conn.readNumber16bit(self._state['temp_dome']) / 10.0)
+        ret['pState_tempT'] = str(self._conn.readTemp(self._state['temp_telescope']))
+        ret['pState_tempD'] = str(self._conn.readTemp(self._state['temp_dome']))
         return ret
 
-    def readAlarmStatus(self):
+    def readCommonAlarmStatus(self):
         try:
             state = self._conn.readFlag(self._status['alarmCommon2'])
         except Exception as ex:
@@ -273,21 +282,19 @@ class PLCManager(object):
         else:
             return 'Normal'
 
-    def readServiceMode(self):
-        return self._conn.readNumber16bit(self._state['service_mode'])
-
-    def readControlMode(self):
-        return self._conn.readNumber16bit(self._state['control_mode'])
+    def readAlarmStatus(self):
+        return 'DUMMY'
 
     def takeControl(self):
+        self._logger.info('Take telescope control')
         self._conn.writeNumber16bit(self._state['take_control'], PC_CONTROL)
 
     def startMoving(self):
-        print('start moving')
+        self._logger.info('start moving')
         self._conn.writeFlag(self._state['move_stop'], 1)
 
     def stopMoving(self):
-        print('stop moving')
+        self._logger.info('stop moving')
         self._conn.writeFlag(self._state['move_stop'], 0)
 
     def close(self):
