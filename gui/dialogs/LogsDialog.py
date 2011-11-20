@@ -1,3 +1,4 @@
+import codecs
 import os
 from posixpath import join
 import wx
@@ -154,7 +155,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
             # Open the file for write, write, close
             self.filename = dialog.GetFilename()
             self.dirname = dialog.GetDirectory()
-            filehandle = open(os.path.join(self.dirname, self.filename), 'w')
+            filehandle = codecs.open(os.path.join(self.dirname, self.filename), 'w', 'utf-8')
             for data in self._log._log:
                 line = self.parseDict(data)
                 filehandle.write(';'.join(line))
