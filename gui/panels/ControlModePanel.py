@@ -48,12 +48,14 @@ class ControlModePanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnBtnStop, self.butStop)
 
     def OnObjSetpointRadBut(self, event):
+        event.Skip()
         self.takeControl()
         self._controls.Hide()
         self.GetParent().Fit()
         self._resources.updateSetPoint()
 
     def OnManSetpointRadBut(self, event):
+        event.Skip()
         self.takeControl()
         self._controls.Show()
         self.GetParent().Fit()
@@ -98,4 +100,4 @@ class ControlModePanel(SimplePanel):
             self.butStart.Enable()
 
     def _isRemoveControl(self, mode):
-        return mode != 1
+        return mode is not 'pState_PC'
