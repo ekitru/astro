@@ -288,7 +288,6 @@ class PLCManager(object):
         status = ",".join(keys)
         return status
 
-
     def takeControl(self):
         self._logger.info('Take telescope control')
         self._conn.writeNumber16bit(self._state['take_control'], PC_CONTROL)

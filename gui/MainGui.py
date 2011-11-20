@@ -9,12 +9,10 @@ class MainGui(wx.Frame):
     """ Main GUI class, includes all panels and dialogs with Binding for calls  """
 
     def __init__(self, parent, title, controller):
-        super(MainGui, self).__init__(parent, title=title,
-                                      size=(706, 388))
+        super(MainGui, self).__init__(parent, title=title, size=(706, 388))
         #        InspectionTool().Show()
         self.controller = controller
         self.resources = controller.resources
-
         codes = controller.resources.codes
         panelArgs = {"parent": self, "codes": codes}
 
@@ -78,7 +76,7 @@ class MainGui(wx.Frame):
         self.timeDatePanel.update(self.resources)
         self.positioningPanel.update(self.resources)
         self.manualSetpointPanel.update(self.controller)
-        self.controlModePanel.update(self.controller)
+        self.controlModePanel.update()
         self.statusPanel.update(self.resources)
         self.telescopePanel.update(self.resources)
         self.Fit()

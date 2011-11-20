@@ -34,11 +34,6 @@ class TelescopePanel(SimplePanel):
             sizer.Add(field, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
             self._statuses[key] = field
 
-    def _readStatuses(self, codes, status):
-        for key in status:
-            field = self._statuses[key]
-            field.SetLabel(codes.get(status[key]))
-
     def update(self, resources):
         codes = resources.codes
 
@@ -46,7 +41,11 @@ class TelescopePanel(SimplePanel):
         status.append(resources.plcManager.readTelescopeConnStatus())
         status.append(resources.plcManager.readTelescopeMovingStatus())
         status.append(resources.plcManager.readTelescopeMode())
-        status.append(resources.plcManager.readTemperature() )
+        status.append(resources.plcManager.readTemperature())
         for st in status:
             self._readStatuses(codes, st)
-  
+
+    def _readStatuses(self, codes, status):
+        for key in status:
+            field = self._statuses[key]
+            field.SetLabel(codes.get(status[key]))

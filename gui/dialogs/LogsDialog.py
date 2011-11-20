@@ -1,3 +1,5 @@
+import os
+from posixpath import join
 import wx
 import sys
 import datetime
@@ -8,6 +10,8 @@ from gui.panels.SimplePanel import SimplePanel
 __author__ = 'kitru'
 
 class LogsDialog(wx.Dialog, SimplePanel):
+    ONE_DAY = 24 * 60 * 60 - 1 #23hour 59 minutes 59 seconds
+
     def __init__(self, parent, id, controller):
         resources = controller.resources
         codes = resources.codes
@@ -18,10 +22,14 @@ class LogsDialog(wx.Dialog, SimplePanel):
         self._list = self.CreateLists(codes)
         searchPanel = self.CreateSearchPanel(codes)
 
+        buttons = wx.BoxSizer(wx.HORIZONTAL)
+        buttons.Add(wx.Button(self, wx.ID_FILE, label=codes.get('dLogs_export')), flag=wx.RIGHT, border=10)
+        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dLogs_close')))
+
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(searchPanel, flag=wx.ALL | wx.EXPAND, border=10)
         sizer.Add(self._list, flag=wx.EXPAND)
-        sizer.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dLogs_close')), flag=wx.ALL | wx.ALIGN_RIGHT, border=10)
+        sizer.Add(buttons, flag=wx.ALL, border=10)
 
         self.SetFocus()
         self.SetSizer(sizer)
@@ -29,6 +37,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
 
         self.Bind(wx.EVT_BUTTON, self.OnFind, id=wx.ID_FIND)
         self.Bind(wx.EVT_BUTTON, self.OnCancel, id=wx.ID_CANCEL)
+        self.Bind(wx.EVT_BUTTON, self.OnExport, id=wx.ID_FILE)
         self.Bind(wx.EVT_KEY_UP, self.OnListCharacter)
 
     def CreateLists(self, codes):
@@ -52,8 +61,10 @@ class LogsDialog(wx.Dialog, SimplePanel):
         sizer = wx.FlexGridSizer(1, 12, 5, 5)
 
         self.name = wx.TextCtrl(self, size=(120, -1))
-        self.startDate = wx.DatePickerCtrl(self, dt=wx.DateTime().UNow(), size=(120, -1), style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
-        self.endDate = wx.DatePickerCtrl(self, dt=wx.DateTime.UNow(), size=(120, -1), style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
+        self.startDate = wx.DatePickerCtrl(self, dt=wx.DateTime().UNow(), size=(120, -1),
+                                           style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
+        self.endDate = wx.DatePickerCtrl(self, dt=wx.DateTime.UNow(), size=(120, -1),
+                                         style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
 
         sizer.Add(self.CreateCaption(codes.get('dLogs_name')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         sizer.Add(self.name)
@@ -88,10 +99,10 @@ class LogsDialog(wx.Dialog, SimplePanel):
         """ Return first second of the day """
         return self.getUnixTimeStamp(dateTime)
 
+
     def getEndDay(self, dateTime):
         """ Return last second of the day """
-        ONE_DAY=24*60*60-1 #23hour 59 minutes 59 seconds
-        return self.getUnixTimeStamp(dateTime)+ONE_DAY
+        return self.getUnixTimeStamp(dateTime) + self.ONE_DAY
 
     def getUnixTimeStamp(self, dateTime):
         day, month, year = dateTime.GetDay(), dateTime.GetMonth() + 1, dateTime.GetYear()
@@ -125,3 +136,36 @@ class LogsDialog(wx.Dialog, SimplePanel):
     def OnCancel(self, event):
         event.Skip()
         self.EndModal(wx.ID_CANCEL)
+
+    def OnExport(self, event):
+        event.Skip()
+        path = join(os.getenv('HOME'), 'Desktop')
+        dialog = wx.FileDialog(self, message="File select", defaultDir=path, defaultFile="temp.log",
+                               style=wx.SAVE | wx.OVERWRITE_PROMPT)
+        if dialog.ShowModal() == wx.ID_OK:
+            # Open the file for write, write, close
+            self.filename = dialog.GetFilename()
+            self.dirname = dialog.GetDirectory()
+            filehandle = open(os.path.join(self.dirname, self.filename), 'w')
+            for data in self._log._log:
+                line = self.parseDict(data)
+                filehandle.write(';'.join(line))
+                filehandle.write('\n')
+            filehandle.close()
+        dialog.Destroy()
+
+    def parseDict(self, log):
+        line = []
+        line.append(str(log['id']))
+        line.append(str(log['time']))
+        line.append(unicode(log['name']))
+        line.append(str(log['sRa']))
+        line.append(str(log['sDec']))
+        line.append(unicode(log['msg']))
+        line.append(str(log['ra']))
+        line.append(str(log['dec']))
+        line.append(str(log['focus']))
+        line.append(str(log['temp_in']))
+        line.append(str(log['temp_out']))
+        line.append(str(log['status']))
+        return line

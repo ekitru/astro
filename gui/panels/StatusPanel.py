@@ -8,6 +8,7 @@ class StatusPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
+
     def __init__(self, parent, resources):
         SimplePanel.__init__(self, parent)
 
@@ -19,8 +20,8 @@ class StatusPanel(SimplePanel):
         for key in status:
             field = self.CreateField()
             sizer.Add(self.CreateCaption(codes.get(key)), flag=wx.ALL | wx.CENTER | wx.ALIGN_RIGHT)
-            sizer.Add(field, flag = wx.ALL | wx.CENTER | wx.ALIGN_CENTER)
-            self._statuses[key]=field
+            sizer.Add(field, flag=wx.ALL | wx.CENTER | wx.ALIGN_CENTER)
+            self._statuses[key] = field
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pStatus')), wx.VERTICAL)
         comSizer.Add(sizer, flag=wx.ALL | wx.EXPAND, border=10)
@@ -29,5 +30,5 @@ class StatusPanel(SimplePanel):
     def update(self, resources):
         statuses = resources.plcManager.readTelescopeStatus()
         for key in statuses:
-            field  =self._statuses[key]
+            field = self._statuses[key]
             field.SetLabel(statuses[key])

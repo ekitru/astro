@@ -82,7 +82,7 @@ class ControlModePanel(SimplePanel):
         plc.stopMoving()
 
 
-    def update(self, controller):
+    def update(self):
         mode = self._resources.plcManager.readControlMode()
         self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
 
