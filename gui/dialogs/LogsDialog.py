@@ -54,7 +54,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
         list.InsertColumn(col=8, heading=codes.get('dLogs_focus'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=9, heading=codes.get('dLogs_temp_in'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=10, heading=codes.get('dLogs_temp_out'), format=wx.LIST_FORMAT_LEFT)
-        list.InsertColumn(col=11, heading=codes.get('dLogs_status'), format=wx.LIST_FORMAT_LEFT, width=800)
+        list.InsertColumn(col=11, heading=codes.get('dLogs_status'), format=wx.LIST_FORMAT_LEFT, width=400)
         return list
 
     def CreateSearchPanel(self, codes):
