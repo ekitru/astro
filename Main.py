@@ -1,6 +1,5 @@
 #!/usr/bin/python2.6 -B
 # -*- coding: UTF-8 -*-
-from core.Resources import Resources
 from core.Controller import Controller
 from core.Exceptions import InitializationException, ClosingException, GuiException
 
