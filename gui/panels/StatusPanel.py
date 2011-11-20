@@ -27,7 +27,7 @@ class StatusPanel(SimplePanel):
         self.SetSizer(comSizer)
 
     def update(self, resources):
-        status = resources.plcManager.readTelescopeStatus()
-        for key in status:
+        statuses = resources.plcManager.readTelescopeStatus()
+        for key in statuses:
             field  =self._statuses[key]
-            field.SetLabel(status[key])
+            field.SetLabel(statuses[key])

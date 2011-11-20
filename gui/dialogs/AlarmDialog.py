@@ -12,13 +12,13 @@ class AlarmDialog(wx.Dialog, SimplePanel):
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 
         alarmSizer = wx.FlexGridSizer(0, 2, 5, 5)
-        status = resources.plcManager.readAlarms()
-        self._statuses = dict()
-        for key in status:
+        alarms = resources.plcManager.readAlarms()
+        self._alarms = dict()
+        for key in alarms:
             field = self.CreateField()
             alarmSizer.Add(self.CreateCaption(codes.get(key)), flag=wx.ALL | wx.CENTER | wx.ALIGN_RIGHT)
             alarmSizer.Add(field, flag = wx.ALL | wx.CENTER | wx.ALIGN_CENTER)
-            self._statuses[key]=field
+            self._alarms[key]=field
 
         buttons = wx.BoxSizer(wx.VERTICAL)
         buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dAlarm_cancel')), flag=wx.ALIGN_RIGHT)
@@ -32,9 +32,9 @@ class AlarmDialog(wx.Dialog, SimplePanel):
         self.update(resources)
 
     def update(self, resources):
-        status = resources.plcManager.readAlarms()
-        for key in status:
-            field  =self._statuses[key]
-            field.SetLabel(status[key])
+        alarms = resources.plcManager.readAlarms()
+        for key in alarms:
+            field  =self._alarms[key]
+            field.SetLabel(alarms[key])
 
 

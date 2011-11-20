@@ -33,7 +33,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
 
     def CreateLists(self, codes):
         list = wx.ListCtrl(self, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
-        list.SetMinSize((1200, 300))
+        list.SetMinSize((1400, 300))
         list.InsertColumn(col=0, heading=codes.get('dLogs_ID'), format=wx.LIST_FORMAT_LEFT, width=40)
         list.InsertColumn(col=1, heading=codes.get('dLogs_time'), format=wx.LIST_FORMAT_LEFT, width=200)
         list.InsertColumn(col=2, heading=codes.get('dLogs_star_name'), format=wx.LIST_FORMAT_LEFT, width=120)
@@ -45,7 +45,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
         list.InsertColumn(col=8, heading=codes.get('dLogs_focus'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=9, heading=codes.get('dLogs_temp_in'), format=wx.LIST_FORMAT_LEFT)
         list.InsertColumn(col=10, heading=codes.get('dLogs_temp_out'), format=wx.LIST_FORMAT_LEFT)
-        list.InsertColumn(col=11, heading=codes.get('dLogs_status'), format=wx.LIST_FORMAT_LEFT)
+        list.InsertColumn(col=11, heading=codes.get('dLogs_status'), format=wx.LIST_FORMAT_LEFT, width=800)
         return list
 
     def CreateSearchPanel(self, codes):
