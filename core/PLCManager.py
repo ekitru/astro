@@ -285,7 +285,10 @@ class PLCManager(object):
     def readAlarmStatus(self):
         alarms = self.readAlarms()
         keys = alarms.keys()
-        status = ",".join(keys)
+        list = []
+        for key in keys:
+            list.append(self._alarms[key])
+        status = ",".join(list)
         return status
 
     def takeControl(self):

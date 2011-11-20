@@ -14,17 +14,17 @@ class LogsDialog(wx.Dialog, SimplePanel):
 
     def __init__(self, parent, id, controller):
         resources = controller.resources
-        codes = resources.codes
-        wx.Dialog.__init__(self, parent, title=codes.get('dLogs_title'),
+        self.codes = resources.codes
+        wx.Dialog.__init__(self, parent, title=self.codes.get('dLogs_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 
         self._log = Log(resources.getDbManager())
-        self._list = self.CreateLists(codes)
-        searchPanel = self.CreateSearchPanel(codes)
+        self._list = self.CreateLists(self.codes)
+        searchPanel = self.CreateSearchPanel(self.codes)
 
         buttons = wx.BoxSizer(wx.HORIZONTAL)
-        buttons.Add(wx.Button(self, wx.ID_FILE, label=codes.get('dLogs_export')), flag=wx.RIGHT, border=10)
-        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=codes.get('dLogs_close')))
+        buttons.Add(wx.Button(self, wx.ID_FILE, label=self.codes.get('dLogs_export')), flag=wx.RIGHT, border=10)
+        buttons.Add(wx.Button(self, wx.ID_CANCEL, label=self.codes.get('dLogs_close')))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(searchPanel, flag=wx.ALL | wx.EXPAND, border=10)
@@ -93,7 +93,15 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 8, str(log['focus']))
             self._list.SetStringItem(index, 9, str(log['temp_in']))
             self._list.SetStringItem(index, 10, str(log['temp_out']))
-            self._list.SetStringItem(index, 11, str(log['status']))
+            self._list.SetStringItem(index, 11, self.parseAlarms(log))
+
+    def parseAlarms(self, log):
+        status = str(log['status'])
+        list = []
+        for alarm in status.split(','):
+            list.append(self.codes.get('al'+alarm))
+        alarms = ",".join(list)
+        return alarms
 
     def getStartDay(self, dateTime):
         """ Return first second of the day """

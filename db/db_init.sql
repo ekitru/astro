@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `astro`.`log`
  `focus` FLOAT DEFAULT NULL,
  `temp_in` FLOAT DEFAULT NULL,
  `temp_out` FLOAT DEFAULT NULL,
- `status` VARCHAR DEFAULT NULL,
+ `status` CHAR(255) DEFAULT NULL,
   FOREIGN KEY(`star_id`) REFERENCES `astro`.`star`(`id`),
   FOREIGN KEY(`msg_id`) REFERENCES `astro`.`message`(`id`)
 );
