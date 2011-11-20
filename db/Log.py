@@ -1,3 +1,4 @@
+from twisted.python.util import OrderedDict
 from db.DbQuery import DBQuery
 import time
 from core import astronomy
@@ -6,6 +7,7 @@ __author__ = 'kitru'
 
 class Log(DBQuery):
     """ manage operations with logs in Log table """
+    _log=None
 
     def __init__(self, dbManager):
         super(Log, self).__init__(dbManager.getDb(), dbManager.getLogger())
@@ -42,7 +44,7 @@ class Log(DBQuery):
         rows = self.selectAll(select, where=condition)
         list = []
         for row in rows:
-            data = dict()
+            data = OrderedDict()
             data['id'] = row[0]
             data['time'] = time.ctime(int(row[1]))
             data['name'] = row[2]
@@ -52,8 +54,9 @@ class Log(DBQuery):
             data['focus'] = row[8]
             data['temp_in'], data['temp_out'] = row[9], row[10]
             data['status'] = row[11]
-            print('get from DB', data)
+            #print('get from DB', data)
             list.append(data)
+        self._log = list
         return list
 
 

@@ -18,18 +18,18 @@ class Message(DBQuery):
     def getLastId(self):
         """ return last stored message id, if there is no return empty string
         can throw DbException """
-        if self.getLastRow():
-            return self.getLastRow()[0]
+        if self._getLastRow():
+            return self._getLastRow()[0]
 
     def getLastMsg(self):
         """ return last stored message, if there is no return empty string
         can throw DbException """
-        if self.getLastRow():
-            return self.getLastRow()[1]
+        if self._getLastRow():
+            return self._getLastRow()[1]
         else:
             return ""
 
-    def getLastRow(self):
+    def _getLastRow(self):
         """ Last row is the newest message in DB
         can throw DbException """
         sql = "SELECT `id`,`text` FROM `message` ORDER BY `id` DESC LIMIT 1"

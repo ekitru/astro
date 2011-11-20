@@ -283,7 +283,11 @@ class PLCManager(object):
             return 'Normal'
 
     def readAlarmStatus(self):
-        return 'DUMMY'
+        alarms = self.readAlarms()
+        keys = alarms.keys()
+        status = ",".join(keys)
+        return status
+
 
     def takeControl(self):
         self._logger.info('Take telescope control')
