@@ -28,6 +28,7 @@ class TranslationConfig(SimpleConfig):
             return self._codes[key.lower()]
         else:
             self._logger.warning('Missing translation code ' + key)
+            self._codes[key.lower()] = key.lower()
             return key
 
     def _getTranslationConfig(self, language):
