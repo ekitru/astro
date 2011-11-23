@@ -67,7 +67,7 @@ class ControlModePanel(SimplePanel):
     def OnBtnStart(self, event):
         event.Skip()
         data = self._resources.getSetPoint().getRawData()
-        data['st'] = ephem.hours(self._resources.getObserver().getLST()).real
+        data['st'] = ephem.hours(self._resources.getObserver().getLST()).real #TODO send sidereal time periodically
         data['ha'] = ephem.hours(data['st']-data['ra']).norm.real    #TODO look to Object data, there is same normalization
         print('=====  send ha and lst', data['ha'], data['st'])
         print('RA',getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))

@@ -20,6 +20,7 @@ class Observer(ephem.Observer):
             longitude = confDict['longitude']
             elevation = confDict['elevation']
             temp = confDict['temperature']
+            #TODO add minimum level
             self._createObserver(elevation, latitude, longitude, temp)
         except Exception as ex:
             raise ConfigurationException(ex.args)
