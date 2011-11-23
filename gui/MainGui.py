@@ -79,5 +79,6 @@ class MainGui(wx.Frame):
         self.controlModePanel.update()
         self.statusPanel.update(self.resources)
         self.telescopePanel.update(self.resources)
+        self.Layout()
         self.Fit()
         self.Show()

@@ -139,7 +139,7 @@ class Object(object):
             az = str(self._fixedBody.az)
             rise = self.getRisingTime()
             set = self.getSettingTime()
-            ha = str(getHours(self._observer.getLST() - self._fixedBody.ra)) # LHA=LST-RA
+            ha = str(getHours(self._observer.getLST() - self._fixedBody.ra).norm) # LHA=LST-RA   #add normalization from 0 to 2PI
 
         return {'ra': ra, 'dec': dec, 'alt': alt, 'az': az, 'ha': ha, 'rise': rise, 'set': set}
 
