@@ -19,19 +19,19 @@ class MainGui(wx.Frame):
         self.objectPanel = ObjectPanel(**panelArgs)
         self.positioningPanel = PositionPanel(**panelArgs)
         self.manualSetpointPanel = ManualSetpointPanel(resources=self.resources, **panelArgs)
-        self.controlModePanel = ControlModePanel(self, codes, self.resources, self.manualSetpointPanel)
+        self.controlModePanel = ControlModePanel(self, codes, self.resources, self.objectPanel, self.manualSetpointPanel)
 
         self.timeDatePanel = TimeDatePanel(**panelArgs)
         self.telescopePanel = TelescopePanel(self, self.resources)
         self.statusPanel = StatusPanel(self, self.resources)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
-        leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
-        leftColon.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND)
-        leftColon.AddSpacer(10)
         leftColon.Add(self.controlModePanel, flag=wx.ALL | wx.EXPAND)
-        leftColon.AddSpacer(5)
+        leftColon.AddSpacer(10)
+        leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
         leftColon.Add(self.manualSetpointPanel, flag=wx.ALL | wx.EXPAND)
+        leftColon.AddSpacer(10)
+        leftColon.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND | wx.ALIGN_BOTTOM)
 
         rightColon = wx.BoxSizer(wx.VERTICAL)
         rightColon.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
@@ -49,7 +49,7 @@ class MainGui(wx.Frame):
         self.timer = wx.Timer(self)
 
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
-        self.timer.Start(2000)
+        self.timer.Start(500)
         menu = AstroMenu(self.controller)
 
         self.SetMenuBar(menu)

@@ -10,7 +10,7 @@ class ControlModePanel(SimplePanel):
     """
     _setpointControlMode = 1
 
-    def __init__(self, parent, codes, resources, controls):
+    def __init__(self, parent, codes, resources, object, manual):
         """ Attr:
             codes - translation codes
             resouces - program resources
@@ -18,7 +18,8 @@ class ControlModePanel(SimplePanel):
         SimplePanel.__init__(self, parent)
 
         self._resources = resources
-        self._controls = controls
+        self._object = object
+        self._manual = manual
 
         self.rbObjectSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlObjSP'))
         self.rbManualSetpoint = wx.RadioButton(self, wx.ID_ANY, codes.get('pCtrlManSP'))
@@ -40,7 +41,10 @@ class ControlModePanel(SimplePanel):
         sizer.Add(column1)
         sizer.AddSpacer(40)
         sizer.Add(column2)
-        self.SetSizer(sizer)
+
+        comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pCtrlTitle')), wx.VERTICAL)
+        comSizer.Add(sizer, flag=wx.EXPAND | wx.ALL, border=10)
+        self.SetSizer(comSizer)
 
         self.Bind(wx.EVT_RADIOBUTTON, self.OnObjSetpointRadBut, id=self.rbObjectSetpoint.GetId())
         self.Bind(wx.EVT_RADIOBUTTON, self.OnManSetpointRadBut, id=self.rbManualSetpoint.GetId())
@@ -50,14 +54,16 @@ class ControlModePanel(SimplePanel):
     def OnObjSetpointRadBut(self, event):
         event.Skip()
         self.takeControl()
-        self._controls.Hide()
+        self._object.Show()
+        self._manual.Hide()
         self.GetParent().Fit()
         self._resources.updateSetPoint()
 
     def OnManSetpointRadBut(self, event):
         event.Skip()
         self.takeControl()
-        self._controls.Show()
+        self._object.Hide()
+        self._manual.Show()
         self.GetParent().Fit()
 
     def takeControl(self):
@@ -67,7 +73,7 @@ class ControlModePanel(SimplePanel):
     def OnBtnStart(self, event):
         event.Skip()
         data = self._resources.getSetPoint().getRawData()
-        data['st'] = ephem.hours(self._resources.getObserver().getLST()).real #TODO send sidereal time periodically
+        data['st'] = ephem.hours(self._resources.observer.getLST()).real #TODO send sidereal time periodically
         data['ha'] = ephem.hours(data['st']-data['ra']).norm.real    #TODO look to Object data, there is same normalization
         print('=====  send ha and lst', data['ha'], data['st'])
         print('RA',getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
@@ -88,11 +94,16 @@ class ControlModePanel(SimplePanel):
         mode = self._resources.plcManager.readControlMode()
         self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
 
+        #TODO temporaly not needed
+#        if self.rbRemoteControl.GetValue():
+#            self._object.Show()
+#            self._manual.Hide()
+
         if self.rbObjectSetpoint.GetValue():
             self._resources.updateSetPoint()
 
         if self.rbManualSetpoint.GetValue():
-            self._controls.updateSetPoint()
+            self._manual.updateSetPoint()
 
         if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
             self.butStart.Disable()
