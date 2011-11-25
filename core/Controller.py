@@ -12,6 +12,7 @@ __author__ = 'kitru'
 class Controller(object):
     def __init__(self):
         self.__initLogger()
+        self.resources = Resources()
 
     def __initLogger(self):
         """ Initialize base system logger  """
@@ -27,7 +28,7 @@ class Controller(object):
         Opens DB connection and connection with PLCm also reads translation codes """
         try:
             logging.info('======= Program initialization =======')
-            self.resources = Resources()
+            self.resources.initResources()
             self.logThread = LogThread(self.resources)
         except ConfigurationException as ce:
             logging.info('Error during initialization occure', ce)

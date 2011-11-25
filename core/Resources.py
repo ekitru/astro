@@ -1,4 +1,4 @@
-from core.Exceptions import InitializationException
+from core.Exceptions import InitializationException, DbException
 from core.PLCManager import PLCManager
 from core.astronomy import Object, Observer, SetPoint
 
@@ -16,8 +16,7 @@ class Resources(object):
     Also contain logger for resourses, if they need to log something: self.logger """
 
     def __init__(self):
-        """ Reads common configuration file. As result after initialization
-        common dictionary, codes, observer and object will be created """
+        """ Reads common configuration file and initialize transation codes, observer object """
         try:
             self.logger = openLog("resources")
             self.config = ProgramConfig()
@@ -29,22 +28,39 @@ class Resources(object):
             self.observer = Observer(observerConfig)
             self.object = Object(self.observer)
 
-            self.plcManager = PLCManager()
-            self._setPoint = self._initSetPoint()
+            self._setPoint =  SetPoint(0, 0, 0) #TODO fix it!
 
-            self._dbManager = DbManager(self.config.getDbConfig())
-            self.dbStar = Star(self._dbManager)
-            self.dbLog = Log(self._dbManager)
-            self.dbMessage = Message(self._dbManager)
+            self.initResources()
+
         except Exception as error:
+            self.logger.exception(error)
             raise InitializationException(error.args, self.logger)
 
-    def _initSetPoint(self):
+    def initResources(self):
+        try:
+            self.initDbResources()
+        except DbException as error:
+            self.logger.exception(error)
+
+        try:
+            self.initPlcResources()
+        except Exception as error:
+            self.logger.exception(error)
+
+
+    def initDbResources(self):
+        self._dbManager = DbManager(self.config.getDbConfig())
+        self.dbStar = Star(self._dbManager)
+        self.dbLog = Log(self._dbManager)
+        self.dbMessage = Message(self._dbManager)
+
+    def initPlcResources(self):
+        self.plcManager = PLCManager()
+
         self.logger.info('Init SetPoint object')
         ra, dec = self.plcManager.getSetpointPosition()
         focus = self.plcManager.getFocus()[1]
-        return SetPoint(ra, dec, focus)
-
+        self._setPoint =  SetPoint(ra, dec, focus)
 
     def __del__(self):
         self.logger.info('Closing resources')

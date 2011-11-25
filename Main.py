@@ -8,16 +8,16 @@ from gui.MainGui import MainGui
 
 __author__ = 'kitru'
 
-def runGui(controller):
-    app = wx.App(False)
-    MainGui(None, 'AstroLab', controller)
-    app.MainLoop()
+
 
 if __name__ == '__main__':
     try:
+        app = wx.App(False)
         controller = Controller()
+        MainGui(None, 'AstroLab', controller)
         controller.initialization()
-        runGui(controller)
+        app.MainLoop()
+
         controller.freeResources()
     except InitializationException as exception:
         print("Unexcepted error occured during resources initialization: " + exception.__str__())
