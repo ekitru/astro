@@ -19,7 +19,7 @@ class LogThread(object):
             self._log = Log(db)
             self._message = Message(db)
             self._plc = self._resources.plcManager
-            self._period = resources.getConfig().getLoggingTime()
+            self._period = resources.config.getLoggingTime()
             self._start()
         except Exception as ex:
             raise ConfigurationException(ex.args)
@@ -61,7 +61,7 @@ class LogThread(object):
 
     def _getStarId(self):
         """ return selected object id from controller, if object is not selected return None """
-        object = self._resources.getObject()
+        object = self._resources.object
         return object.getId()
 
     def _getMsgId(self):

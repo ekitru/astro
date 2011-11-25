@@ -35,7 +35,7 @@ class TimeDatePanel(SimplePanel):
 
     def update(self, resources):
         """Updates local time, sidereal time, julian day and UTC time """
-        times = resources.getObserver().getCurrentTimes()
+        times = resources.observer.getCurrentTimes()
         self.LT.SetLabel(times[0])
         self.UTC.SetLabel(times[1])
         self.JD.SetLabel(times[2])

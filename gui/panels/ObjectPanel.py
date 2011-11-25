@@ -87,7 +87,7 @@ class ObjectPanel(SimplePanel):
     def update(self, resources):
         """Updates Objects name and coordinates """
 
-        object = resources.getObject()
+        object = resources.object
 
         # show object data
         data = object.getData()
