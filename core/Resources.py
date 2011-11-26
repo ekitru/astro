@@ -79,8 +79,8 @@ class Resources(object):
 
     def updateSetPoint(self):
         if self.object.selected():
-            position = self.object.getCurrentCoordinates()
-            self.getSetPoint().setPosition(position['ra'], position['dec'])
+            position = self.object.getEquatorialPosition()
+            self.getSetPoint().setPosition(*position)
 
     def getDbManager(self):
         return self._dbManager

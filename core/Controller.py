@@ -5,6 +5,7 @@ from Exceptions import   ClosingException
 from LogThread import LogThread
 from core.Resources import Resources
 from core.Exceptions import ConfigurationException, InitializationException
+from core.astronomy import rad2str
 from core.config.TranslationConfig import TranslationConfig
 from core.logger import getLogPath
 
@@ -60,11 +61,40 @@ class Controller(object):
         self.logThread.updatePeriod(int(time)*60)
 
     # Presenter
-    def getSelectedObjectData(self):
-        """ Return object name, ra, dec for epoch 2000 """
-        object = self.resources.object
-        return object.getData()
+    def isObjectSelected(self):
+        return self.resources.object.selected()
 
-    def getSelectedObjectCurrentPosition(self):
+    def getObjectData(self):
+        """ Return dictionary of object data
+        Return:
+            dict(name, ra, dec) for epoch 2000 """
+        name = self.resources.object.getName()
+        position = self.resources.object.getPosition()
+        ra, dec = rad2str(*position)
+        return {'name': name, 'ra': ra, 'dec': dec}
+
+    def getObjectPosition(self):
         object = self.resources.object
-        return object.getCurrentPosition()
+        coord = object.getEquatorialPosition()
+        ra, dec = rad2str(*coord)
+        alt, az = object.getHorizontalPosition()
+        return {'ra': ra, 'dec': dec, 'alt': str(alt), 'az': str(az)}
+
+    def getObjectHA(self):
+        object = self.resources.object
+        ha = object.getObjectHA()
+        return str(ha)
+
+    def getObjectRiseSetTimes(self):
+        object = self.resources.object
+        rt = self.parseTime(object.getRisingTime())
+        st = self.parseTime(object.getSettingTime())
+        return {'rise':rt, "set": st}
+
+    def parseTime(self, time):
+        if time:
+            return str(time.strftime('%H:%M:%S'))
+        else:
+            return 'N/A'
+
+

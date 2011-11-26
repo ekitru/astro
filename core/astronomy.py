@@ -70,8 +70,10 @@ class Object(object):
     def __init__(self, observer):
         """ By default selected object is not selected """
         self._observer = observer
+
         self._fixedBody = None
-        self._name = ''
+
+        self._name = ' '
         self._id = None
 
     def init(self, id, name, ra, dec):
@@ -104,73 +106,47 @@ class Object(object):
     def getName(self):
         return self._name
 
-    def getData(self):
-        """ Get common selected object data in HH:MM:SEC format
-        Return:
-            dict(name, str(ra), str(dec))
-        """
-        ra, dec, name = '', '', ''
-        if self.selected():
-            ra, dec = rad2str(self._fixedBody._ra, self._fixedBody._dec)
-            name = self._name
-        return {'name': name, 'ra': ra, 'dec': dec}
+    def getPosition(self):
+        """ Get objects position for J2000 """
+        return self._fixedBody._ra, self._fixedBody._dec
 
-    def getCurrentCoordinates(self):
-        """ Returns current object position
-        Return:
-            ra, dec - radians """
-        ra, dec = '', ''
-        if self.selected():
-            self._observer.updateToNow()
-            self._fixedBody.compute(self._observer)
-            ra, dec = self._fixedBody.ra, self._fixedBody.dec
-        return {'ra': ra, 'dec': dec}
+    def _now(self):
+        """ Update obsever to now and recalculate object position """
+        self._observer.updateToNow()
+        self._fixedBody.compute(self._observer)
 
-    def getCurrentPosition(self):
-        """ Calculates current object position in sky. If object is not selected return empty dictionary
-        Return:
-            dict(ra,dec,alt,ha,rise,set)
-        """
-        ra, dec, alt, az, ha, rise, set = '', '', '', ' ', '', '', ''
-        if self.selected():
-            self._observer.updateToNow()
-            self._fixedBody.compute(self._observer)
-            ra, dec = rad2str(self._fixedBody.ra, self._fixedBody.dec)
-            alt = str(self._fixedBody.alt)
-            az = str(self._fixedBody.az)
-            rise = self.getRisingTime()
-            set = self.getSettingTime()
-            ha = str(getHours(self._observer.getLST() - self._fixedBody.ra).norm) # LHA=LST-RA   #add normalization from 0 to 2PI
+    def getEquatorialPosition(self):
+        """ position for now """
+        self._now()
+        return self._fixedBody.ra, self._fixedBody.dec
 
-        return {'ra': ra, 'dec': dec, 'alt': alt, 'az': az, 'ha': ha, 'rise': rise, 'set': set}
+    def getHorizontalPosition(self):
+        """ position for now """
+        self._now()
+        return self._fixedBody.alt, self._fixedBody.az
+
+    def getObjectHA(self):
+        """ Calculates current object HA for observer. """
+        self._now()
+        return getHours(self._observer.getLST() - self._fixedBody.ra).norm # added normalization from [0, 2π)
 
     def getRisingTime(self):
         """ Calcutes next rising time for selected object
         Return:
-            rise time, if object rises
-            never or always, if object always up, down
-        """
+            rise time or None """
         try:
-            time = ephem.localtime(self._observer.next_rising(self._fixedBody))
-            return str(time.strftime('%H:%M:%S'))
-        except ephem.NeverUpError:
-            return 'never'
-        except ephem.AlwaysUpError:
-            return 'always'
+            return ephem.localtime(self._observer.next_rising(self._fixedBody))
+        except ephem.CircumpolarError:
+            return
 
     def getSettingTime(self):
         """ Calcutes next setting time for selected object
         Return:
-            set time, if object sets
-            never or always, if object always up, down
-        """
+            rise time or None """
         try:
-            time = ephem.localtime(self._observer.next_setting(self._fixedBody))
-            return str(time.strftime('%H:%M:%S'))
-        except ephem.NeverUpError:
-            return 'never'
-        except ephem.AlwaysUpError:
-            return 'always'
+            return ephem.localtime(self._observer.next_setting(self._fixedBody))
+        except ephem.CircumpolarError:
+            return
 
 
 class SetPoint(object):

@@ -85,17 +85,21 @@ class ObjectPanel(SimplePanel):
 
     def update(self, controller):
         """Updates Objects name and coordinates """
-        # show object data
-        data = controller.getSelectedObjectData()
-        self.objectName.SetLabel(data['name'])
-        self.objectOrigRA.SetLabel(data['ra'])
-        self.objectOrigDEC.SetLabel(data['dec'])
-        # show current object position
-        position = controller.getSelectedObjectCurrentPosition()
-        self.objectCurrRA.SetLabel(position['ra'])
-        self.objectCurrDEC.SetLabel(position['dec'])
-        self.objAltitude.SetLabel(position['alt'])
-        self.objAzimuth.SetLabel(position['az'])
-        self.objHourAngle.SetLabel(position['ha'])
-        self.objRisingTime.SetLabel(position['rise'])
-        self.objSettingTime.SetLabel(position['set'])
+        if controller.isObjectSelected():
+            # show object data
+            data = controller.getObjectData()
+            self.objectName.SetLabel(data['name'])
+            self.objectOrigRA.SetLabel(data['ra'])
+            self.objectOrigDEC.SetLabel(data['dec'])
+            # show object current coordinates
+            coord = controller.getObjectPosition()
+            self.objectCurrRA.SetLabel(coord['ra'])
+            self.objectCurrDEC.SetLabel(coord['dec'])
+            self.objAltitude.SetLabel(coord['alt'])
+            self.objAzimuth.SetLabel(coord['az'])
+            # show telescope position
+            ha = controller.getObjectHA()
+            self.objHourAngle.SetLabel(ha)
+            times = controller.getObjectRiseSetTimes()
+            self.objRisingTime.SetLabel(times['rise'])
+            self.objSettingTime.SetLabel(times['set'])
