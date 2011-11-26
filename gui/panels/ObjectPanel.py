@@ -8,8 +8,7 @@ class ObjectPanel(SimplePanel):
     Attributes:
         codes - Translation codes
     """
-
-    def __init__(self, parent, id=wx.ID_ANY, codes=None):
+    def __init__(self, parent, id, codes):
         SimplePanel.__init__(self, parent, id)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("pObject")), wx.VERTICAL)
@@ -84,10 +83,10 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.objHourAngle, flag=wx.ALL | wx.ALIGN_CENTER)
         return sizer
 
-    def update(self, resources):
+    def update(self, controller):
         """Updates Objects name and coordinates """
 
-        object = resources.object
+        object = controller.resources.object
 
         # show object data
         data = object.getData()

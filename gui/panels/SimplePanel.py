@@ -4,7 +4,7 @@ from os.path import join
 __author__ = 'kitru'
 
 class SimplePanel(wx.Panel):
-    def __init__(self, parent=None, id=wx.ID_ANY):
+    def __init__(self, parent, id=wx.ID_ANY):
         wx.Panel.__init__(self, parent, id)
 
     def CreateHeader(self, name):

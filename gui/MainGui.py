@@ -11,17 +11,17 @@ class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title, size=(706, 388))
         #        InspectionTool().Show()
+        trans = controller.codes
         self.controller = controller
         self.resources = controller.resources
-        codes = controller.codes
-        panelArgs = {"parent": self, "codes": codes}
 
-        self.objectPanel = ObjectPanel(**panelArgs)
-        self.positioningPanel = PositionPanel(**panelArgs)
-        self.manualSetpointPanel = ManualSetpointPanel(resources=self.resources, **panelArgs)
-        self.controlModePanel = ControlModePanel(self, codes, self.resources, self.objectPanel, self.manualSetpointPanel)
 
-        self.timeDatePanel = TimeDatePanel(**panelArgs)
+        self.objectPanel = ObjectPanel(self, ID_OBJECT_PANEL, trans)
+        self.positioningPanel = PositionPanel(self, codes=trans)
+        self.manualSetpointPanel = ManualSetpointPanel(self, codes=trans, resources=self.resources)
+        self.controlModePanel = ControlModePanel(self, trans, self.resources, self.objectPanel, self.manualSetpointPanel)
+
+        self.timeDatePanel = TimeDatePanel(self, codes=trans)
         self.telescopePanel = TelescopePanel(self, self.controller)
         self.statusPanel = StatusPanel(self, self.controller)
 
@@ -63,7 +63,7 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_MENU, menu.OnAlarms, id=ID_ALARMS_DIALOG)
         self.CreateStatusBar()
 
-        self.SetStatusText(codes.get('mainSuccStart'))
+        self.SetStatusText(trans.get('mainSuccStart'))
 
         self.SetSizer(commonSizer)
         self.Layout()
@@ -72,7 +72,8 @@ class MainGui(wx.Frame):
 
     def update(self, event):
         """ Updates panels view """
-        self.objectPanel.update(self.resources)
+        self.objectPanel.update(self.controller)
+
         self.timeDatePanel.update(self.resources)
         self.positioningPanel.update(self.resources)
         self.manualSetpointPanel.update(self.controller)
