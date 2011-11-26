@@ -85,16 +85,13 @@ class ObjectPanel(SimplePanel):
 
     def update(self, controller):
         """Updates Objects name and coordinates """
-
-        object = controller.resources.object
-
         # show object data
-        data = object.getData()
+        data = controller.getSelectedObjectData()
         self.objectName.SetLabel(data['name'])
         self.objectOrigRA.SetLabel(data['ra'])
         self.objectOrigDEC.SetLabel(data['dec'])
         # show current object position
-        position = object.getCurrentPosition()
+        position = controller.getSelectedObjectCurrentPosition()
         self.objectCurrRA.SetLabel(position['ra'])
         self.objectCurrDEC.SetLabel(position['dec'])
         self.objAltitude.SetLabel(position['alt'])

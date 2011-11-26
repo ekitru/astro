@@ -60,4 +60,11 @@ class Controller(object):
         self.logThread.updatePeriod(int(time)*60)
 
     # Presenter
+    def getSelectedObjectData(self):
+        """ Return object name, ra, dec for epoch 2000 """
+        object = self.resources.object
+        return object.getData()
 
+    def getSelectedObjectCurrentPosition(self):
+        object = self.resources.object
+        return object.getCurrentPosition()
