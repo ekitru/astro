@@ -39,10 +39,10 @@ class ObjectListDialog(wx.Dialog):
     OnOk, OnCancel, OnListItemSelected, OnListItemActivated
     """
 
-    def __init__(self, parent, id, title, resources):
-        wx.Dialog.__init__(self, parent, id, resources.codes.get(title), style=wx.CAPTION)
-        self._starHolder = resources.dbStar
-        self.codes = resources.codes
+    def __init__(self, parent, id, title, controller):
+        wx.Dialog.__init__(self, parent, id, controller.codes.get(title), style=wx.CAPTION)
+        self._starHolder = controller.resources.dbStar
+        self.codes = controller.codes
 
         self.starName = ""
         self.list = StarList(self, self.codes)

@@ -4,23 +4,23 @@ from gui.panels.SimplePanel import SimplePanel
 __author__ = 'kitru'
 
 class TelescopePanel(SimplePanel):
-    def __init__(self, parent, resources):
+    def __init__(self, parent, controller):
         SimplePanel.__init__(self, parent)
 
-        codes = resources.codes
+        codes = controller.codes
         sizer = wx.GridSizer(0, 2, 5, 10)
         self._statuses = dict()
 
-        status = resources.plcManager.readTelescopeConnStatus()
+        status = controller.resources.plcManager.readTelescopeConnStatus()
         self.addFields(codes, sizer, status)
 
-        status = resources.plcManager.readTelescopeMovingStatus()
+        status = controller.resources.plcManager.readTelescopeMovingStatus()
         self.addFields(codes, sizer, status)
 
-        status = resources.plcManager.readTelescopeMode()
+        status = controller.resources.plcManager.readTelescopeMode()
         self.addFields(codes, sizer, status)
 
-        status = resources.plcManager.readTemperature()
+        status = controller.resources.plcManager.readTemperature()
         self.addFields(codes, sizer, status)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pTelescope')), wx.VERTICAL)
@@ -34,14 +34,14 @@ class TelescopePanel(SimplePanel):
             sizer.Add(field, flag=wx.ALL | wx.EXPAND | wx.ALIGN_CENTER)
             self._statuses[key] = field
 
-    def update(self, resources):
-        codes = resources.codes
+    def update(self, controller):
+        codes = controller.codes
 
         status = []
-        status.append(resources.plcManager.readTelescopeConnStatus())
-        status.append(resources.plcManager.readTelescopeMovingStatus())
-        status.append(resources.plcManager.readTelescopeMode())
-        status.append(resources.plcManager.readTemperature())
+        status.append(controller.resources.plcManager.readTelescopeConnStatus())
+        status.append(controller.resources.plcManager.readTelescopeMovingStatus())
+        status.append(controller.resources.plcManager.readTelescopeMode())
+        status.append(controller.resources.plcManager.readTemperature())
         for st in status:
             self._readStatuses(codes, st)
 

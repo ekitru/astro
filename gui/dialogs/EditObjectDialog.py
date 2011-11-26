@@ -8,9 +8,9 @@ __author__ = 'kitru'
 
 class EditObjectDialog(ObjectListDialog, SimplePanel):
     def __init__(self, parent, id, controller):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller.resources)
-        self._controller = controller
-        self.codes = controller.resources.codes
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dEditObj_title', controller)
+        self.controller = controller
+        self.codes = controller.codes
 
         findBox = wx.BoxSizer(wx.HORIZONTAL)
         findBox.Add(self.CreateCaption(self.codes.get('dEditObj_find')), flag=wx.ALIGN_CENTER)
@@ -47,7 +47,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
     def OnListItemActivated(self, event):
         star = self.GetSelectedStar()
-        dialog = UpdateStarDialog(self, self._controller.resources, star)
+        dialog = UpdateStarDialog(self, self.controller, star)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -68,7 +68,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
             event.Skip()
 
     def OnAddClicked(self, event):
-        dialog = AddStarDialog(self, self._controller.resources)
+        dialog = AddStarDialog(self, self.controller)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -82,10 +82,10 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
 
 class AddStarDialog(wx.Dialog):
-    def __init__(self, parent, resource):
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=resource.codes.get('dAddObj_title'), style=wx.CAPTION)
-        self.starManager = resource.dbStar
-        self.codes = resource.codes
+    def __init__(self, parent, controller):
+        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.codes.get('dAddObj_title'), style=wx.CAPTION)
+        self.starManager = controller.resources.dbStar
+        self.codes = controller.codes
         self.name = wx.TextCtrl(self, size=(120, -1))
         self.name.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))
@@ -150,8 +150,8 @@ class AddStarDialog(wx.Dialog):
         self.EndModal(wx.ID_CANCEL)
 
 class UpdateStarDialog(AddStarDialog):
-    def __init__(self, parent, resources, star):
-        AddStarDialog.__init__(self, parent, resources)
+    def __init__(self, parent, controller, star):
+        AddStarDialog.__init__(self, parent, controller)
         self.name.SetValue(star['name'])
         self.name.Disable()
         self.RA.SetValue(star['ra'])

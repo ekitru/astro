@@ -15,7 +15,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
 
     def __init__(self, parent, id, controller):
         resources = controller.resources
-        self.codes = resources.codes
+        self.codes = controller.codes
         wx.Dialog.__init__(self, parent, title=self.codes.get('dLogs_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 

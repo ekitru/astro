@@ -6,10 +6,10 @@ from gui.dialogs.ObjectListDialog import ObjectListDialog
 __author__ = 'kitru'
 
 class SelectObjectDialog(ObjectListDialog):
-    def __init__(self, parent, resouces):
-        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dSelObj_title', resouces)
+    def __init__(self, parent, controller):
+        ObjectListDialog.__init__(self, parent, wx.ID_ANY, 'dSelObj_title', controller)
 
-        self._resources = resouces
+        self._resources = controller.resources
         self.text = wx.TextCtrl(self, size=(120, -1))
         self.text.SetFocus()
         self.RA = wx.TextCtrl(self, size=(120, -1))

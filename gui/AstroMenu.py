@@ -9,9 +9,9 @@ class AstroMenu(wx.MenuBar):
 
     def __init__(self, controller):
         wx.MenuBar.__init__(self)
-        self._controller = controller
-        self._resources = controller.resources
-        self._codes = self._resources.codes
+        self.controller = controller
+        self.resources = controller.resources
+        self._codes = controller.codes
 
         objMenu = self.CreateObjectMenu(self._codes)
         toolsMenu = self.CreateToolsMenu(self._codes)
@@ -22,12 +22,12 @@ class AstroMenu(wx.MenuBar):
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
         event.Skip(False)
-        dialog = SelectObjectDialog(self, self._resources)
+        dialog = SelectObjectDialog(self, self.controller)
         ret = dialog.ShowModal()
         dialog.Destroy()
 
         if ret == wx.ID_OK:
-            self._controller.forceLog()
+            self.controller.forceLog()
 
     def OnEditObject(self, event):
         """ Working with DB objects: add, update, delete """
@@ -40,7 +40,7 @@ class AstroMenu(wx.MenuBar):
         ret = self.showDial(MessageDialog)
         if ret == wx.ID_OK:
             print('updated msg')
-            self._controller.forceLog()
+            self.controller.forceLog()
 
     def OnLogs(self, event):
         """ Shows observation logs """
@@ -50,14 +50,14 @@ class AstroMenu(wx.MenuBar):
     def OnSettings(self, event):
         """ Give opportunities to change program default setups, like language or connection parameters """
         event.Skip(False)
-        dialog = SettingsDialog(self, self._codes, self._controller)
+        dialog = SettingsDialog(self, self._codes, self.controller)
         dialog.ShowModal()
         dialog.Destroy()
 
     def OnAlarms(self, event):
         """ Show current system alarms """
         event.Skip(False)
-        dialog = AlarmDialog(self, self._resources)
+        dialog = AlarmDialog(self, self.controller)
         dialog.ShowModal()
         dialog.Destroy()
 
@@ -67,7 +67,7 @@ class AstroMenu(wx.MenuBar):
         Attr:
             Dialog(wx.Dialog) class object
         """
-        dialog = Dialog(self, wx.ID_ANY, self._controller)
+        dialog = Dialog(self, wx.ID_ANY, self.controller)
         ret = dialog.ShowModal()
         dialog.Destroy()
         return ret

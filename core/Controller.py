@@ -5,6 +5,7 @@ from Exceptions import   ClosingException
 from LogThread import LogThread
 from core.Resources import Resources
 from core.Exceptions import ConfigurationException, InitializationException
+from core.config.TranslationConfig import TranslationConfig
 from core.logger import getLogPath
 
 __author__ = 'kitru'
@@ -13,6 +14,9 @@ class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.resources = Resources()
+
+        lang = self.resources.config.getDefaultLanguage()
+        self.codes = TranslationConfig(lang)
 
     def __initLogger(self):
         """ Initialize base system logger  """
@@ -54,3 +58,6 @@ class Controller(object):
     def updateLogTime(self, time):
         """ update logging period, time in minutes """
         self.logThread.updatePeriod(int(time)*60)
+
+    # Presenter
+

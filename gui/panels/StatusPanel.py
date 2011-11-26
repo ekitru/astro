@@ -9,13 +9,13 @@ class StatusPanel(SimplePanel):
         codes - Translation codes
     """
 
-    def __init__(self, parent, resources):
+    def __init__(self, parent, controller):
         SimplePanel.__init__(self, parent)
 
-        codes = resources.codes
+        codes = controller.codes
         sizer = wx.GridSizer(0, 2, 5, 5)
 
-        status = resources.plcManager.readTelescopeStatus()
+        status = controller.resources.plcManager.readTelescopeStatus()
         self._statuses = dict()
         for key in status:
             field = self.CreateField()

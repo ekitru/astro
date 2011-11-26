@@ -13,7 +13,7 @@ class MainGui(wx.Frame):
         #        InspectionTool().Show()
         self.controller = controller
         self.resources = controller.resources
-        codes = controller.resources.codes
+        codes = controller.codes
         panelArgs = {"parent": self, "codes": codes}
 
         self.objectPanel = ObjectPanel(**panelArgs)
@@ -22,8 +22,8 @@ class MainGui(wx.Frame):
         self.controlModePanel = ControlModePanel(self, codes, self.resources, self.objectPanel, self.manualSetpointPanel)
 
         self.timeDatePanel = TimeDatePanel(**panelArgs)
-        self.telescopePanel = TelescopePanel(self, self.resources)
-        self.statusPanel = StatusPanel(self, self.resources)
+        self.telescopePanel = TelescopePanel(self, self.controller)
+        self.statusPanel = StatusPanel(self, self.controller)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -49,7 +49,7 @@ class MainGui(wx.Frame):
         self.timer = wx.Timer(self)
 
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
-        self.timer.Start(500)
+        self.timer.Start(2000)
         menu = AstroMenu(self.controller)
 
         self.SetMenuBar(menu)
@@ -78,7 +78,7 @@ class MainGui(wx.Frame):
         self.manualSetpointPanel.update(self.controller)
         self.controlModePanel.update()
         self.statusPanel.update(self.resources)
-        self.telescopePanel.update(self.resources)
+        self.telescopePanel.update(self.controller)
         self.Layout()
         self.Fit()
         self.Show()

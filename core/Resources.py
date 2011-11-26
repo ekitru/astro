@@ -21,9 +21,6 @@ class Resources(object):
             self.logger = openLog("resources")
             self.config = ProgramConfig()
 
-            lang = self.config.getDefaultLanguage()
-            self.codes = TranslationConfig(lang)
-
             observerConfig = self.config.getObserverConfig()
             self.observer = Observer(observerConfig)
             self.object = Object(self.observer)
@@ -33,7 +30,7 @@ class Resources(object):
             self.initResources()
 
         except Exception as error:
-            self.logger.exception(error)
+            self.logger.info("erwre")
             raise InitializationException(error.args, self.logger)
 
     def initResources(self):
