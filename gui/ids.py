@@ -1,5 +1,7 @@
 __author__ = 'kitru'
 
+ID_OBJECT_PANEL = 2001
+
 #Menu items IDs, needed to perform binding menu and main frame application
 #Object menu
 ID_SELOBJ_DIALOG = 1000
