@@ -54,7 +54,7 @@ class ControlModePanel(SimplePanel):
     def OnObjSetpointRadBut(self, event):
         event.Skip()
         self.takeControl()
-        self._object.Show()
+#        self._object.Show()
         self._manual.Hide()
         self.GetParent().Fit()
         self._resources.updateSetPoint()
@@ -62,7 +62,7 @@ class ControlModePanel(SimplePanel):
     def OnManSetpointRadBut(self, event):
         event.Skip()
         self.takeControl()
-        self._object.Hide()
+#        self._object.Hide()
         self._manual.Show()
         self.GetParent().Fit()
 

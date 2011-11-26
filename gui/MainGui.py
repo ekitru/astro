@@ -26,12 +26,12 @@ class MainGui(wx.Frame):
         self.statusPanel = StatusPanel(self, self.resources)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
+        leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
+        leftColon.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND | wx.ALIGN_BOTTOM)
         leftColon.Add(self.controlModePanel, flag=wx.ALL | wx.EXPAND)
         leftColon.AddSpacer(10)
-        leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
         leftColon.Add(self.manualSetpointPanel, flag=wx.ALL | wx.EXPAND)
         leftColon.AddSpacer(10)
-        leftColon.Add(self.positioningPanel, flag=wx.ALL | wx.EXPAND | wx.ALIGN_BOTTOM)
 
         rightColon = wx.BoxSizer(wx.VERTICAL)
         rightColon.Add(self.timeDatePanel, flag=wx.ALL | wx.EXPAND)
