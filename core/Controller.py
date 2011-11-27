@@ -16,6 +16,8 @@ class Controller(object):
         self.__initLogger()
         self.resources = Resources()
 
+        self.object = ObjectRepresenter(self.resources.object)
+
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
 
@@ -58,43 +60,51 @@ class Controller(object):
 
     def updateLogTime(self, time):
         """ update logging period, time in minutes """
-        self.logThread.updatePeriod(int(time)*60)
+        self.logThread.updatePeriod(int(time) * 60)
 
-    # Presenter
-    def isObjectSelected(self):
-        return self.resources.object.selected()
+        # Presenter
 
-    def getObjectData(self):
+
+class ObjectRepresenter(object):
+    """ Sky Object representation """
+
+    def __init__(self, starObject):
+        """ object - astronomy object """
+        self._object = starObject;
+
+    def isSelected(self):
+        return self._object.selected()
+
+    def getData(self):
         """ Return dictionary of object data
         Return:
             dict(name, ra, dec) for epoch 2000 """
-        name = self.resources.object.getName()
-        position = self.resources.object.getPosition()
+        name = self._object.getName()
+        position = self._object.getPosition()
         ra, dec = rad2str(*position)
         return {'name': name, 'ra': ra, 'dec': dec}
 
-    def getObjectPosition(self):
-        object = self.resources.object
-        coord = object.getEquatorialPosition()
+    def getPosition(self):
+        coord = self._object.getEquatorialPosition()
         ra, dec = rad2str(*coord)
-        alt, az = object.getHorizontalPosition()
+        alt, az = self._object.getHorizontalPosition()
         return {'ra': ra, 'dec': dec, 'alt': str(alt), 'az': str(az)}
 
-    def getObjectHA(self):
-        object = self.resources.object
-        ha = object.getObjectHA()
+    def getHA(self):
+        ha = self._object.getCurrentHA()
         return str(ha)
 
-    def getObjectRiseSetTimes(self):
-        object = self.resources.object
-        rt = self.parseTime(object.getRisingTime())
-        st = self.parseTime(object.getSettingTime())
-        return {'rise':rt, "set": st}
+    def getRiseSetTimes(self):
+        rt = self._parseTime(self._object.getRisingTime())
+        st = self._parseTime(self._object.getSettingTime())
+        return {'rise': rt, 'set': st}
 
-    def parseTime(self, time):
+    def getExpositionTime(self):
+        time =  self._object.getExpositionTime() or 'N/A'
+        return str(time)
+
+    def _parseTime(self, time):
         if time:
             return str(time.strftime('%H:%M:%S'))
         else:
             return 'N/A'
-
-

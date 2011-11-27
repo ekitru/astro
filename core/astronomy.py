@@ -125,7 +125,7 @@ class Object(object):
         self._now()
         return self._fixedBody.alt, self._fixedBody.az
 
-    def getObjectHA(self):
+    def getCurrentHA(self):
         """ Calculates current object HA for observer. """
         self._now()
         return getHours(self._observer.getLST() - self._fixedBody.ra).norm # added normalization from [0, 2π)
@@ -148,6 +148,14 @@ class Object(object):
         except ephem.CircumpolarError:
             return
 
+    def getExpositionTime(self):
+        """ Calculate exposition time """
+        try:
+            return ephem.localtime(self._observer.next_setting(self._fixedBody)) - ephem.localtime(ephem.now())
+        except ephem.CircumpolarError:
+            return
+        except Exception:
+            return
 
 class SetPoint(object):
     """ Holding set point position: Ra, Dec, Ha, Focus. This values will be used for sending setpoint to PLC """

@@ -68,6 +68,7 @@ class ObjectPanel(SimplePanel):
         self.objHourAngle = self.CreateCoordinateField()
         self.objRisingTime = self.CreateField()
         self.objSettingTime = self.CreateField()
+        self.objExpositionTime = self.CreateField()
 
         sizer = wx.FlexGridSizer(2, 4, 5, 10)
         sizer.Add(self.CreateCaption(codes.get('pObjALT')), flag=wx.ALL | wx.ALIGN_RIGHT)
@@ -78,28 +79,33 @@ class ObjectPanel(SimplePanel):
         sizer.Add(self.objAzimuth, flag=wx.ALL | wx.ALIGN_CENTER)
         sizer.Add(self.CreateCaption(codes.get('pObjSet')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objSettingTime, flag=wx.ALL | wx.ALIGN_CENTER)
-
         sizer.Add(self.CreateCaption(codes.get('pObjHA')), flag=wx.ALL | wx.ALIGN_RIGHT)
         sizer.Add(self.objHourAngle, flag=wx.ALL | wx.ALIGN_CENTER)
+        sizer.Add(self.CreateCaption(codes.get('pObjExpos')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        sizer.Add(self.objExpositionTime, flag=wx.ALL | wx.ALIGN_CENTER)
         return sizer
 
     def update(self, controller):
+        object = controller.object
         """Updates Objects name and coordinates """
-        if controller.isObjectSelected():
+        if object.isSelected():
             # show object data
-            data = controller.getObjectData()
+            data = object.getData()
             self.objectName.SetLabel(data['name'])
             self.objectOrigRA.SetLabel(data['ra'])
             self.objectOrigDEC.SetLabel(data['dec'])
             # show object current coordinates
-            coord = controller.getObjectPosition()
+            coord = object.getPosition()
             self.objectCurrRA.SetLabel(coord['ra'])
             self.objectCurrDEC.SetLabel(coord['dec'])
             self.objAltitude.SetLabel(coord['alt'])
             self.objAzimuth.SetLabel(coord['az'])
             # show telescope position
-            ha = controller.getObjectHA()
+            ha = object.getHA()
             self.objHourAngle.SetLabel(ha)
-            times = controller.getObjectRiseSetTimes()
+            # show observation times
+            times = object.getRiseSetTimes()
             self.objRisingTime.SetLabel(times['rise'])
             self.objSettingTime.SetLabel(times['set'])
+            exp = object.getExpositionTime()
+            self.objExpositionTime.SetLabel(exp)
