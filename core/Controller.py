@@ -1,5 +1,6 @@
 from posixpath import join
 import logging
+from time import strftime
 
 from Exceptions import   ClosingException
 from LogThread import LogThread
@@ -17,6 +18,7 @@ class Controller(object):
         self.resources = Resources()
 
         self.object = ObjectRepresenter(self.resources.object)
+        self.times = TimeRepresenter(self.resources.observer)
 
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
@@ -85,22 +87,25 @@ class ObjectRepresenter(object):
         return {'name': name, 'ra': ra, 'dec': dec}
 
     def getPosition(self):
+        """ Return current equatorial and horizontl position """
         coord = self._object.getEquatorialPosition()
         ra, dec = rad2str(*coord)
         alt, az = self._object.getHorizontalPosition()
         return {'ra': ra, 'dec': dec, 'alt': str(alt), 'az': str(az)}
 
     def getHA(self):
+        """ Objects current HA value (HH:MM:SEC) normalized to [0;2PI) """
         ha = self._object.getCurrentHA()
         return str(ha)
 
     def getRiseSetTimes(self):
+        """ Object rising nd setting times """
         rt = self._parseTime(self._object.getRisingTime())
         st = self._parseTime(self._object.getSettingTime())
         return {'rise': rt, 'set': st}
 
     def getExpositionTime(self):
-        time =  self._object.getExpositionTime() or 'N/A'
+        time = self._object.getExpositionTime() or 'N/A'
         return str(time)
 
     def _parseTime(self, time):
@@ -108,3 +113,34 @@ class ObjectRepresenter(object):
             return str(time.strftime('%H:%M:%S'))
         else:
             return 'N/A'
+
+
+class TimeRepresenter(object):
+    """ Local time representation """
+
+    def __init__(self, observer):
+        self._observer = observer
+
+    def getCurrentTimes(self):
+        return self._observer.getCurrentTimes()
+
+    def getLocalTime(self):
+        """ Local time system time ZONE HOURS:MIN:SEC """
+        return  str(strftime("%Z %H:%M:%S"))
+
+    def getUTC(self):
+        utc = self._observer.getUTC()
+        return str(utc)
+
+    def getLST(self):
+        """ Local sidereal time  for observation point """
+        lst = self._observer.getLST()
+        return str(lst)
+
+    def getJulianDay(self):
+        """ current julian date """
+        jd = self._observer.getJulianDate()
+        return str(jd)
+
+
+

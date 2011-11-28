@@ -33,10 +33,10 @@ class TimeDatePanel(SimplePanel):
         self.SetSizer(comSizer)
         self.SetMinSize((290, -1))
 
-    def update(self, resources):
+    def update(self, controller):
         """Updates local time, sidereal time, julian day and UTC time """
-        times = resources.observer.getCurrentTimes()
-        self.LT.SetLabel(times[0])
-        self.UTC.SetLabel(times[1])
-        self.JD.SetLabel(times[2])
-        self.LST.SetLabel(times[3])
+        time = controller.times
+        self.LT.SetLabel(time.getLocalTime())
+        self.UTC.SetLabel(time.getUTC())
+        self.JD.SetLabel(time.getJulianDay())
+        self.LST.SetLabel(time.getLST())

@@ -2,7 +2,6 @@
 from core.Exceptions import ConfigurationException
 
 import re
-from time import strftime
 import ephem
 
 __author__ = 'kitru'
@@ -31,28 +30,18 @@ class Observer(ephem.Observer):
         self.elevation = float(elevation)
         self.temp = float(temp)  #temperature will be corrected by PLC later
 
-    def getCurrentTimes(self):
-        """ Calculates current time, julian date and sidereal time
-        Return:
-            tuple(LT, UTC, JD, LST)
-        """
-        self.updateToNow()
-        localtime = str(strftime("%Z %H:%M:%S")) #System time ZONE HOURS:MIN:SEC
-        utc = str(self.date)
-        jd = str(ephem.julian_date())
-        lst = str(self.sidereal_time()) #observer local sidereal time
-        return localtime, utc, jd, lst
+    def getUTC(self):
+        return self.date
 
     def getLST(self):
-        """ Calculates current local sidereal time
-        Return:
-            LST in radians
-        """
-        self.updateToNow()
-        lst = self.sidereal_time()
-        return lst
+        """ Calculates current local sidereal time """
+        self._now()
+        return self.sidereal_time()
 
-    def updateToNow(self):
+    def getJulianDate(self):
+        return ephem.julian_date()
+
+    def _now(self):
         """ Updates observer date to current date """
         self.date = ephem.now()
 
@@ -112,7 +101,7 @@ class Object(object):
 
     def _now(self):
         """ Update obsever to now and recalculate object position """
-        self._observer.updateToNow()
+        self._observer._now()
         self._fixedBody.compute(self._observer)
 
     def getEquatorialPosition(self):
@@ -157,8 +146,10 @@ class Object(object):
         except Exception:
             return
 
+
 class SetPoint(object):
     """ Holding set point position: Ra, Dec, Ha, Focus. This values will be used for sending setpoint to PLC """
+
     def __init__(self, ra=0, dec=0, focus=None):
         self._ra = float(ra)
         self._dec = float(dec)
