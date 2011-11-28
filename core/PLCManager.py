@@ -23,7 +23,7 @@ class ModBusManager(object):
     def openConnection(self):
         self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']))
         self.ID = int(self._confDict['slave id'])
-        self._master._do_open()
+#        self._master._do_open()
         return self._master
 
     def _mergeNumber(self, words):
