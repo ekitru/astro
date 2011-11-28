@@ -238,6 +238,7 @@ class PLCManager(object):
 
     # ========================
 
+    #TODO check is needed
     def readCommonAlarmStatus(self):
         try:
             state = self._conn.readFlag(self._status['alarmCommon2'])

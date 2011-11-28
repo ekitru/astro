@@ -221,9 +221,10 @@ class TelescopeStatusRepresenter(object):
         self._plc = resources.plcManager
 
     def getLabels(self):
-        statuses = self._plc.readStatusLabels()
-        return statuses.keys()
-
+        """ Status labels are taken from section [status] in plc.conf """
+        statuses = self._plc.readStatusLabels().keys()
+        statuses.sort()
+        return statuses
 
     def readStatus(self):
         """ Return telescope statuses
@@ -231,9 +232,9 @@ class TelescopeStatusRepresenter(object):
         """
         status = dict()
         try:
-            status =  self._plc.readStatuses()
+            status = self._plc.readStatuses()
             for key in status:
-                status[key]=str(status[key])
+                status[key] = str(status[key])
         except Exception as e:
             print(e)
         return status
