@@ -19,7 +19,8 @@ class Controller(object):
 
         self.object = ObjectRepresenter(self.resources.object)
         self.times = TimeRepresenter(self.resources.observer)
-        self.telescope = TelescopeRepresenter(self.resources)
+        self.telescope = TelescopeRepresenter(self.resources.plcManager)
+        self.statuses = TelescopeStatusRepresenter(self.resources)
 
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
@@ -145,47 +146,46 @@ class TimeRepresenter(object):
 
 
 class TelescopeRepresenter(object):
-    def __init__(self, resources):
-        self._res = resources
+    def __init__(self, plcManager):
+        self._plc = plcManager
 
     def getLabels(self):
         return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
                 'pState_service_mode', 'pState_control_mode', 'pState_tempT', 'pState_tempD']
 
     def readStatus(self):
-        """ Return:
+        """ Return telescope modes and statuses
         dict(key, status)
         """
         status = dict()
         try:
-            stat = self._res.plcManager.readConnectionStatus()
+            stat = self._plc.readConnectionStatus()
             status['pCommCheck1'] = str(stat[0])
             status['pCommCheck2'] = str(stat[1])
             status['pMoveStop'] = self._getMovingStatus()
             status['pMoveable'] = self._getMovingFlag()
             status['pState_service_mode'] = self._getServiceMode()
             status['pState_control_mode'] = self._getControlMode()
-            status['pState_tempT'] =  self._getTubeTemp()
+            status['pState_tempT'] = self._getTubeTemp()
             status['pState_tempD'] = self._getDomeTemp()
         except Exception as e:
-            print('connection not reachable')
             print(e)
         return status
 
     def _getMovingStatus(self):
-        if self._res.plcManager.readMovingStatus():
+        if self._plc.readMovingStatus():
             return 'pMoving'
         else:
             return 'pStopping'
 
     def _getMovingFlag(self):
-        if self._res.plcManager.readMovingFlag():
+        if self._plc.readMovingFlag():
             return 'pMoveableTrue'
         else:
             return 'pMoveableFalse'
 
     def _getServiceMode(self):
-        mode = self._res.plcManager.readServiceMode()
+        mode = self._plc.readServiceMode()
         if mode is 1:
             ret = 'pState_online'
         elif mode is 2:
@@ -195,7 +195,7 @@ class TelescopeRepresenter(object):
         return ret
 
     def _getControlMode(self):
-        mode = self._res.plcManager.readControlMode()
+        mode = self._plc.readControlMode()
         if mode is 1:
             ret = 'pState_PC'
         elif mode is 2:
@@ -209,7 +209,32 @@ class TelescopeRepresenter(object):
         return ret
 
     def _getTubeTemp(self):
-        return str(self._res.plcManager.readTemperatures()[0])
+        return str(self._plc.readTemperatures()[0])
 
     def _getDomeTemp(self):
-        return str(self._res.plcManager.readTemperatures()[1])
+        return str(self._plc.readTemperatures()[1])
+
+
+class TelescopeStatusRepresenter(object):
+    def __init__(self, resources):
+        self._res = resources
+        self._plc = resources.plcManager
+
+    def getLabels(self):
+        statuses = self._plc.readStatusLabels()
+        return statuses.keys()
+
+
+    def readStatus(self):
+        """ Return telescope statuses
+        dict(key, status)
+        """
+        status = dict()
+        try:
+            status =  self._plc.readStatuses()
+            for key in status:
+                status[key]=str(status[key])
+        except Exception as e:
+            print(e)
+        return status
+

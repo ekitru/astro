@@ -15,15 +15,15 @@ class MainGui(wx.Frame):
         self.controller = controller
         self.resources = controller.resources
 
-
         self.objectPanel = ObjectPanel(self, ID_OBJECT_PANEL, trans)
         self.positioningPanel = PositionPanel(self, codes=trans)
         self.manualSetpointPanel = ManualSetpointPanel(self, codes=trans, resources=self.resources)
-        self.controlModePanel = ControlModePanel(self, trans, self.resources, self.objectPanel, self.manualSetpointPanel)
+        self.controlModePanel = ControlModePanel(self, trans, self.resources, self.objectPanel,
+                                                 self.manualSetpointPanel)
 
-        self.timeDatePanel = TimeDatePanel(self, codes=trans)
-        self.telescopePanel = TelescopePanel(self, codes=trans, telescope = self.controller.telescope)
-        self.statusPanel = StatusPanel(self, self.controller)
+        self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
+        self.telescopePanel = TelescopePanel(parent=self, codes=trans, telescope=self.controller.telescope)
+        self.statusPanel = StatusPanel(parent=self, codes=trans, statuses=self.controller.statuses)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.ALL | wx.EXPAND)
@@ -75,11 +75,11 @@ class MainGui(wx.Frame):
         self.objectPanel.update(self.controller)
         self.timeDatePanel.update(self.controller)
         self.telescopePanel.update()
+        self.statusPanel.update()
 
         self.positioningPanel.update(self.resources)
         self.manualSetpointPanel.update(self.controller)
         self.controlModePanel.update()
-        self.statusPanel.update(self.resources)
         self.Layout()
         self.Fit()
         self.Show()

@@ -23,7 +23,7 @@ class ModBusManager(object):
     def openConnection(self):
         self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=2)
         self.ID = int(self._confDict['slave id'])
-#        self._master._do_open()
+        #        self._master._do_open()
         return self._master
 
     def _mergeNumber(self, words):
@@ -195,28 +195,7 @@ class PLCManager(object):
         self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
 
 
-    def readTelescopeStatus(self):
-        ret = dict()
-        for key in self._status:
-            state = self._conn.readFlag(self._status[key])
-            if state == 1:
-                state = 'On'
-            else:
-                state = 'Off'
-
-            ret[key] = state
-        return ret
-
-    def readAlarms(self):
-        ret = dict()
-        for key in self._alarms:
-            state = self._conn.readFlag(self._alarms[key])
-            if state == 1:
-                ret[key] = 'On'
-
-        return ret
-
-
+    # Functions to get Telescope status and modes
     def readConnectionStatus(self):
         return (self._conn.readNumber16bit(self._state['comm_check']) == 1, self._conn.readNumber16bit(self._state['comm_add_check']) == 1)
 
@@ -226,12 +205,14 @@ class PLCManager(object):
     def readMovingFlag(self):
         return self._conn.readFlag(self._state['moveable'])
 
+    #TODO check is needed anymore?
+
     def readTelescopeMode(self):
         """ Get current telescope  service and control modes
         Return:
             dict(pState_service_mode,pState_control_mode)
         """
-        return {'pState_service_mode':self.readServiceMode() ,'pState_control_mode':self.readControlMode()}
+        return {'pState_service_mode': self.readServiceMode(), 'pState_control_mode': self.readControlMode()}
 
     def readServiceMode(self):
         return  self._conn.readNumber16bit(self._state['service_mode'])
@@ -241,6 +222,21 @@ class PLCManager(object):
 
     def readTemperatures(self):
         return (self._conn.readTemp(self._state['temp_telescope'])), (self._conn.readTemp(self._state['temp_dome']))
+
+    # Functions to get Telescope statuses
+    def readStatusLabels(self):
+        return self._status
+
+    def readStatuses(self):
+        ret = dict()
+        for key in self._status:
+            state = self._conn.readFlag(self._status[key])
+            ret[key] = state
+        return ret
+
+
+
+    # ========================
 
     def readCommonAlarmStatus(self):
         try:
@@ -253,6 +249,16 @@ class PLCManager(object):
         else:
             return 'Normal'
 
+
+    def readAlarms(self):
+        ret = dict()
+        for key in self._alarms:
+            state = self._conn.readFlag(self._alarms[key])
+            if state == 1:
+                ret[key] = 'On'
+
+        return ret
+
     def readAlarmStatus(self):
         alarms = self.readAlarms()
         keys = alarms.keys()
@@ -262,6 +268,7 @@ class PLCManager(object):
         status = ",".join(list)
         return status
 
+    # Telescope controlling
     def takeControl(self):
         self._logger.info('Take telescope control')
         self._conn.writeNumber16bit(self._state['take_control'], PC_CONTROL)
