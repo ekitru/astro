@@ -19,6 +19,7 @@ class Controller(object):
 
         self.object = ObjectRepresenter(self.resources.object)
         self.times = TimeRepresenter(self.resources.observer)
+        self.telescope = TelescopeRepresenter(self.resources)
 
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
@@ -143,4 +144,42 @@ class TimeRepresenter(object):
         return str(jd)
 
 
+class TelescopeRepresenter(object):
+    def __init__(self, resources):
+        self._res = resources
+
+    def getLabels(self):
+        return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
+                'pState_service_mode', 'pState_control_mode', 'pState_tempT', 'pState_tempD']
+
+    def readStatus(self):
+        """ Return:
+        dict(key, status)
+        """
+        status = dict()
+        try:
+            #stat = self._res.plcManager.readConnectionStatus()
+            status['pCommCheck1'] = ' temp '
+            status['pCommCheck2'] = ' temp '
+        except Exception:
+            pass
+        return status
+
+    def _getMovingStatus(self):
+        if self._res.plcManager.readMovingStatus(self):
+            return 'pMoving'
+        else:
+            return 'pStopping'
+
+    def _getMovingFlag(self):
+        if self._res.plcManager.readMovingFlag(self):
+            return 'pMoveableTrue'
+        else:
+            return 'pMoveableFalse'
+
+    def readTelescopeMode(self):
+        return self._res.plcManager.readTelescopeMode()
+
+    def readTemperature(self):
+        return self._res.plcManager.readTemperature()
 

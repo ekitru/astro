@@ -21,7 +21,7 @@ class ModBusManager(object):
         self.openConnection()
 
     def openConnection(self):
-        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']))
+        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.2)
         self.ID = int(self._confDict['slave id'])
 #        self._master._do_open()
         return self._master
@@ -217,36 +217,14 @@ class PLCManager(object):
         return ret
 
 
-    def readTelescopeConnStatus(self):
-        ret = dict()
+    def readConnectionStatus(self):
+        return (self._conn.readNumber16bit(self._state['comm_check']) == 1, self._conn.readNumber16bit(self._state['comm_add_check']) == 1)
 
-        if self._conn.readNumber16bit(self._state['comm_check']) == 1:
-            ret['pCommCheck1'] = 'ON'
-        else:
-            ret['pCommCheck1'] = 'OFF'
+    def readMovingStatus(self):
+        return self._conn.readFlag(self._state['move_stop'])
 
-        if self._conn.readNumber16bit(self._state['comm_add_check']) == 1:
-            ret['pCommCheck2'] = 'ON'
-        else:
-            ret['pCommCheck2'] = 'OFF'
-
-        return ret
-
-    def readTelescopeMovingStatus(self):
-        ret = dict()
-
-        if self._conn.readFlag(self._state['move_stop']):
-            ret['pMoveStop'] = 'pMoving'
-        else:
-            ret['pMoveStop'] = 'pStopping'
-
-        if self._conn.readFlag(self._state['moveable']):
-            ret['pMoveable'] = 'pMoveableTrue'
-        else:
-            ret['pMoveable'] = 'pMoveableFalse'
-
-        return ret
-
+    def readMovingFlag(self):
+        return self._conn.readFlag(self._state['moveable'])
 
     def readTelescopeMode(self):
         """ Get current telescope  service and control modes
