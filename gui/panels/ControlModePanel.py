@@ -105,10 +105,11 @@ class ControlModePanel(SimplePanel):
         if self.rbManualSetpoint.GetValue():
             self._manual.updateSetPoint()
 
-        if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
-            self.butStart.Disable()
-        else:
-            self.butStart.Enable()
+            #TODO FIX!
+#        if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
+#            self.butStart.Disable()
+#        else:
+#            self.butStart.Enable()
 
     def _isRemoveControl(self, mode):
         return mode is not 'pState_PC'

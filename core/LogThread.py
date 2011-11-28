@@ -80,8 +80,7 @@ class LogThread(object):
 
     def _getTemperature(self):
         """ current dome and telescope temperatures """
-        temp = self._plc.readTemperature()
-        return temp['pState_tempT'], temp['pState_tempD']
+        return self._plc.readTemperatures()
 
     def _getAlarmStatus(self):
         """ alarm status as a alarm codes separated by ',' """

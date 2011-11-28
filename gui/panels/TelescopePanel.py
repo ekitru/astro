@@ -4,11 +4,11 @@ from gui.panels.SimplePanel import SimplePanel
 __author__ = 'kitru'
 
 class TelescopePanel(SimplePanel):
-    def __init__(self, parent, codes, controller):
+    def __init__(self, parent, codes, telescope):
         SimplePanel.__init__(self, parent)
 
         self._codes = codes
-        self._telescope = controller.telescope
+        self._telescope = telescope
 
         sizer = wx.GridSizer(0, 2, 5, 10)
 

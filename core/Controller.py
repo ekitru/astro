@@ -158,28 +158,58 @@ class TelescopeRepresenter(object):
         """
         status = dict()
         try:
-            #stat = self._res.plcManager.readConnectionStatus()
-            status['pCommCheck1'] = ' temp '
-            status['pCommCheck2'] = ' temp '
-        except Exception:
-            pass
+            stat = self._res.plcManager.readConnectionStatus()
+            status['pCommCheck1'] = str(stat[0])
+            status['pCommCheck2'] = str(stat[1])
+            status['pMoveStop'] = self._getMovingStatus()
+            status['pMoveable'] = self._getMovingFlag()
+            status['pState_service_mode'] = self._getServiceMode()
+            status['pState_control_mode'] = self._getControlMode()
+            status['pState_tempT'] =  self._getTubeTemp()
+            status['pState_tempD'] = self._getDomeTemp()
+        except Exception as e:
+            print('connection not reachable')
+            print(e)
         return status
 
     def _getMovingStatus(self):
-        if self._res.plcManager.readMovingStatus(self):
+        if self._res.plcManager.readMovingStatus():
             return 'pMoving'
         else:
             return 'pStopping'
 
     def _getMovingFlag(self):
-        if self._res.plcManager.readMovingFlag(self):
+        if self._res.plcManager.readMovingFlag():
             return 'pMoveableTrue'
         else:
             return 'pMoveableFalse'
 
-    def readTelescopeMode(self):
-        return self._res.plcManager.readTelescopeMode()
+    def _getServiceMode(self):
+        mode = self._res.plcManager.readServiceMode()
+        if mode is 1:
+            ret = 'pState_online'
+        elif mode is 2:
+            ret = 'pState_service'
+        else:
+            ret = 'pState_unknown_service_state'
+        return ret
 
-    def readTemperature(self):
-        return self._res.plcManager.readTemperature()
+    def _getControlMode(self):
+        mode = self._res.plcManager.readControlMode()
+        if mode is 1:
+            ret = 'pState_PC'
+        elif mode is 2:
+            ret = 'pState_Obs_room'
+        elif mode is 3:
+            ret = 'pState_Scope_room'
+        elif mode is 4:
+            ret = 'pState_Remote_control'
+        else:
+            ret = 'pState_nobody'
+        return ret
 
+    def _getTubeTemp(self):
+        return str(self._res.plcManager.readTemperatures()[0])
+
+    def _getDomeTemp(self):
+        return str(self._res.plcManager.readTemperatures()[1])

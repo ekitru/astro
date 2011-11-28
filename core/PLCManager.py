@@ -21,7 +21,7 @@ class ModBusManager(object):
         self.openConnection()
 
     def openConnection(self):
-        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.2)
+        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=2)
         self.ID = int(self._confDict['slave id'])
 #        self._master._do_open()
         return self._master
@@ -234,20 +234,13 @@ class PLCManager(object):
         return {'pState_service_mode':self.readServiceMode() ,'pState_control_mode':self.readControlMode()}
 
     def readServiceMode(self):
-        serviceMode =  self._conn.readNumber16bit(self._state['service_mode'])
-        serviceModes = {'0': 'pState_unknown_service_state', '1': 'pState_online', '2': 'pState_service'}
-        return serviceModes[str(serviceMode)]
+        return  self._conn.readNumber16bit(self._state['service_mode'])
 
     def readControlMode(self):
-        controlMode =  self._conn.readNumber16bit(self._state['control_mode'])
-        controlModes = {'0': 'pState_nobody', '1': 'pState_PC', '2': 'pState_Obs_room', '3': 'pState_Scope_room', '4': 'pState_Remote_control'}
-        return controlModes[str(controlMode)]
+        return  self._conn.readNumber16bit(self._state['control_mode'])
 
-    def readTemperature(self):
-        ret = dict()
-        ret['pState_tempT'] = str(self._conn.readTemp(self._state['temp_telescope']))
-        ret['pState_tempD'] = str(self._conn.readTemp(self._state['temp_dome']))
-        return ret
+    def readTemperatures(self):
+        return (self._conn.readTemp(self._state['temp_telescope'])), (self._conn.readTemp(self._state['temp_dome']))
 
     def readCommonAlarmStatus(self):
         try:
