@@ -5,7 +5,6 @@ from time import strftime
 from Exceptions import   ClosingException
 from LogThread import LogThread
 from core.Resources import Resources
-from core.Exceptions import ConfigurationException, InitializationException
 from core.astronomy import rad2str
 from core.config.TranslationConfig import TranslationConfig
 from core.logger import getLogPath
@@ -18,9 +17,9 @@ class Controller(object):
         self.resources = Resources()
 
         self.object = ObjectRepresenter(self.resources.object)
-        self.times = TimeRepresenter(self.resources.observer)
-        self.telescope = TelescopeRepresenter(self.resources.plcManager)
-        self.statuses = TelescopeStatusRepresenter(self.resources)
+        self.tsTimes = TimeRepresenter(self.resources.observer)
+        self.tsMode = TelescopeModeRepresenter(self.resources)
+        self.tsStatus = TelescopeStateRepresenter(self.resources)
 
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
@@ -37,16 +36,17 @@ class Controller(object):
     def initialization(self):
         """ Initialization for all components
         Opens DB connection and connection with PLCm also reads translation codes """
-        try:
-            logging.info('======= Program initialization =======')
-            self.resources.initResources()
-            self.logThread = LogThread(self.resources)
-        except ConfigurationException as ce:
-            logging.info('Error during initialization occure', ce)
-            raise InitializationException(ce)
-        except Exception as e:
-            logging.info('Error during initialization occure', e)
-            raise InitializationException(e)
+        #        try:
+        logging.info('======= Program initialization =======')
+        self.resources.initResources()
+        self.logThread = LogThread(self.resources)
+
+    #        except ConfigurationException as ce:
+    #            logging.info('Error during initialization occure', ce)
+    #            raise InitializationException(ce)
+    #        except Exception as e:
+    #            logging.info('Error during initialization occure', e)
+    #            raise InitializationException(e)
 
 
     def freeResources(self):
@@ -145,9 +145,9 @@ class TimeRepresenter(object):
         return str(jd)
 
 
-class TelescopeRepresenter(object):
-    def __init__(self, plcManager):
-        self._plc = plcManager
+class TelescopeModeRepresenter(object):
+    def __init__(self, resources):
+        self._plc = resources.telescopeMode
 
     def getLabels(self):
         return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
@@ -215,14 +215,13 @@ class TelescopeRepresenter(object):
         return str(self._plc.readTemperatures()[1])
 
 
-class TelescopeStatusRepresenter(object):
+class TelescopeStateRepresenter(object):
     def __init__(self, resources):
-        self._res = resources
-        self._plc = resources.plcManager
+        self._plc = resources.telescopeState
 
     def getLabels(self):
         """ Status labels are taken from section [status] in plc.conf """
-        statuses = self._plc.readStatusLabels().keys()
+        statuses = self._plc.getLabels().keys()
         statuses.sort()
         return statuses
 
@@ -232,7 +231,7 @@ class TelescopeStatusRepresenter(object):
         """
         status = dict()
         try:
-            status = self._plc.readStatuses()
+            status = self._plc.readStatus()
             for key in status:
                 status[key] = str(status[key])
         except Exception as e:

@@ -11,18 +11,19 @@ class LogThread(object):
     Timer could be stopped be calling stop() method.  """
 
     def __init__(self, resources):
-        try:
-            self._mutex = threading.RLock()
-            logging.info('Starting logging thread')
-            self._resources = resources
-            db = self._resources.getDbManager()
-            self._log = Log(db)
-            self._message = Message(db)
-            self._plc = self._resources.plcManager
-            self._period = resources.config.getLoggingTime()
-            self._start()
-        except Exception as ex:
-            raise ConfigurationException(ex.args)
+#        try:
+        self._mutex = threading.RLock()
+        logging.info('Starting logging thread')
+        self._resources = resources
+        db = self._resources.getDbManager()
+        self._log = Log(db)
+        self._message = Message(db)
+        self._plc = self._resources.plcManager
+        self._mode = self._resources.telescopeMode
+        self._period = resources.config.getLoggingTime()
+        self._start()
+#        except Exception as ex:
+#            raise ConfigurationException(ex)
 
     def _start(self):
         """ Starts timer to run, function is looped by itself.
@@ -80,7 +81,7 @@ class LogThread(object):
 
     def _getTemperature(self):
         """ current dome and telescope temperatures """
-        return self._plc.readTemperatures()
+        return self._mode.readTemperatures()
 
     def _getAlarmStatus(self):
         """ alarm status as a alarm codes separated by ',' """

@@ -108,27 +108,79 @@ class ModBusManager(object):
 
 PC_CONTROL = 1
 
+class TelescopeState(object):
+    """ Common telescope switchers state """
+    def __init__(self, plcManager):
+        self._plc = plcManager
+        configs = CommunicationConfig()
+        self._status = configs.getStatusAddresses()
+
+    def getLabels(self):
+        self._plc.logger.info('Read status lables')
+        return self._status
+
+    def readStatus(self):
+        """ Read switchers state """
+        ret = dict()
+        for key in self._status:
+            state = self._plc._conn.readFlag(self._status[key])
+            ret[key] = state
+        return ret
+
+class TelescopeMode(object):
+
+    def __init__(self, plcManager):
+        self._plc = plcManager
+        configs = CommunicationConfig()
+        self._state = configs.getStateAddresses()
+
+    def readConnectionStatus(self):
+        return (self._plc._conn.readNumber16bit(self._state['comm_check']) == 1, self._plc._conn.readNumber16bit(self._state['comm_add_check']) == 1)
+
+    def readMovingStatus(self):
+        return self._plc._conn.readFlag(self._state['move_stop'])
+
+    def readMovingFlag(self):
+        return self._plc._conn.readFlag(self._state['moveable'])
+
+    #TODO check is needed anymore?
+
+    def readTelescopeMode(self):
+        """ Get current telescope  service and control modes
+        Return:
+            dict(pState_service_mode,pState_control_mode)
+        """
+        return {'pState_service_mode': self.readServiceMode(), 'pState_control_mode': self.readControlMode()}
+
+    def readServiceMode(self):
+        return  self._plc._conn.readNumber16bit(self._state['service_mode'])
+
+    def readControlMode(self):
+        return  self._plc._conn.readNumber16bit(self._state['control_mode'])
+
+    def readTemperatures(self):
+        return (self._plc._conn.readTemp(self._state['temp_telescope'])), (self._plc._conn.readTemp(self._state['temp_dome']))
+
 class PLCManager(object):
     def __init__(self):
         try:
             configs = CommunicationConfig()
-            self._logger = openLog('plc_manager')
-            self._logger.info('Establishing connection')
+            self.logger = openLog('plc_manager')
+            self.logger.info('Establishing connection')
             confDict = configs.getConnectionConfig()
             self._conn = ModBusManager(confDict)
-            self._logger.info('Connection established')
+            self.logger.info('Connection established')
 
             self._axes = configs.getAxesAddresses()
-            self._status = configs.getStatusAddresses()
-            self._state = configs.getStateAddresses()
+
             self._alarms = configs.getAlarms()
         except modbus_tk.modbus.ModbusError as error:
-            raise ConfigurationException(error.args, self._logger)
+            raise ConfigurationException(error.args, self.logger)
         except Exception as error:
-            raise ConfigurationException(error.args, self._logger)
+            raise ConfigurationException(error.args, self.logger)
 
     def __del__(self):
-        closeLog(self._logger)
+        closeLog(self.logger)
 
     def readCoordinate(self, addr):
         """  Coordinate is scaled by 10^8
@@ -196,44 +248,6 @@ class PLCManager(object):
 
 
     # Functions to get Telescope status and modes
-    def readConnectionStatus(self):
-        return (self._conn.readNumber16bit(self._state['comm_check']) == 1, self._conn.readNumber16bit(self._state['comm_add_check']) == 1)
-
-    def readMovingStatus(self):
-        return self._conn.readFlag(self._state['move_stop'])
-
-    def readMovingFlag(self):
-        return self._conn.readFlag(self._state['moveable'])
-
-    #TODO check is needed anymore?
-
-    def readTelescopeMode(self):
-        """ Get current telescope  service and control modes
-        Return:
-            dict(pState_service_mode,pState_control_mode)
-        """
-        return {'pState_service_mode': self.readServiceMode(), 'pState_control_mode': self.readControlMode()}
-
-    def readServiceMode(self):
-        return  self._conn.readNumber16bit(self._state['service_mode'])
-
-    def readControlMode(self):
-        return  self._conn.readNumber16bit(self._state['control_mode'])
-
-    def readTemperatures(self):
-        return (self._conn.readTemp(self._state['temp_telescope'])), (self._conn.readTemp(self._state['temp_dome']))
-
-    # Functions to get Telescope statuses
-    def readStatusLabels(self):
-        return self._status
-
-    def readStatuses(self):
-        ret = dict()
-        for key in self._status:
-            state = self._conn.readFlag(self._status[key])
-            ret[key] = state
-        return ret
-
 
 
     # ========================
@@ -271,18 +285,18 @@ class PLCManager(object):
 
     # Telescope controlling
     def takeControl(self):
-        self._logger.info('Take telescope control')
+        self.logger.info('Take telescope control')
         self._conn.writeNumber16bit(self._state['take_control'], PC_CONTROL)
 
     def startMoving(self):
-        self._logger.info('start moving')
+        self.logger.info('start moving')
         self._conn.writeFlag(self._state['move_stop'], 1)
 
     def stopMoving(self):
-        self._logger.info('stop moving')
+        self.logger.info('stop moving')
         self._conn.writeFlag(self._state['move_stop'], 0)
 
     def close(self):
-        self._logger.info("Close Communication connection")
+        self.logger.info("Close Communication connection")
         self.master.close()
 

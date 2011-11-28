@@ -1,5 +1,5 @@
 from core.Exceptions import InitializationException, DbException
-from core.PLCManager import PLCManager
+from core.PLCManager import PLCManager, TelescopeState, TelescopeMode
 from core.astronomy import Object, Observer, SetPoint
 
 from core.config import ProgramConfig
@@ -14,6 +14,12 @@ __author__ = 'kitru'
 class Resources(object):
     """ Holder for all resources: DB connection, PLC connection, translation codes and so on
     Also contain logger for resourses, if they need to log something: self.logger """
+    dbStar = None
+    dbLog = None
+    dbMessage = None
+    plcManager = None
+    telescopeMode = None
+    telescopeState = None
 
     def __init__(self):
         """ Reads common configuration file and initialize transation codes, observer object """
@@ -25,7 +31,7 @@ class Resources(object):
             self.observer = Observer(observerConfig)
             self.object = Object(self.observer)
 
-            self._setPoint =  SetPoint(0, 0, 0) #TODO fix it!
+            self._setPoint = SetPoint(0, 0, 0) #TODO fix it!
 
             self.initResources()
 
@@ -53,11 +59,13 @@ class Resources(object):
 
     def initPlcResources(self):
         self.plcManager = PLCManager()
+        self.telescopeMode = TelescopeMode(self.plcManager)
+        self.telescopeState = TelescopeState(self.plcManager)
 
         self.logger.info('Init SetPoint object')
         ra, dec = self.plcManager.getSetpointPosition()
         focus = self.plcManager.getFocus()[1]
-        self._setPoint =  SetPoint(ra, dec, focus)
+        self._setPoint = SetPoint(ra, dec, focus)
 
     def __del__(self):
         self.logger.info('Closing resources')

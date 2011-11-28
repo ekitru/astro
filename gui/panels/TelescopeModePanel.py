@@ -3,16 +3,16 @@ from gui.panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
 
-class TelescopePanel(SimplePanel):
-    def __init__(self, parent, codes, telescope):
+class TelescopeModePanel(SimplePanel):
+    def __init__(self, parent, codes, mode):
         SimplePanel.__init__(self, parent)
 
         self._codes = codes
-        self._telescope = telescope
+        self._mode = mode
 
         sizer = wx.GridSizer(0, 2, 5, 10)
 
-        labels = self._telescope.getLabels()
+        labels = self._mode.getLabels()
         self._fields = self._addFields(sizer, labels)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=self._codes.get('pTelescope')), wx.VERTICAL)
@@ -29,7 +29,7 @@ class TelescopePanel(SimplePanel):
         return fields
 
     def update(self):
-        statuses = self._telescope.readStatus()
+        statuses = self._mode.readStatus()
         for status in statuses:
             field = self._fields[status]
             value = statuses[status]

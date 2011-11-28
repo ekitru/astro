@@ -35,7 +35,7 @@ class TimeDatePanel(SimplePanel):
 
     def update(self, controller):
         """Updates local time, sidereal time, julian day and UTC time """
-        time = controller.times
+        time = controller.tsTimes
         self.LT.SetLabel(time.getLocalTime())
         self.UTC.SetLabel(time.getUTC())
         self.JD.SetLabel(time.getJulianDay())

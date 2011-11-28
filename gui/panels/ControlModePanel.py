@@ -91,7 +91,7 @@ class ControlModePanel(SimplePanel):
 
 
     def update(self):
-        mode = self._resources.plcManager.readControlMode()
+        mode = self._resources.telescopeMode.readControlMode()
         self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
 
         #TODO temporaly not needed
