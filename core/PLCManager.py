@@ -21,7 +21,7 @@ class ModBusManager(object):
         self.openConnection()
 
     def openConnection(self):
-        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=2)
+        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=1)
         self.ID = int(self._confDict['slave id'])
         #        self._master._do_open()
         return self._master
@@ -181,6 +181,9 @@ class PLCManager(object):
 
     def __del__(self):
         closeLog(self.logger)
+
+    def isConnected(self):
+        return self._conn._master._is_opened
 
     def readCoordinate(self, addr):
         """  Coordinate is scaled by 10^8

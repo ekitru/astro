@@ -58,6 +58,9 @@ class Controller(object):
         except Exception as e:
             raise ClosingException(e)
 
+    def isConnected(self):
+        return self.resources.plcManager.isConnected()
+
     def forceLog(self):
         """ Force to log message and start new timer  """
         self.logThread.force()
