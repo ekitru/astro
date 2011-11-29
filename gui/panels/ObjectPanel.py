@@ -107,5 +107,6 @@ class ObjectPanel(SimplePanel):
             times = object.getRiseSetTimes()
             self.objRisingTime.SetLabel(times['rise'])
             self.objSettingTime.SetLabel(times['set'])
+            # show exosition time
             exp = object.getExpositionTime()
             self.objExpositionTime.SetLabel(exp)
