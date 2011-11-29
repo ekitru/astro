@@ -22,7 +22,7 @@ class ModBusManager(object):
     def openConnection(self):
         master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.1)
         self.ID = int(self._confDict['slave id'])
-        #        self._master._do_open()
+        master._do_open()
         return master
 
     def _mergeNumber(self, words):
@@ -107,26 +107,21 @@ class ModBusManager(object):
 
 class PLCManager(object):
     def __init__(self):
-        try:
-            configs = CommunicationConfig()
-            self.logger = openLog('plc_manager')
-            confDict = configs.getConnectionConfig()
-            self.logger.info('Establishing connection')
-            self._conn = ModBusManager(confDict)
-            self.logger.info('Connection established')
+        configs = CommunicationConfig()
+        self.logger = openLog('plc_manager')
+        confDict = configs.getConnectionConfig()
+        self.logger.info('Establishing connection')
+        self._conn = ModBusManager(confDict)
+        self.logger.info('Connection established')
 
-            #Helpers to work with PLC
-            self.logger.info('Open helpers')
-            self._state = StateHelper(self._conn, configs, self.logger)
-            self._mode = ModeHelper(self._conn, configs, self.logger)
-            self._position = PositionHelper(self._conn, configs, self.logger)
-            self.logger.info('Helpers are done')
+        #Helpers to work with PLC
+        self.logger.info('Open helpers')
+        self._state = StateHelper(self._conn, configs, self.logger)
+        self._mode = ModeHelper(self._conn, configs, self.logger)
+        self._position = PositionHelper(self._conn, configs, self.logger)
+        self.logger.info('Helpers are done')
 
-            self._alarms = configs.getAlarms()
-        except modbus_tk.modbus.ModbusError as error:
-            raise ConfigurationException(error, self.logger)
-        except Exception as error:
-            raise ConfigurationException(error, self.logger)
+        self._alarms = configs.getAlarms()
 
     def __del__(self):
         closeLog(self.logger)
@@ -301,6 +296,6 @@ class PositionHelper(BaseHelper):
     def setFocus(self, focus):
         """ Set new focus value """
         self.logger.info('Set new focus dist.')
-        self.logger.info('Focus: ' + focus)
+        self.logger.info('Focus: ' + str(focus))
         self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
 
