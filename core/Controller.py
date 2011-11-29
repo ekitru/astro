@@ -290,6 +290,7 @@ class PositionRepresenter(object):
         return {'cur': str(current), 'task': str(task)}
 
 
+#TODO Finish it
 class ControlModeRepresenter():
     def __init__(self, resources):
         self._res = resources

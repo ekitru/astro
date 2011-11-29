@@ -18,8 +18,9 @@ class LogThread(object):
         self._log = Log(db)
         self._message = Message(db)
         self._plc = self._resources.plcManager
+        self._position = self._resources.plcManager.getPositionHelper()
         self._period = resources.config.getLoggingTime()
-#        self._start()
+        self._start()
 #        except Exception as ex:
 #            raise ConfigurationException(ex)
 
@@ -40,13 +41,14 @@ class LogThread(object):
     def _doWork(self):
         """ All logging stuff performs here. This method is calling by logging thread """
         with self._mutex:
-            self._log.setStarId(self._getStarId())
-            self._log.setMsgId(self._getMsgId())
-            self._log.setCurrentRaDec(*self._getCurrentRaDec())
-            self._log.setCurrentFocus(self._getCurrentFocus())
-            self._log.setTemperature(*self._getTemperature())
-            self._log.setAlarmStatus(self._getAlarmStatus())
-            self._log.writeToLog()
+            if self._resources.plcManager.isConnected():
+                self._log.setStarId(self._getStarId())
+                self._log.setMsgId(self._getMsgId())
+                self._log.setCurrentRaDec(*self._getCurrentRaDec())
+                self._log.setCurrentFocus(self._getCurrentFocus())
+                self._log.setTemperature(*self._getTemperature())
+                self._log.setAlarmStatus(self._getAlarmStatus())
+                self._log.writeToLog()
 
     def force(self):
         with self._mutex:
@@ -70,11 +72,11 @@ class LogThread(object):
 
     def _getCurrentRaDec(self):
         """ current telescope positions are taken directly from plc """
-        return self._plc.getCurrentPosition()
+        return self._position.getCurrentPosition()
 
     def _getCurrentFocus(self):
         """ current telescope positions are taken directly from plc """
-        focus = self._plc.getFocus()
+        focus = self._position.getFocus()
         return focus[0]
 
     def _getTemperature(self):
