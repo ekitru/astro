@@ -20,6 +20,7 @@ class Controller(object):
         self.tsTimes = TimeRepresenter(self.resources.observer)
         self.tsMode = TelescopeModeRepresenter(self.resources)
         self.tsStatus = TelescopeStateRepresenter(self.resources)
+        self.tsPosition = PositionRepresenter(self.resources)
 
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
@@ -149,6 +150,8 @@ class TimeRepresenter(object):
 
 
 class TelescopeModeRepresenter(object):
+    """ Telescope mode and statuses representer  """
+
     def __init__(self, resources):
         self._plc = resources.telescopeMode
 
@@ -219,6 +222,8 @@ class TelescopeModeRepresenter(object):
 
 
 class TelescopeStateRepresenter(object):
+    """ Telescope state representer """
+
     def __init__(self, resources):
         self._plc = resources.telescopeState
 
@@ -240,4 +245,45 @@ class TelescopeStateRepresenter(object):
         except Exception as e:
             print(e)
         return status
+
+
+class PositionRepresenter(object):
+    """ Current telescope and setpoint position  """
+
+    def __init__(self, resources):
+        self._plc = resources.telescopePosition
+
+    def getCurrentPosition(self):
+        """ dict(position, value), keys 'ra','dec' """
+        try:
+            ra, dec = self._plc.getCurrentPosition()
+        except Exception as e:
+            ra, dec = None,None
+            print(e)
+            #TODO add logging
+        return self._parsePosition(ra, dec)
+
+    def getSetpointPosition(self):
+        """ dict(position, value), keys 'ra','dec' """
+        try:
+            ra, dec = self._plc.getSetpointPosition()
+        except Exception as e:
+            ra, dec = None, None
+            print(e)
+            #TODO add logging
+        return self._parsePosition(ra, dec)
+
+    def _parsePosition(self, ra, dec):
+        if ra and dec:
+            position = rad2str(ra, dec)
+        else:
+            position = '##:##:##', '##:##:##'
+        return {'ra': position[0], 'dec': position[1]}
+
+    def getFocus(self):
+        try:
+            current, task = self._plc.getFocus()
+        except Exception:
+            current, task = None, None
+        return {'cur':str(current), 'task':str(task)}
 
