@@ -15,12 +15,13 @@ class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.resources = Resources()
+        plcManager = self.resources.plcManager
 
         self.object = ObjectRepresenter(self.resources.object)
         self.tsTimes = TimeRepresenter(self.resources.observer)
-        self.tsMode = TelescopeModeRepresenter(self.resources)
-        self.tsStatus = TelescopeStateRepresenter(self.resources)
-        self.tsPosition = PositionRepresenter(self.resources)
+        self.tsMode = TelescopeModeRepresenter(plcManager.getModeHelper())
+        self.tsStatus = TelescopeStateRepresenter(plcManager.getStateHelper())
+        self.tsPosition = PositionRepresenter(plcManager.getPositionHelper())
         self.tsControl = ControlModeRepresenter(self.resources)
 
         lang = self.resources.config.getDefaultLanguage()
@@ -152,8 +153,8 @@ class TimeRepresenter(object):
 class TelescopeModeRepresenter(object):
     """ Telescope mode and statuses representer  """
 
-    def __init__(self, resources):
-        self._mode = resources.plcManager.getModeHelper()
+    def __init__(self, modeHelper):
+        self._mode = modeHelper
 
     def getLabels(self):
         return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
@@ -224,8 +225,8 @@ class TelescopeModeRepresenter(object):
 class TelescopeStateRepresenter(object):
     """ Telescope state representer """
 
-    def __init__(self, resources):
-        self._state = resources.plcManager.getStateHelper()
+    def __init__(self, stateHelper):
+        self._state = stateHelper
 
     def getLabels(self):
         """ Status labels are taken from section [status] in plc.conf """
@@ -250,8 +251,8 @@ class TelescopeStateRepresenter(object):
 class PositionRepresenter(object):
     """ Current telescope and setpoint position  """
 
-    def __init__(self, resources):
-        self._position = resources.plcManager.getPositionHelper()
+    def __init__(self, positionHelper):
+        self._position = positionHelper
 
     def getCurrentPosition(self):
         """ dict(position, value), keys 'ra','dec' """
