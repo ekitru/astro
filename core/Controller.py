@@ -241,7 +241,11 @@ class TelescopeStateRepresenter(object):
         try:
             status = self._state.readStatus()
             for key in status:
-                status[key] = str(status[key])
+                if status[key] is 1:
+                    temp = 'On'
+                else:
+                    temp = 'Off'
+                status[key] = str(temp)
         except Exception as e:
             print(e)
         return status
