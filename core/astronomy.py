@@ -107,6 +107,14 @@ class Object(object):
     def getEquatorialPosition(self):
         """ position for now """
         self._now()
+        ra, dec = self.getPosition()
+        #TODO testing
+        print(' >>>>----------------------')
+        print('epoch2000 = orig',ra,dec)
+        ra_new, dec_new = self._fixedBody.ra, self._fixedBody.dec
+        print('epoch2011 = orig',ra_new,dec_new)
+
+
         return self._fixedBody.ra, self._fixedBody.dec
 
     def getHorizontalPosition(self):
