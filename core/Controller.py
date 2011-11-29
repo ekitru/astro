@@ -73,8 +73,6 @@ class Controller(object):
 
 
 # Presenters
-
-
 class ObjectRepresenter(object):
     """ Sky Object representation """
 
@@ -155,7 +153,7 @@ class TelescopeModeRepresenter(object):
     """ Telescope mode and statuses representer  """
 
     def __init__(self, resources):
-        self._plc = resources.plcManager.getModeHelper()
+        self._mode = resources.plcManager.getModeHelper()
 
     def getLabels(self):
         return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
@@ -167,7 +165,7 @@ class TelescopeModeRepresenter(object):
         """
         status = dict()
         try:
-            stat = self._plc.readConnectionStatus()
+            stat = self._mode.readConnectionStatus()
             status['pCommCheck1'] = str(stat[0])
             status['pCommCheck2'] = str(stat[1])
             status['pMoveStop'] = self._getMovingStatus()
@@ -181,19 +179,19 @@ class TelescopeModeRepresenter(object):
         return status
 
     def _getMovingStatus(self):
-        if self._plc.readMovingStatus():
+        if self._mode.readMovingStatus():
             return 'pMoving'
         else:
             return 'pStopping'
 
     def _getMovingFlag(self):
-        if self._plc.readMovingFlag():
+        if self._mode.readMovingFlag():
             return 'pMoveableTrue'
         else:
             return 'pMoveableFalse'
 
     def _getServiceMode(self):
-        mode = self._plc.readServiceMode()
+        mode = self._mode.readServiceMode()
         if mode is 1:
             ret = 'pState_online'
         elif mode is 2:
@@ -203,7 +201,7 @@ class TelescopeModeRepresenter(object):
         return ret
 
     def _getControlMode(self):
-        mode = self._plc.readControlMode()
+        mode = self._mode.readControlMode()
         if mode is 1:
             ret = 'pState_PC'
         elif mode is 2:
@@ -217,23 +215,23 @@ class TelescopeModeRepresenter(object):
         return ret
 
     def _getTubeTemp(self):
-        return str(self._plc.readTemperatures()[0])
+        return str(self._mode.readTemperatures()[0])
 
     def _getDomeTemp(self):
-        return str(self._plc.readTemperatures()[1])
+        return str(self._mode.readTemperatures()[1])
 
 
 class TelescopeStateRepresenter(object):
     """ Telescope state representer """
 
     def __init__(self, resources):
-        self._plc = resources.plcManager.getStateHelper()
+        self._state = resources.plcManager.getStateHelper()
 
     def getLabels(self):
         """ Status labels are taken from section [status] in plc.conf """
-        statuses = self._plc.getLabels().keys()
-        statuses.sort()
-        return statuses
+        labels = self._state.getLabels().keys()
+        labels.sort()
+        return labels
 
     def readStatus(self):
         """ Return telescope statuses
@@ -241,7 +239,7 @@ class TelescopeStateRepresenter(object):
         """
         status = dict()
         try:
-            status = self._plc.readStatus()
+            status = self._state.readStatus()
             for key in status:
                 status[key] = str(status[key])
         except Exception as e:
@@ -253,26 +251,24 @@ class PositionRepresenter(object):
     """ Current telescope and setpoint position  """
 
     def __init__(self, resources):
-        self._plc = resources.plcManager.getPositionHelper()
+        self._position = resources.plcManager.getPositionHelper()
 
     def getCurrentPosition(self):
         """ dict(position, value), keys 'ra','dec' """
         try:
-            ra, dec = self._plc.getCurrentPosition()
+            ra, dec = self._position.getCurrentPosition()
         except Exception as e:
             ra, dec = None, None
-            print(e)
-            #TODO add logging
+            self._position.logger.exception(e)
         return self._parsePosition(ra, dec)
 
     def getSetpointPosition(self):
         """ dict(position, value), keys 'ra','dec' """
         try:
-            ra, dec = self._plc.getSetpointPosition()
+            ra, dec = self._position.getSetpointPosition()
         except Exception as e:
             ra, dec = None, None
-            print(e)
-            #TODO add logging
+            self._position.logger.exception(e)
         return self._parsePosition(ra, dec)
 
     def _parsePosition(self, ra, dec):
@@ -284,7 +280,7 @@ class PositionRepresenter(object):
 
     def getFocus(self):
         try:
-            current, task = self._plc.getFocus()
+            current, task = self._position.getFocus()
         except Exception:
             current, task = None, None
         return {'cur': str(current), 'task': str(task)}
@@ -300,6 +296,6 @@ class ControlModeRepresenter():
 
     def takeControl(self):
         plc = self._res.plcManager
-#        plc.takeControl()
+        #        plc.takeControl()
 
 
