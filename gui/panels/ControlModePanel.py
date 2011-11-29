@@ -1,21 +1,12 @@
 import wx
-import ephem
-from core.astronomy import getHours, getDegrees
 from gui.ids import    ID_MANUAL_PANEL
 from gui.panels.SimplePanel import SimplePanel
 
 class ControlModePanel(SimplePanel):
-    """This panel presents means to control the telescope and change its control mode.
-    Attributes:
-        codes - Translation codes
-    """
+    """This panel represents control mode and some control functions  """
     _setpointControlMode = 1
 
     def __init__(self, parent, codes, control):
-        """ Attr:
-            codes - translation codes
-            resouces - program resources
-            controls - ManualSetPointPanel """
         SimplePanel.__init__(self, parent)
 
         self.controlRepr = control
@@ -50,64 +41,48 @@ class ControlModePanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnBtnStart, self.butStart)
         self.Bind(wx.EVT_BUTTON, self.OnBtnStop, self.butStop)
 
-    def _getManualControlPanel(self):
-        return wx.FindWindowById(ID_MANUAL_PANEL)
+    def OnObjSetpointRadBut(self, event):
+        event.Skip()
+        self._showManualControl(False)
+        self.controlRepr.takeControl()
+        self.controlRepr.updateSetPoint()
 
 
-    def catchControl(self, visible):
+    def OnManSetpointRadBut(self, event):
+        event.Skip()
+        self._showManualControl(True)
+        self.controlRepr.takeControl()
+
+    def _showManualControl(self, visible):
         panel = self._getManualControlPanel()
         panel.Show(visible)
         self.GetParent().Fit()
-        self.controlRepr.takeControl()
 
-    def OnObjSetpointRadBut(self, event):
-        self.catchControl(False)
-        self.controlRepr.updateSetPoint()
-
-    def OnManSetpointRadBut(self, event):
-        self.catchControl(True)
+    def _getManualControlPanel(self):
+        return wx.FindWindowById(ID_MANUAL_PANEL)
 
     def OnBtnStart(self, event):
         event.Skip()
-        res = self.controlRepr._res
-        data = res._setPoint.getRawData()
-        data['st'] = ephem.hours(res.observer.getLST()).real #TODO send sidereal time periodically
-        data['ha'] = ephem.hours(data['st'] - data['ra']).norm.real    #TODO look to Object data, there is same normalization
-        print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
-        plc = res.plcManager
-        plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
-        if data['focus']:
-            plc.getPositionHelper().setFocus(data['focus'])
-
-        plc.startMoving()
+        self.controlRepr.setNewSetPoint()
+        self.controlRepr.startMoving()
 
     def OnBtnStop(self, event):
         event.Skip()
-        plc = self.controlRepr._res.plcManager
-        plc.stopMoving()
+        self.controlRepr.stopMoving()
 
 
     def update(self):
-        if self.controlRepr._res.plcManager.isConnected():
-            mode = self.controlRepr._res.plcManager.getModeHelper().readControlMode()
-            self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
+        if self.controlRepr.isMoveable():
+            self.butStart.Enable()
+        else:
+            self.butStart.Disable()
 
-        #TODO temporaly not needed
-        #        if self.rbRemoteControl.GetValue():
-        #            self._object.Show()
-        #            self._manual.Hide()
+        if self.controlRepr.isRemoveControl():
+            self.rbRemoteControl.SetValue(True) #switch to remove control
+            self._getManualControlPanel().Hide()
 
         if self.rbObjectSetpoint.GetValue():
-            self.controlRepr._res.updateSetPoint()
-
+            self.controlRepr.updateSetPoint()
         if self.rbManualSetpoint.GetValue():
             self._getManualControlPanel().updateSetPoint()
 
-            #TODO FIX!
-            #        if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
-            #            self.butStart.Disable()
-            #        else:
-            #            self.butStart.Enable()
-
-    def _isRemoveControl(self, mode):
-        return mode is not 1

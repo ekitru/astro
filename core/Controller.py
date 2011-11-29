@@ -1,11 +1,12 @@
 from posixpath import join
 import logging
 from time import strftime
+import ephem
 
 from Exceptions import   ClosingException
 from LogThread import LogThread
 from core.Resources import Resources
-from core.astronomy import rad2str
+from core.astronomy import rad2str, getHours, getDegrees
 from core.config.TranslationConfig import TranslationConfig
 from core.logger import getLogPath
 
@@ -286,7 +287,6 @@ class PositionRepresenter(object):
         return {'cur': str(current), 'task': str(task)}
 
 
-#TODO Finish it
 class ControlModeRepresenter():
     def __init__(self, resources):
         self._res = resources
@@ -294,8 +294,39 @@ class ControlModeRepresenter():
     def updateSetPoint(self):
         self._res.updateSetPoint()
 
+    def getCurrentSetPoint(self):
+        return self._res._setPoint.getRawData()
+
+    def getCurrentSiderealTime(self):
+        time = ephem.hours(self._res.observer.getLST()).real #TODO send sidereal time periodically
+        return time
+
+    def setNewSetPoint(self):
+        data = self.getCurrentSetPoint()
+        data['st'] = self.getCurrentSiderealTime()
+        data['ha'] = ephem.hours(data['st'] - data['ra']).norm.real    #TODO look to Object data, there is same normalization
+        print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
+
+        plc = self._res.plcManager
+        plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
+        if data['focus']:
+            plc.getPositionHelper().setFocus(data['focus'])
+
+
+    def isRemoveControl(self):
+        return self._res.plcManager.getModeHelper().readControlMode() is not 1
+
     def takeControl(self):
         plc = self._res.plcManager
-        #        plc.takeControl()
+        plc.takeControl()
 
+    def isMoveable(self):
+        return self._res.plcManager.getModeHelper().readMovingFlag()
 
+    def startMoving(self):
+        plc = self._res.plcManager
+        plc.startMoving()
+
+    def stopMoving(self):
+        plc = self._res.plcManager
+        plc.stopMoving()
