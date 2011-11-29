@@ -132,12 +132,21 @@ class PLCManager(object):
         closeLog(self.logger)
 
     def getStateHelper(self):
+        """ Return the state helper
+        @rtype StateHelper
+        """
         return self._state
 
     def getModeHelper(self):
+        """ Return the state helper
+        @rtype ModeHelper
+        """
         return self._mode
 
     def getPositionHelper(self):
+        """ Return the state helper
+        @rtype PositionHelper
+        """
         return self._position
 
     def isConnected(self):
@@ -293,6 +302,6 @@ class PositionHelper(BaseHelper):
     def setFocus(self, focus):
         """ Set new focus value """
         self.logger.info('Set new focus dist.')
-        self.logger.info('Focus: '+focus)
+        self.logger.info('Focus: ' + focus)
         self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
 

@@ -55,7 +55,6 @@ class Resources(object):
 
     def initPlcResources(self):
         self.plcManager = PLCManager()
-
         self.logger.info('Init SetPoint object')
         ra, dec = self.plcManager.getSetpointPosition()
         focus = self.plcManager.getFocus()[1]
