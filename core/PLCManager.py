@@ -17,13 +17,13 @@ __author__ = 'kitru'
 class ModBusManager(object):
     def __init__(self, config):
         self._confDict = config
-        self.openConnection()
+        self._master = self.openConnection()
 
     def openConnection(self):
-        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.1)
+        master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.1)
         self.ID = int(self._confDict['slave id'])
         #        self._master._do_open()
-        return self._master
+        return master
 
     def _mergeNumber(self, words):
         """ Merge two 16bit numbers into single 32 bit: words[0] - R16H, words[1] - R16L
@@ -124,9 +124,9 @@ class PLCManager(object):
 
             self._alarms = configs.getAlarms()
         except modbus_tk.modbus.ModbusError as error:
-            raise ConfigurationException(error.args, self.logger)
+            raise ConfigurationException(error, self.logger)
         except Exception as error:
-            raise ConfigurationException(error.args, self.logger)
+            raise ConfigurationException(error, self.logger)
 
     def __del__(self):
         closeLog(self.logger)

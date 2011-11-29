@@ -46,7 +46,7 @@ class MainGui(wx.Frame):
         self.timer = wx.Timer(self)
 
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
-        self.timer.Start(500)
+        self.timer.Start(2000)
 
         menu = AstroMenu(self.controller)
         self.SetMenuBar(menu)
@@ -73,9 +73,11 @@ class MainGui(wx.Frame):
         if self.controller.isConnected():
             self.telescopeModePanel.update()
             self.statusPanel.update()
-            self.positioningPanel.update(self.controller)
             self.controlModePanel.update()
+            self.positioningPanel.update(self.controller)
+
         self.manualSetpointPanel.update(self.controller)
+
         self.Layout()
         self.Fit()
         self.Show()

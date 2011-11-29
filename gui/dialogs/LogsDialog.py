@@ -98,8 +98,9 @@ class LogsDialog(wx.Dialog, SimplePanel):
 
     def parseAlarms(self, log):
         status = str(log['status'])
+        statuses = status.split(',')
         list = [] #TODO fix al prefix for empty list of alarms
-        for alarm in status.split(','):
+        for alarm in statuses:
             list.append(self.codes.get('al'+alarm))
         alarms = ",".join(list)
         return alarms
