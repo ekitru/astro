@@ -42,19 +42,18 @@ class PositionPanel(SimplePanel):
 
         self.SetSizer(comSizer)
 
-    def update(self, resources):
-        plc = resources.plcManager
+    def update(self, controller):
+        posRepr = controller.tsPosition
 
-        currentCoordinates = plc.getPosition()[0]
-        setpointCoordinates = plc.getPosition()[1]
-        focus = plc.getFocus()
+        position = posRepr.getCurrentPosition()
+        self.curRA.SetLabel(position['ra'])
+        self.curDEC.SetLabel(position['dec'])
 
+        position = posRepr.getSetpointPosition()
+        self.taskRA.SetLabel(position['ra'])
+        self.taskDEC.SetLabel(position['dec'])
 
-        self.curRA.SetLabel(str(currentCoordinates[0]))
-        self.curDEC.SetLabel(str(currentCoordinates[1]))
-        self.curFocus.SetLabel(str(focus[0]))
-
-        self.taskRA.SetLabel(str(setpointCoordinates[0]))
-        self.taskDEC.SetLabel(str(setpointCoordinates[1]))
-        self.taskFocus.SetLabel(str(focus[1]))
+        focus = posRepr.getFocus()
+        self.curFocus.SetLabel(focus['cur'])
+        self.taskFocus.SetLabel(focus['task'])
   
