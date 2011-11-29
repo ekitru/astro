@@ -11,11 +11,11 @@ class ManualSetpointPanel(SimplePanel):
     """
     _setpointSpeed = 1
 
-    def __init__(self, parent, resources, id=wx.ID_ANY, codes=None):
-        SimplePanel.__init__(self, parent)
+    def __init__(self, parent, id, codes, resources):
+        SimplePanel.__init__(self, parent, id)
 
         self._setpoint = resources.getSetPoint()
-        self._focus = resources.plcManager.getFocus()[0]
+        self._focus = 0
 
         captions = self.CreateCaptionPanel(codes)
         fields = self.CreateFieldsPanel()

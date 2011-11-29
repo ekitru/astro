@@ -1,7 +1,7 @@
 import wx
 import ephem
 from core.astronomy import getHours, getDegrees
-from gui.ids import   ID_OBJECT_PANEL
+from gui.ids import    ID_MANUAL_PANEL
 from gui.panels.SimplePanel import SimplePanel
 
 class ControlModePanel(SimplePanel):
@@ -11,14 +11,14 @@ class ControlModePanel(SimplePanel):
     """
     _setpointControlMode = 1
 
-    def __init__(self, parent, codes, resources):
+    def __init__(self, parent, codes, control):
         """ Attr:
             codes - translation codes
             resouces - program resources
             controls - ManualSetPointPanel """
         SimplePanel.__init__(self, parent)
 
-        self._resources = resources
+        self.controlRepr = control
 
         self.butStart = self.CreateButton(label=codes.get('pCtrlStart'))
         self.butStop = self.CreateButton(label=codes.get('pCtrlStop'))
@@ -50,35 +50,39 @@ class ControlModePanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnBtnStart, self.butStart)
         self.Bind(wx.EVT_BUTTON, self.OnBtnStop, self.butStop)
 
-    def setManualControlPanelVisibility(self, visible):
-        panel = wx.FindWindowById(ID_OBJECT_PANEL) #TODO FIX to  manual panel
+    def _getManualControlPanel(self):
+        return wx.FindWindowById(ID_MANUAL_PANEL)
+
+
+    def _setManualControlPanelVisibility(self, visible):
+        panel = self._getManualControlPanel()
         panel.Show(visible)
         self.GetParent().Fit()
 
     def OnObjSetpointRadBut(self, event):
         event.Skip()
-        self.setManualControlPanelVisibility(True)
+        self._setManualControlPanelVisibility(False)
         self.takeControl()
-        self._resources.updateSetPoint()
+        self.controlRepr.updateSetPoint()
 
     def OnManSetpointRadBut(self, event):
         event.Skip()
-        self.setManualControlPanelVisibility(False)
+        self._setManualControlPanelVisibility(True)
         self.takeControl()
 
     def takeControl(self):
         """ Take telescope control, PC control """
-        plc = self._resources.plcManager
-        plc.takeControl()
+        self.controlRepr.takeControl()
 
     def OnBtnStart(self, event):
         event.Skip()
-        data = self._resources._setPoint.getRawData()
-        data['st'] = ephem.hours(self._resources.observer.getLST()).real #TODO send sidereal time periodically
+        res = self.controlRepr._res
+        data = res._setPoint.getRawData()
+        data['st'] = ephem.hours(res.observer.getLST()).real #TODO send sidereal time periodically
         data['ha'] = ephem.hours(data['st'] - data['ra']).norm.real    #TODO look to Object data, there is same normalization
         print('=====  send ha and lst', data['ha'], data['st'])
         print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
-        plc = self._resources.plcManager
+        plc = res.plcManager
         plc.setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
         if data['focus']:
             plc.setFocus(data['focus'])
@@ -87,13 +91,14 @@ class ControlModePanel(SimplePanel):
 
     def OnBtnStop(self, event):
         event.Skip()
-        plc = self._resources.plcManager
+        plc = self.controlRepr._res.plcManager
         plc.stopMoving()
 
 
     def update(self):
-        mode = self._resources.plcManager.getModeHelper().readControlMode()
-        self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
+        if self.controlRepr._res.plcManager.isConnected():
+            mode = self.controlRepr._res.plcManager.getModeHelper().readControlMode()
+            self.rbRemoteControl.SetValue(self._isRemoveControl(mode))
 
         #TODO temporaly not needed
         #        if self.rbRemoteControl.GetValue():
@@ -101,16 +106,16 @@ class ControlModePanel(SimplePanel):
         #            self._manual.Hide()
 
         if self.rbObjectSetpoint.GetValue():
-            self._resources.updateSetPoint()
+            self.controlRepr._res.updateSetPoint()
 
         if self.rbManualSetpoint.GetValue():
-            self._manual.updateSetPoint()
+            self._getManualControlPanel().updateSetPoint()
 
             #TODO FIX!
-        #        if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
-        #            self.butStart.Disable()
-        #        else:
-        #            self.butStart.Enable()
+            #        if self._resources.plcManager.readTelescopeMovingStatus()['pMoveable'] != 'pMoveableTrue':
+            #            self.butStart.Disable()
+            #        else:
+            #            self.butStart.Enable()
 
     def _isRemoveControl(self, mode):
         return mode is 1

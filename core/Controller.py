@@ -21,6 +21,7 @@ class Controller(object):
         self.tsMode = TelescopeModeRepresenter(self.resources)
         self.tsStatus = TelescopeStateRepresenter(self.resources)
         self.tsPosition = PositionRepresenter(self.resources)
+        self.tsControl = ControlModeRepresenter(self.resources)
 
         lang = self.resources.config.getDefaultLanguage()
         self.codes = TranslationConfig(lang)
@@ -70,7 +71,8 @@ class Controller(object):
         """ update logging period, time in minutes """
         self.logThread.updatePeriod(int(time) * 60)
 
-        # Presenter
+
+# Presenters
 
 
 class ObjectRepresenter(object):
@@ -258,7 +260,7 @@ class PositionRepresenter(object):
         try:
             ra, dec = self._plc.getCurrentPosition()
         except Exception as e:
-            ra, dec = None,None
+            ra, dec = None, None
             print(e)
             #TODO add logging
         return self._parsePosition(ra, dec)
@@ -285,8 +287,18 @@ class PositionRepresenter(object):
             current, task = self._plc.getFocus()
         except Exception:
             current, task = None, None
-        return {'cur':str(current), 'task':str(task)}
+        return {'cur': str(current), 'task': str(task)}
+
 
 class ControlModeRepresenter():
-    def __init__(self, resousec):
-        pass
+    def __init__(self, resources):
+        self._res = resources
+
+    def updateSetPoint(self):
+        self._res.updateSetPoint()
+
+    def takeControl(self):
+        plc = self._res.plcManager
+#        plc.takeControl()
+
+
