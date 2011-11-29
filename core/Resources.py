@@ -1,4 +1,3 @@
-from core.Exceptions import InitializationException, DbException
 from core.PLCManager import PLCManager
 from core.astronomy import Object, Observer, SetPoint
 
@@ -20,32 +19,19 @@ class Resources(object):
 
     def __init__(self):
         """ Reads common configuration file and initialize transation codes, observer object """
-        try:
-            self.logger = openLog("resources")
-            self.config = ProgramConfig()
+        self.logger = openLog("resources")
+        self.config = ProgramConfig()
 
-            observerConfig = self.config.getObserverConfig()
-            self.observer = Observer(observerConfig)
-            self.object = Object(self.observer)
+        observerConfig = self.config.getObserverConfig()
+        self.observer = Observer(observerConfig)
+        self.object = Object(self.observer)
 
-            self._setPoint = SetPoint(0, 0, 0) #TODO fix it!
-            self.initResources()
-
-        except Exception as error:
-            self.logger.info("error")
-            raise InitializationException(error.args, self.logger)
+        self._setPoint = SetPoint(0, 0, 0) #TODO fix it!
+        self.initResources()
 
     def initResources(self):
-        try:
-            self.initDbResources()
-        except DbException as error:
-            self.logger.exception(error)
-
-        try:
-            self.initPlcResources()
-        except Exception as error:
-            self.logger.exception(error)
-
+        self.initDbResources()
+        self.initPlcResources()
 
     def initDbResources(self):
         self._dbManager = DbManager(self.config.getDbConfig())
@@ -56,8 +42,8 @@ class Resources(object):
     def initPlcResources(self):
         self.plcManager = PLCManager()
         self.logger.info('Init SetPoint object')
-        ra, dec = self.plcManager.getSetpointPosition()
-        focus = self.plcManager.getFocus()[1]
+        ra, dec = self.plcManager.getPositionHelper().getSetpointPosition()
+        focus = self.plcManager.getPositionHelper().getFocus()[1]
         self._setPoint = SetPoint(ra, dec, focus)
 
     def __del__(self):
