@@ -9,14 +9,14 @@ class StatusPanel(SimplePanel):
         codes - Translation codes
     """
 
-    def __init__(self, parent, codes, statuses):
+    def __init__(self, parent, codes, tsStatus):
         SimplePanel.__init__(self, parent)
 
         sizer = wx.GridSizer(0, 2, 5, 5)
 
         self._codes = codes
-        self._statuses = statuses
-        labels = self._statuses.getLabels()
+        self._statusRepr = tsStatus
+        labels = self._statusRepr.getLabels()
         self._fields = self._addFields(sizer, labels)
 
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=self._codes.get('pStatus')), wx.VERTICAL)
@@ -34,7 +34,7 @@ class StatusPanel(SimplePanel):
 
 
     def update(self):
-        statuses = self._statuses.readStatus()
+        statuses = self._statusRepr.readStatus()
         for key in statuses:
             field = self._fields[key]
             field.SetLabel(statuses[key])
