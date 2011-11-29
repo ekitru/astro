@@ -54,25 +54,18 @@ class ControlModePanel(SimplePanel):
         return wx.FindWindowById(ID_MANUAL_PANEL)
 
 
-    def _setManualControlPanelVisibility(self, visible):
+    def catchControl(self, visible):
         panel = self._getManualControlPanel()
         panel.Show(visible)
         self.GetParent().Fit()
+        self.controlRepr.takeControl()
 
     def OnObjSetpointRadBut(self, event):
-        event.Skip()
-        self._setManualControlPanelVisibility(False)
-        self.takeControl()
+        self.catchControl(False)
         self.controlRepr.updateSetPoint()
 
     def OnManSetpointRadBut(self, event):
-        event.Skip()
-        self._setManualControlPanelVisibility(True)
-        self.takeControl()
-
-    def takeControl(self):
-        """ Take telescope control, PC control """
-        self.controlRepr.takeControl()
+        self.catchControl(True)
 
     def OnBtnStart(self, event):
         event.Skip()
