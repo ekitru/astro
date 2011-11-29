@@ -26,7 +26,7 @@ class Resources(object):
         self.observer = Observer(observerConfig)
         self.object = Object(self.observer)
 
-        self._setPoint = SetPoint(0, 0, 0) #TODO fix it!
+        self._setPoint = SetPoint(0, 0, 0)
         self.initResources()
 
     def initResources(self):
