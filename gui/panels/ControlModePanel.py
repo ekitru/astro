@@ -80,10 +80,9 @@ class ControlModePanel(SimplePanel):
         data = res._setPoint.getRawData()
         data['st'] = ephem.hours(res.observer.getLST()).real #TODO send sidereal time periodically
         data['ha'] = ephem.hours(data['st'] - data['ra']).norm.real    #TODO look to Object data, there is same normalization
-        print('=====  send ha and lst', data['ha'], data['st'])
         print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
         plc = res.plcManager
-        plc.setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
+        plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
         if data['focus']:
             plc.setFocus(data['focus'])
 
