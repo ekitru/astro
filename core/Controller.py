@@ -277,7 +277,6 @@ class PositionRepresenter(object):
         return self._parsePosition(ra, dec)
 
     def _parsePosition(self, ra, dec):
-        print(ra,dec)
         if ra is not None and dec is not None :
             position = rad2str(ra, dec)
         else:
