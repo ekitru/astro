@@ -15,9 +15,9 @@ class MainGui(wx.Frame):
         self.controller = controller
         self.resources = controller.resources
 
-        self.objectPanel = ObjectPanel(self, ID_OBJECT_PANEL, trans)
+        self.objectPanel = ObjectPanel(self, ID_OBJECT_PANEL, codes=trans)
         self.positioningPanel = PositionPanel(self, codes=trans)
-        self.controlModePanel = ControlModePanel(self, trans, control=controller.tsControl)
+        self.controlModePanel = ControlModePanel(self, codes=trans, control=controller.tsControl)
         self.manualSetpointPanel = ManualSetpointPanel(self, ID_MANUAL_PANEL, codes=trans, resources=self.resources)
 
         self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
