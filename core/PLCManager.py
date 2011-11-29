@@ -20,8 +20,7 @@ class ModBusManager(object):
         self.openConnection()
 
     def openConnection(self):
-        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']),
-                                            timeout_in_sec=1)
+        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=1)
         self.ID = int(self._confDict['slave id'])
         #        self._master._do_open()
         return self._master
@@ -106,7 +105,80 @@ class ModBusManager(object):
         return self.readNumber16bit(long(addr)) / 10.0
 
 
-PC_CONTROL = 1
+class PLCManager(object):
+    def __init__(self):
+        try:
+            configs = CommunicationConfig()
+            self.logger = openLog('plc_manager')
+            confDict = configs.getConnectionConfig()
+            self.logger.info('Establishing connection')
+            self._conn = ModBusManager(confDict)
+            self.logger.info('Connection established')
+
+            #Helpers to work with PLC
+            self.logger.info('Open helpers')
+            self._state = StateHelper(self._conn, configs, self.logger)
+            self._mode = ModeHelper(self._conn, configs, self.logger)
+            self._position = PositionHelper(self._conn, configs, self.logger)
+            self.logger.info('Helpers are done')
+
+            self._alarms = configs.getAlarms()
+        except modbus_tk.modbus.ModbusError as error:
+            raise ConfigurationException(error.args, self.logger)
+        except Exception as error:
+            raise ConfigurationException(error.args, self.logger)
+
+    def __del__(self):
+        closeLog(self.logger)
+
+    def getStateHelper(self):
+        return self._state
+
+    def getModeHelper(self):
+        return self._mode
+
+    def getPositionHelper(self):
+        return self._position
+
+    def isConnected(self):
+        return self._conn._master._is_opened
+
+    # =====================================
+    def readAlarms(self):
+        ret = dict()
+        for key in self._alarms:
+            state = self._conn.readFlag(self._alarms[key])
+            if state == 1:
+                ret[key] = 'On'
+
+        return ret
+
+    def readAlarmStatus(self):
+        alarms = self.readAlarms()
+        keys = alarms.keys()
+        list = []
+        for key in keys:
+            list.append(self._alarms[key])
+        status = ",".join(list)
+        return status
+
+    # Telescope controlling
+    def takeControl(self):
+        self.logger.info('Take control')
+        self._conn.writeNumber16bit(self._state['take_control'], 1)
+
+    def startMoving(self):
+        self.logger.info('Start moving')
+        self._conn.writeFlag(self._state['move_stop'], 1)
+
+    def stopMoving(self):
+        self.logger.info('Stop moving')
+        self._conn.writeFlag(self._state['move_stop'], 0)
+
+    def close(self):
+        self.logger.info("Close Communication connection")
+        self.master.close()
+
 
 class BaseHelper(object):
     def __init__(self, connection, logger):
@@ -202,6 +274,9 @@ class PositionHelper(BaseHelper):
             ra -  in radians
             dec - in radians
         """
+        self.logger.info('Set new setpoint')
+        self.logger.info('RA: ' + ra + ', DEC: ' + dec + ', HA: ' + ha + ', ST: ' + st)
+        self.logger.info('RA: ' + ra + ', DEC: ' + dec + ', HA: ' + ha + ', ST: ' + st)
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
         self._writeCoordinate(self._axes['ha_task'], ha)
@@ -217,78 +292,7 @@ class PositionHelper(BaseHelper):
 
     def setFocus(self, focus):
         """ Set new focus value """
+        self.logger.info('Set new focus dist.')
+        self.logger.info('Focus: '+focus)
         self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
-
-
-class PLCManager(object):
-    def __init__(self):
-        try:
-            configs = CommunicationConfig()
-            self.logger = openLog('plc_manager')
-            confDict = configs.getConnectionConfig()
-            self.logger.info('Establishing connection')
-            self._conn = ModBusManager(confDict)
-
-            #Helpers to work with PLC
-            self._state = StateHelper(self._conn, configs, self.logger)
-            self._mode = ModeHelper(self._conn, configs, self.logger)
-            self._position = PositionHelper(self._conn, configs, self.logger)
-
-            self.logger.info('Connection established')
-            self._alarms = configs.getAlarms()
-        except modbus_tk.modbus.ModbusError as error:
-            raise ConfigurationException(error.args, self.logger)
-        except Exception as error:
-            raise ConfigurationException(error.args, self.logger)
-
-    def __del__(self):
-        closeLog(self.logger)
-
-    def getStateHelper(self):
-        return self._state
-
-    def getModeHelper(self):
-        return self._mode
-
-    def getPositionHelper(self):
-        return self._position
-
-    def isConnected(self):
-        return self._conn._master._is_opened
-
-    # =====================================
-    def readAlarms(self):
-        ret = dict()
-        for key in self._alarms:
-            state = self._conn.readFlag(self._alarms[key])
-            if state == 1:
-                ret[key] = 'On'
-
-        return ret
-
-    def readAlarmStatus(self):
-        alarms = self.readAlarms()
-        keys = alarms.keys()
-        list = []
-        for key in keys:
-            list.append(self._alarms[key])
-        status = ",".join(list)
-        return status
-
-    # Telescope controlling
-    def takeControl(self):
-        self.logger.info('Take telescope control')
-        self._conn.writeNumber16bit(self._state['take_control'], PC_CONTROL)
-
-    def startMoving(self):
-        self.logger.info('start moving')
-        self._conn.writeFlag(self._state['move_stop'], 1)
-
-    def stopMoving(self):
-        self.logger.info('stop moving')
-        self._conn.writeFlag(self._state['move_stop'], 0)
-
-    def close(self):
-        self.logger.info("Close Communication connection")
-        self.master.close()
 
