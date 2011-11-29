@@ -20,7 +20,7 @@ class ModBusManager(object):
         self.openConnection()
 
     def openConnection(self):
-        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=1)
+        self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.1)
         self.ID = int(self._confDict['slave id'])
         #        self._master._do_open()
         return self._master
@@ -263,7 +263,7 @@ class PositionHelper(BaseHelper):
             number - coordinate in radians
         """
         number = long(float(number) * COORD_SCALE)
-        self._plc.writeNumber32bit(addr, number)
+        self._conn.writeNumber32bit(addr, number)
 
     def getCurrentPosition(self):
         """ Returns current telescope position in radians """
@@ -284,8 +284,7 @@ class PositionHelper(BaseHelper):
             dec - in radians
         """
         self.logger.info('Set new setpoint')
-        self.logger.info('RA: ' + ra + ', DEC: ' + dec + ', HA: ' + ha + ', ST: ' + st)
-        self.logger.info('RA: ' + ra + ', DEC: ' + dec + ', HA: ' + ha + ', ST: ' + st)
+        self.logger.info('RA: ' + str(ra) + ', DEC: ' + str(dec) + ', HA: ' + str(ha) + ', ST: ' + str(st))
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
         self._writeCoordinate(self._axes['ha_task'], ha)
