@@ -42,9 +42,7 @@ class Resources(object):
     def initPlcResources(self):
         self.plcManager = PLCManager()
         self.logger.info('Init SetPoint object')
-        ra, dec = self.plcManager.getPositionHelper().getSetpointPosition()
-        focus = self.plcManager.getPositionHelper().getFocus()[1]
-        self._setPoint = SetPoint(ra, dec, focus)
+        self._setPoint = SetPoint()
 
     def __del__(self):
         self.logger.info('Closing resources')

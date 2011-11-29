@@ -73,10 +73,11 @@ class MainGui(wx.Frame):
         if self.controller.isConnected():
             self.telescopeModePanel.update()
             self.statusPanel.update()
-            self.controlModePanel.update()
-            self.positioningPanel.update(self.controller)
 
-        self.manualSetpointPanel.update(self.controller)
+            self.controlModePanel.update()
+            self.manualSetpointPanel.update(self.controller)
+
+        self.positioningPanel.update(self.controller)
 
         self.Layout()
         self.Fit()

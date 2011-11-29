@@ -22,7 +22,7 @@ class ModBusManager(object):
     def openConnection(self):
         master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']), timeout_in_sec=0.1)
         self.ID = int(self._confDict['slave id'])
-        master._do_open()
+#        master._do_open()
         return master
 
     def _mergeNumber(self, words):
@@ -116,12 +116,13 @@ class PLCManager(object):
 
         #Helpers to work with PLC
         self.logger.info('Open helpers')
-        self._state = StateHelper(self._conn, configs, self.logger)
-        self._mode = ModeHelper(self._conn, configs, self.logger)
-        self._position = PositionHelper(self._conn, configs, self.logger)
+        self._stateHelper = StateHelper(self._conn, configs, self.logger)
+        self._modeHelper = ModeHelper(self._conn, configs, self.logger)
+        self._positionHelper = PositionHelper(self._conn, configs, self.logger)
         self.logger.info('Helpers are done')
 
         self._alarms = configs.getAlarms()
+        self._state = configs.getStateAddresses()
 
     def __del__(self):
         closeLog(self.logger)
@@ -130,19 +131,19 @@ class PLCManager(object):
         """ Return the state helper
         @rtype StateHelper
         """
-        return self._state
+        return self._stateHelper
 
     def getModeHelper(self):
         """ Return the state helper
         @rtype ModeHelper
         """
-        return self._mode
+        return self._modeHelper
 
     def getPositionHelper(self):
         """ Return the state helper
         @rtype PositionHelper
         """
-        return self._position
+        return self._positionHelper
 
     def isConnected(self):
         return self._conn._master._is_opened

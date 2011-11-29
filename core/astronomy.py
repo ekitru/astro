@@ -108,17 +108,15 @@ class Object(object):
         """ position for now """
         self._now()
         ra, dec = self.getPosition()
-        #TODO testing
-        print(' >>>>----------------------')
-        print('epoch2000 = orig',ra,dec)
-        ra_new, dec_new = self._fixedBody.ra, self._fixedBody.dec
-        print('epoch2011 = orig',ra_new,dec_new)
-        coord = ephem.Equatorial(ra_new, dec_new, epoch=ephem.now())
-        print('new coord  ===>>> ', coord.ra, coord.dec )
-        coord_2000 = coord.compute(ephem.now())
-        print('new coord in j2000 ===>>> ', coord_2000.ra, coord_2000.dec )
-
-
+#        #TODO testing
+#        print(' >>>>----------------------')
+#        print('epoch2000 = orig',ra,dec)
+#        ra_new, dec_new = self._fixedBody.ra, self._fixedBody.dec
+#        print('epoch2011 = orig',ra_new,dec_new)
+#        coord = ephem.Equatorial(ra_new, dec_new, epoch=ephem.now())
+#        print('new coord  ===>>> ', coord.ra, coord.dec )
+#        coord_2000 = coord.compute(ephem.now())
+#        print('new coord in j2000 ===>>> ', coord_2000.ra, coord_2000.dec )
         return self._fixedBody.ra, self._fixedBody.dec
 
     def getHorizontalPosition(self):
@@ -162,7 +160,7 @@ class Object(object):
 class SetPoint(object):
     """ Holding set point position: Ra, Dec, Ha, Focus. This values will be used for sending setpoint to PLC """
 
-    def __init__(self, ra=0, dec=0, focus=None):
+    def __init__(self, ra=0, dec=0, focus=0):
         self._ra = float(ra)
         self._dec = float(dec)
         self._focus = float(focus)

@@ -41,7 +41,6 @@ class Controller(object):
         Opens DB connection and connection with PLCm also reads translation codes """
         #        try:
         logging.info('======= Program initialization =======')
-        self.resources.initResources()
         self.logThread = LogThread(self.resources)
 
     #        except ConfigurationException as ce:
