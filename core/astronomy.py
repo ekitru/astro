@@ -113,6 +113,10 @@ class Object(object):
         print('epoch2000 = orig',ra,dec)
         ra_new, dec_new = self._fixedBody.ra, self._fixedBody.dec
         print('epoch2011 = orig',ra_new,dec_new)
+        coord = ephem.Equatorial(ra_new, dec_new, epoch=ephem.now())
+        print('new coord  ===>>> ', coord.ra, coord.dec )
+        coord_2000 = coord.compute(ephem.now())
+        print('new coord in j2000 ===>>> ', coord_2000.ra, coord_2000.dec )
 
 
         return self._fixedBody.ra, self._fixedBody.dec
