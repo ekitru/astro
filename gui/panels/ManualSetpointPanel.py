@@ -140,13 +140,6 @@ class ManualSetpointPanel(SimplePanel):
         self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
         self.__setSetpointSpeed(1)
 
-    def isVisible(self, controller):
-        autoControl = controller.objSetpointControlSelected()
-        if autoControl:
-            return False
-        else:
-            return True
-
     def update(self, controller):
         data = self._setpoint.getRawData()
         #print(data)
@@ -154,6 +147,7 @@ class ManualSetpointPanel(SimplePanel):
     def updateSetPoint(self):
         if self._checkCoordinatesAndFocus():  #if coordinates are correct
             ra, dec, focus = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
+            print(ra,dec,focus)
             self._setpoint.setPosition(ra, dec)
             self._setpoint.setFocus(focus)
 

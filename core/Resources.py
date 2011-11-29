@@ -66,6 +66,8 @@ class Resources(object):
         if self.object.selected():
             position = self.object.getEquatorialPosition()
             self.getSetPoint().setPosition(*position)
+            focus = self.plcManager.getPositionHelper().getFocus()
+            self.getSetPoint().setFocus(focus[0])
 
     def getDbManager(self):
         return self._dbManager
