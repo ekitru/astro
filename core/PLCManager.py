@@ -108,59 +108,62 @@ class ModBusManager(object):
 
 PC_CONTROL = 1
 
-class TelescopeState(object):
+class BaseHelper(object):
+    def __init__(self, connection, logger):
+        self._conn = connection
+        self.logger = logger
+
+
+class StateHelper(BaseHelper):
     """ Common telescope switchers state """
 
-    def __init__(self, plcManager):
-        self._plc = plcManager
-        configs = CommunicationConfig()
-        self._status = configs.getStatusAddresses()
+    def __init__(self, connection, config, logger):
+        BaseHelper.__init__(self, connection, logger)
+        self._status = config.getStatusAddresses()
 
     def getLabels(self):
-        self._plc.logger.info('Read status lables')
+        self.logger.info('Read status lables')
         return self._status
 
     def readStatus(self):
         """ Read switchers state """
         ret = dict()
         for key in self._status:
-            state = self._plc._conn.readFlag(self._status[key])
+            state = self._conn.readFlag(self._status[key])
             ret[key] = state
         return ret
 
 
-class TelescopeMode(object):
-    def __init__(self, plcManager):
-        self._plc = plcManager
-        configs = CommunicationConfig()
-        self._state = configs.getStateAddresses()
+class ModeHelper(BaseHelper):
+    def __init__(self, connection, config, logger):
+        BaseHelper.__init__(self, connection, logger)
+        self._state = config.getStateAddresses()
 
     def readConnectionStatus(self):
-        return (self._plc._conn.readNumber16bit(self._state['comm_check']) == 1,
-                self._plc._conn.readNumber16bit(self._state['comm_add_check']) == 1)
+        return (self._conn.readNumber16bit(self._state['comm_check']) == 1,
+                self._conn.readNumber16bit(self._state['comm_add_check']) == 1)
 
     def readMovingStatus(self):
-        return self._plc._conn.readFlag(self._state['move_stop'])
+        return self._conn.readFlag(self._state['move_stop'])
 
     def readMovingFlag(self):
-        return self._plc._conn.readFlag(self._state['moveable'])
+        return self._conn.readFlag(self._state['moveable'])
 
     def readServiceMode(self):
-        return  self._plc._conn.readNumber16bit(self._state['service_mode'])
+        return  self._conn.readNumber16bit(self._state['service_mode'])
 
     def readControlMode(self):
-        return  self._plc._conn.readNumber16bit(self._state['control_mode'])
+        return  self._conn.readNumber16bit(self._state['control_mode'])
 
     def readTemperatures(self):
-        return ((self._plc._conn.readTemp(self._state['temp_telescope'])),
-                    (self._plc._conn.readTemp(self._state['temp_dome'])))
+        return ((self._conn.readTemp(self._state['temp_telescope'])),
+                    (self._conn.readTemp(self._state['temp_dome'])))
 
 
-class TelescopePosition(object):
-    def __init__(self, plcManager):
-        self._plc = plcManager
-        configs = CommunicationConfig()
-        self._axes = configs.getAxesAddresses()
+class PositionHelper(BaseHelper):
+    def __init__(self, connection, config, logger):
+        BaseHelper.__init__(self, connection, logger)
+        self._axes = config.getAxesAddresses()
 
     def _readCoordinate(self, addr):
         """  Coordinate is scaled by 10^8
@@ -169,7 +172,7 @@ class TelescopePosition(object):
         Return:
             coordinate in radians as float number
         """
-        number = self._plc._conn.readNumber32bit(addr)
+        number = self._conn.readNumber32bit(addr)
         return (float(number) / COORD_SCALE)
 
     def _writeCoordinate(self, addr, number):
@@ -179,7 +182,7 @@ class TelescopePosition(object):
             number - coordinate in radians
         """
         number = long(float(number) * COORD_SCALE)
-        self._plc._conn.writeNumber32bit(addr, number)
+        self._plc.writeNumber32bit(addr, number)
 
     def getCurrentPosition(self):
         """ Returns current telescope position in radians """
@@ -208,13 +211,13 @@ class TelescopePosition(object):
         """ Get current and setpoint for focus from PLC
         Return:
             tuple(curFocus, taskFocus)"""
-        cur = self._plc._conn.readNumber16bit(self._axes['focus_cur']) / 10.0
-        task = self._plc._conn.readNumber16bit(self._axes['focus_task']) / 10.0
+        cur = self._conn.readNumber16bit(self._axes['focus_cur']) / 10.0
+        task = self._conn.readNumber16bit(self._axes['focus_task']) / 10.0
         return cur, task
 
     def setFocus(self, focus):
         """ Set new focus value """
-        self._plc._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
+        self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
 
 
 class PLCManager(object):
@@ -227,9 +230,9 @@ class PLCManager(object):
             self._conn = ModBusManager(confDict)
 
             #Helpers to work with PLC
-            self._state = TelescopeState(self)
-            self._mode = TelescopeMode(self)
-            self._position = TelescopePosition(self)
+            self._state = StateHelper(self._conn, configs, self.logger)
+            self._mode = ModeHelper(self._conn, configs, self.logger)
+            self._position = PositionHelper(self._conn, configs, self.logger)
 
             self.logger.info('Connection established')
             self._alarms = configs.getAlarms()
