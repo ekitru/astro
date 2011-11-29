@@ -270,13 +270,15 @@ class PositionRepresenter(object):
         """ dict(position, value), keys 'ra','dec' """
         try:
             ra, dec = self._position.getSetpointPosition()
+            print(ra,dec)
         except Exception as e:
             ra, dec = None, None
             self._position.logger.exception(e)
         return self._parsePosition(ra, dec)
 
     def _parsePosition(self, ra, dec):
-        if ra and dec:
+        print(ra,dec)
+        if ra is not None and dec is not None :
             position = rad2str(ra, dec)
         else:
             position = '##:##:##', '##:##:##'
