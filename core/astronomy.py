@@ -96,7 +96,7 @@ class Object(object):
         return self._name
 
     def getPosition(self):
-        """ Get objects position for J2000 """
+        """ Get objects original position for J2000 """
         return self._fixedBody._ra, self._fixedBody._dec
 
     def _now(self):
@@ -107,16 +107,17 @@ class Object(object):
     def getEquatorialPosition(self):
         """ position for now """
         self._now()
-        ra, dec = self.getPosition()
-#        #TODO testing
-#        print(' >>>>----------------------')
-#        print('epoch2000 = orig',ra,dec)
-#        ra_new, dec_new = self._fixedBody.ra, self._fixedBody.dec
-#        print('epoch2011 = orig',ra_new,dec_new)
-#        coord = ephem.Equatorial(ra_new, dec_new, epoch=ephem.now())
-#        print('new coord  ===>>> ', coord.ra, coord.dec )
-#        coord_2000 = coord.compute(ephem.now())
-#        print('new coord in j2000 ===>>> ', coord_2000.ra, coord_2000.dec )
+        #TODO testing
+        print(' >>>>----------------------')
+        print('epoch2000 original: ',self.getPosition())
+        print('Apparent Topocentric Position', (self._fixedBody.ra, self._fixedBody.dec))
+        ra, dec = self._fixedBody.ra, self._fixedBody.dec
+        print('epoch2011 = orig ',ra,dec)
+        coord = ephem.Equatorial(ra, dec, epoch=ephem.now())
+        print('coord', coord.ra, coord.dec)
+        coord2 = ephem.Equatorial(coord, epoch=ephem.J2000)
+        print('coord2', coord2.ra, coord2.dec)
+
         return self._fixedBody.ra, self._fixedBody.dec
 
     def getHorizontalPosition(self):

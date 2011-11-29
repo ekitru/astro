@@ -16,17 +16,16 @@ class Controller(object):
     def __init__(self):
         self.__initLogger()
         self.resources = Resources()
-        plcManager = self.resources.plcManager
+        lang = self.resources.config.getDefaultLanguage()
+        self.codes = TranslationConfig(lang)
 
+        plcManager = self.resources.plcManager
         self.object = ObjectRepresenter(self.resources.object)
         self.tsTimes = TimeRepresenter(self.resources.observer)
         self.tsMode = TelescopeModeRepresenter(plcManager.getModeHelper())
         self.tsStatus = TelescopeStateRepresenter(plcManager.getStateHelper())
         self.tsPosition = PositionRepresenter(plcManager.getPositionHelper())
         self.tsControl = ControlModeRepresenter(self.resources)
-
-        lang = self.resources.config.getDefaultLanguage()
-        self.codes = TranslationConfig(lang)
 
     def __initLogger(self):
         """ Initialize base system logger  """
