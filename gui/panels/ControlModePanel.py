@@ -77,7 +77,7 @@ class ControlModePanel(SimplePanel):
         plc = res.plcManager
         plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
         if data['focus']:
-            plc.setFocus(data['focus'])
+            plc.getPositionHelper().setFocus(data['focus'])
 
         plc.startMoving()
 
@@ -110,4 +110,4 @@ class ControlModePanel(SimplePanel):
             #            self.butStart.Enable()
 
     def _isRemoveControl(self, mode):
-        return mode is 1
+        return mode is not 1
