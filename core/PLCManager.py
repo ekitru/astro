@@ -21,7 +21,7 @@ class ModBusManager(object):
 
     def openConnection(self):
         self._master = modbus_tcp.TcpMaster(host=self._confDict['host'], port=int(self._confDict['port']),
-                                            timeout_in_sec=0.1)
+                                            timeout_in_sec=1)
         self.ID = int(self._confDict['slave id'])
         #        self._master._do_open()
         return self._master
@@ -222,9 +222,15 @@ class PLCManager(object):
         try:
             configs = CommunicationConfig()
             self.logger = openLog('plc_manager')
-            self.logger.info('Establishing connection')
             confDict = configs.getConnectionConfig()
+            self.logger.info('Establishing connection')
             self._conn = ModBusManager(confDict)
+
+            #Helpers to work with PLC
+            self._state = TelescopeState(self)
+            self._mode = TelescopeMode(self)
+            self._position = TelescopePosition(self)
+
             self.logger.info('Connection established')
             self._alarms = configs.getAlarms()
         except modbus_tk.modbus.ModbusError as error:
@@ -235,10 +241,19 @@ class PLCManager(object):
     def __del__(self):
         closeLog(self.logger)
 
+    def getStateHelper(self):
+        return self._state
+
+    def getModeHelper(self):
+        return self._mode
+
+    def getPositionHelper(self):
+        return self._position
+
     def isConnected(self):
         return self._conn._master._is_opened
 
-# =====================================
+    # =====================================
     def readAlarms(self):
         ret = dict()
         for key in self._alarms:

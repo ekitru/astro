@@ -153,7 +153,7 @@ class TelescopeModeRepresenter(object):
     """ Telescope mode and statuses representer  """
 
     def __init__(self, resources):
-        self._plc = resources.telescopeMode
+        self._plc = resources.plcManager.getModeHelper()
 
     def getLabels(self):
         return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
@@ -225,7 +225,7 @@ class TelescopeStateRepresenter(object):
     """ Telescope state representer """
 
     def __init__(self, resources):
-        self._plc = resources.telescopeState
+        self._plc = resources.plcManager.getStateHelper()
 
     def getLabels(self):
         """ Status labels are taken from section [status] in plc.conf """
@@ -251,7 +251,7 @@ class PositionRepresenter(object):
     """ Current telescope and setpoint position  """
 
     def __init__(self, resources):
-        self._plc = resources.telescopePosition
+        self._plc = resources.plcManager.getPositionHelper()
 
     def getCurrentPosition(self):
         """ dict(position, value), keys 'ra','dec' """
@@ -287,3 +287,6 @@ class PositionRepresenter(object):
             current, task = None, None
         return {'cur':str(current), 'task':str(task)}
 
+class ControlModeRepresenter():
+    def __init__(self, resousec):
+        pass

@@ -1,6 +1,5 @@
 import logging
 import threading
-from core.Exceptions import ConfigurationException
 from db import Message, Log
 
 __author__ = 'kitru'
@@ -19,9 +18,8 @@ class LogThread(object):
         self._log = Log(db)
         self._message = Message(db)
         self._plc = self._resources.plcManager
-        self._mode = self._resources.telescopeMode
         self._period = resources.config.getLoggingTime()
-        self._start()
+#        self._start()
 #        except Exception as ex:
 #            raise ConfigurationException(ex)
 
@@ -81,7 +79,7 @@ class LogThread(object):
 
     def _getTemperature(self):
         """ current dome and telescope temperatures """
-        return self._mode.readTemperatures()
+        return self._plc.getModeHelper().readTemperatures()
 
     def _getAlarmStatus(self):
         """ alarm status as a alarm codes separated by ',' """

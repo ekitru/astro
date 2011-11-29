@@ -1,5 +1,5 @@
 from core.Exceptions import InitializationException, DbException
-from core.PLCManager import PLCManager, TelescopeState, TelescopeMode, TelescopePosition
+from core.PLCManager import PLCManager
 from core.astronomy import Object, Observer, SetPoint
 
 from core.config import ProgramConfig
@@ -17,9 +17,6 @@ class Resources(object):
     dbLog = None
     dbMessage = None
     plcManager = None
-    telescopeMode = None
-    telescopeState = None
-    telescopePosition = None
 
     def __init__(self):
         """ Reads common configuration file and initialize transation codes, observer object """
@@ -58,9 +55,6 @@ class Resources(object):
 
     def initPlcResources(self):
         self.plcManager = PLCManager()
-        self.telescopeMode = TelescopeMode(self.plcManager)
-        self.telescopeState = TelescopeState(self.plcManager)
-        self.telescopePosition = TelescopePosition(self.plcManager)
 
         self.logger.info('Init SetPoint object')
         ra, dec = self.plcManager.getSetpointPosition()
