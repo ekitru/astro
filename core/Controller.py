@@ -329,12 +329,12 @@ class ControlModeRepresenter():
     def sendLST(self):
         plc = self._res.plcManager
         print('Send new LST: ',self.getCurrentST())
-        plc.getPositionHelper.setST(self.getCurrentST())
+        plc.getPositionHelper().setST(self.getCurrentST())
 
     def sendHA(self):
         plc = self._res.plcManager
         print('Send new HA: ',self.getCurrentHA())
-        plc.getPositionHelper.setHA(self.getCurrentHA())
+        plc.getPositionHelper().setHA(self.getCurrentHA())
 
     def setNewSetPoint(self):
         data = self.getCurrentSetPoint()
