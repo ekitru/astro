@@ -1,8 +1,5 @@
-import modbus_tk
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
-
-from Exceptions import ConfigurationException
 
 from core.config.CommunicationConfig import CommunicationConfig
 from logger import openLog, closeLog
@@ -290,13 +287,13 @@ class PositionHelper(BaseHelper):
         """ Get current and setpoint for focus from PLC
         Return:
             tuple(curFocus, taskFocus)"""
-        cur = self._conn.readNumber16bit(self._axes['focus_cur']) / 10.0
-        task = self._conn.readNumber16bit(self._axes['focus_task']) / 10.0
+        cur = self._conn.readNumber16bit(self._axes['focus_cur']) / 100.0
+        task = self._conn.readNumber16bit(self._axes['focus_task']) / 100.0
         return cur, task
 
     def setFocus(self, focus):
         """ Set new focus value """
         self.logger.info('Set new focus dist.')
         self.logger.info('Focus: ' + str(focus))
-        self._conn.writeNumber16bit(self._axes['focus_task'], focus * 10.0)
+        self._conn.writeNumber16bit(self._axes['focus_task'], focus * 100.0)
 
