@@ -156,7 +156,7 @@ class TelescopeModeRepresenter(object):
         self._mode = modeHelper
 
     def getLabels(self):
-        return ['pCommCheck1', 'pCommCheck2', 'pMoveable', 'pMoveStop',
+        return ['pCommCheck1', 'pCommCheck2', 'pMovable', 'pMoveStop',
                 'pState_service_mode', 'pState_control_mode', 'pState_tempT', 'pState_tempD']
 
     def readStatus(self):
