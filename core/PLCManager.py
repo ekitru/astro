@@ -280,8 +280,6 @@ class PositionHelper(BaseHelper):
         self.logger.info('RA: ' + str(ra) + ', DEC: ' + str(dec))
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
-        self.setHA(ha)
-        self.setST(st)
 
     def setHA(self, ha):
         self._writeCoordinate(self._axes['ha_task'], ha)
