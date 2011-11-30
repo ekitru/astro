@@ -308,7 +308,7 @@ class ControlModeRepresenter():
         return self._res._setPoint.getRawData()
 
     def getCurrentST(self):
-        time = ephem.hours(self._res.observer.getLST()).real #TODO send sidereal time periodically
+        time = ephem.hours(self._res.observer.getLST()).real
         return time
 
     def getCurrentHA(self):
