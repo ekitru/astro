@@ -36,10 +36,6 @@ class ManualSetpointPanel(SimplePanel):
         self.Bind(wx.EVT_BUTTON, self.OnButtonDown, self.butDecRA)
         self.Bind(wx.EVT_BUTTON, self.OnButtonLeft, self.butDecDEC)
         self.Bind(wx.EVT_BUTTON, self.OnButtonRight, self.butIncDEC)
-
-        self.Bind(wx.EVT_BUTTON, self.OnButtonIncFoc, self.butIncFoc)
-        self.Bind(wx.EVT_BUTTON, self.OnButtonDecFoc, self.butDecFoc)
-
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelHour, self.butSelHour)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelMin, self.butSelMin)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.OnButtonSelSec, self.butSelSec)
@@ -48,17 +44,15 @@ class ManualSetpointPanel(SimplePanel):
         captions = wx.GridSizer(4, 1, 5, 5)
         captions.Add(self.CreateCaption(codes.get('pSetpointRA')), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         captions.Add(self.CreateCaption(codes.get('pSetpointDEC')), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
-        captions.Add(self.CreateCaption(codes.get('pSetpointFoc')), flag=wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         captions.Add(self.CreateElement())
         return captions
 
     def CreateFieldsPanel(self):
         self.inFieldRA = self.CreateInputField(size=self.sizeLarge())
         self.inFieldDEC = self.CreateInputField(size=self.sizeLarge())
-        self.inFieldFoc = self.CreateInputField(size=self.sizeLarge())
 
         fields = wx.GridSizer(4, 1, 5, 5)
-        fields.AddMany([self.inFieldRA, self.inFieldDEC, self.inFieldFoc, self.CreateElement()])
+        fields.AddMany([self.inFieldRA, self.inFieldDEC, self.CreateElement()])
         return fields
 
     def CreateControlPanel(self, codes):
@@ -67,8 +61,6 @@ class ManualSetpointPanel(SimplePanel):
         self.butDecRA = self.CreateButton('-', size=self.sizeSmall())
         self.butIncDEC = self.CreateButton('+', size=self.sizeSmall())
         self.butDecDEC = self.CreateButton('-', size=self.sizeSmall())
-        self.butIncFoc = self.CreateButton('+', size=self.sizeSmall())
-        self.butDecFoc = self.CreateButton('-', size=self.sizeSmall())
 
         self.butSelHour = self.CreateToggleButton(label=codes.get('pSetpointHour'), font=self.fontBold(), size=self.sizeSmall())
         self.butSelMin = self.CreateToggleButton(label=codes.get('pSetpointMin'), font=self.fontBold(), size=self.sizeSmall())
@@ -78,7 +70,6 @@ class ManualSetpointPanel(SimplePanel):
         buttons = wx.FlexGridSizer(4, 3, 5, 5)
         buttons.AddMany([self.CreateElement(), self.butIncRA, self.butDecRA])
         buttons.AddMany([self.CreateElement(), self.butIncDEC, self.butDecDEC])
-        buttons.AddMany([self.CreateElement(), self.butIncFoc, self.butDecFoc])
         buttons.AddMany([self.butSelHour, self.butSelMin, self.butSelSec])
         return buttons
 
@@ -87,7 +78,6 @@ class ManualSetpointPanel(SimplePanel):
             data = self._setpoint.getData()
             self.inFieldRA.SetValue(data['ra'])
             self.inFieldDEC.SetValue(data['dec'])
-            self.inFieldFoc.SetValue(data['focus'])
 
     def OnButtonUp(self, event):
         sign = 1
@@ -108,16 +98,6 @@ class ManualSetpointPanel(SimplePanel):
         sign = 1
         speed = self.__getSetpointSpeed()
         self.__changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, sign)
-
-    def OnButtonIncFoc(self, event):
-        sign = 1
-        speed = self.__getSetpointSpeed()
-        self.__changeInputFieldValue(self._incrementFocus, self.inFieldFoc, speed, sign)
-
-    def OnButtonDecFoc(self, event):
-        sign = -1
-        speed = self.__getSetpointSpeed()
-        self.__changeInputFieldValue(self._incrementFocus, self.inFieldFoc, speed, sign)
 
     def OnButtonSelHour(self, event):
         butSelHour = self.butSelHour
@@ -145,11 +125,10 @@ class ManualSetpointPanel(SimplePanel):
         #print(data)
 
     def updateSetPoint(self):
-        if self._checkCoordinatesAndFocus():  #if coordinates are correct
-            ra, dec, focus = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
-            print(ra,dec,focus)
+        if self._checkCoordinates():  #if coordinates are correct
+            ra, dec = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue()
+            print(ra,dec)
             self._setpoint.setPosition(ra, dec)
-            self._setpoint.setFocus(focus)
 
     def __handleToggleLogic(self, but1, but2, but3):
         if but1.GetValue():
@@ -193,30 +172,6 @@ class ManualSetpointPanel(SimplePanel):
             dec = astronomy.normDec(dec)
         return str(dec)
 
-    def _incrementFocus(self, focus, speed, sign):
-        if self._checkFocus(focus):
-            focus = float(focus) + speed * sign
-            focus = self._normFocus(focus)
-            return str(focus)
-        else:
-            return focus
-
-    def _checkCoordinatesAndFocus(self):
-        ra, dec, foc = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue(), self.inFieldFoc.GetValue()
-        return astronomy.checkCoordinates(ra, dec) and self._checkFocus(foc)
-
-    def _checkFocus(self, focus):
-        try:
-            focus = float(focus)
-            return 0 <= focus <= 1600
-        except Exception:
-            return False
-
-    def _normFocus(self, focus):
-        """ Checks that focus distance is within limits. If not, then it's value is set to the closest limit """
-        if focus < 0.0:
-            return 0.0
-        if focus > 1600.0:
-            return 1600.0
-        else:
-            return focus
+    def _checkCoordinates(self):
+        ra, dec = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue()
+        return astronomy.checkCoordinates(ra, dec)

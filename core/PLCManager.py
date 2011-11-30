@@ -288,16 +288,6 @@ class PositionHelper(BaseHelper):
         self._writeCoordinate(self._axes['st_task'], st)
 
     def getFocus(self):
-        """ Get current and setpoint for focus from PLC
-        Return:
-            tuple(curFocus, taskFocus)"""
-        cur = self._conn.readNumber16bit(self._axes['focus_cur']) / 100.0
-        task = self._conn.readNumber16bit(self._axes['focus_task']) / 100.0
-        return cur, task
-
-    def setFocus(self, focus):
-        """ Set new focus value """
-        self.logger.info('Set new focus dist.')
-        self.logger.info('Focus: ' + str(focus))
-        self._conn.writeNumber16bit(self._axes['focus_task'], focus * 100.0)
-
+        """ Get current focus from PLC """
+        cur = self._conn.readNumber32bit(self._axes['focus_cur']) / 100.0
+        return cur

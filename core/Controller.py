@@ -285,10 +285,10 @@ class PositionRepresenter(object):
 
     def getFocus(self):
         try:
-            current, task = self._position.getFocus()
+            current = self._position.getFocus()
         except Exception:
-            current, task = None, None
-        return {'cur': str(current), 'task': str(task)}
+            current = None
+        return str(current)
 
     def setST(self, st):
         self._position.setST(self, st)
