@@ -107,16 +107,16 @@ class Object(object):
     def getEquatorialPosition(self):
         """ position for now """
         self._now()
-        #TODO testing
-        print(' >>>>----------------------')
-        print('epoch2000 original: ',self.getPosition())
-        print('Apparent Topocentric Position', (self._fixedBody.ra, self._fixedBody.dec))
-        ra, dec = self._fixedBody.ra, self._fixedBody.dec
-        print('epoch2011 = orig ',ra,dec)
-        coord = ephem.Equatorial(ra, dec, epoch=ephem.now())
-        print('coord', coord.ra, coord.dec)
-        coord2 = ephem.Equatorial(coord, epoch=ephem.J2000)
-        print('coord2', coord2.ra, coord2.dec)
+#        #TODO testing
+#        print(' >>>>----------------------')
+#        print('epoch2000 original: ',self.getPosition())
+#        print('Apparent Topocentric Position', (self._fixedBody.ra, self._fixedBody.dec))
+#        ra, dec = self._fixedBody.ra, self._fixedBody.dec
+#        print('epoch2011 = orig ',ra,dec)
+#        coord = ephem.Equatorial(ra, dec, epoch=ephem.now())
+#        print('coord', coord.ra, coord.dec)
+#        coord2 = ephem.Equatorial(coord, epoch=ephem.J2000)
+#        print('coord2', coord2.ra, coord2.dec)
 
         return self._fixedBody.ra, self._fixedBody.dec
 
