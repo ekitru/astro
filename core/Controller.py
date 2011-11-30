@@ -270,14 +270,14 @@ class PositionRepresenter(object):
         """ dict(position, value), keys 'ra','dec' """
         try:
             ra, dec = self._position.getSetpointPosition()
-            print(ra,dec)
+            print(ra, dec)
         except Exception as e:
             ra, dec = None, None
             self._position.logger.exception(e)
         return self._parsePosition(ra, dec)
 
     def _parsePosition(self, ra, dec):
-        if ra is not None and dec is not None :
+        if ra is not None and dec is not None:
             position = rad2str(ra, dec)
         else:
             position = '##:##:##', '##:##:##'
@@ -290,6 +290,12 @@ class PositionRepresenter(object):
             current, task = None, None
         return {'cur': str(current), 'task': str(task)}
 
+    def setST(self, st):
+        self._position.setST(self, st)
+
+    def setHA(self, ha):
+        self._position.setHA(self, ha)
+
 
 class ControlModeRepresenter():
     def __init__(self, resources):
@@ -301,20 +307,45 @@ class ControlModeRepresenter():
     def getCurrentSetPoint(self):
         return self._res._setPoint.getRawData()
 
-    def getCurrentSiderealTime(self):
+    def getCurrentST(self):
         time = ephem.hours(self._res.observer.getLST()).real #TODO send sidereal time periodically
         return time
 
+    def getCurrentHA(self):
+        data = self.getCurrentSetPoint()
+        ra = data['ra']
+        st = self.getCurrentST()
+        return ephem.hours(st-ra).norm.real
+
+    def sendPosition(self, data):
+        plc = self._res.plcManager
+        plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'])
+
+    def sendFocus(self, focus):
+        plc = self._res.plcManager
+        if focus:
+            plc.getPositionHelper().setFocus(focus)
+
+    def sendLST(self):
+        plc = self._res.plcManager
+        print('Send new LST: ',self.getCurrentST())
+        plc.getPositionHelper.setST(self.getCurrentST())
+
+    def sendHA(self):
+        plc = self._res.plcManager
+        print('Send new HA: ',self.getCurrentHA())
+        plc.getPositionHelper.setHA(self.getCurrentHA())
+
     def setNewSetPoint(self):
         data = self.getCurrentSetPoint()
-        data['st'] = self.getCurrentSiderealTime()
-        data['ha'] = ephem.hours(data['st'] - data['ra']).norm.real    #TODO look to Object data, there is same normalization
-        print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']), 'HA', getHours(data['ha']), 'ST', getHours(data['st']))
+        print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']))
 
-        plc = self._res.plcManager
-        plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'], ha=data['ha'], st=data['st'])
-        if data['focus']:
-            plc.getPositionHelper().setFocus(data['focus'])
+        self.sendPosition(data)
+        self.sendFocus(data['focus'])
+        #        plc.getPositionHelper.setST(data['st'])
+        self.sendLST()
+        #        plc.getPositionHelper.setHA(data['ha'])
+        self.sendHA()
 
 
     def isRemoveControl(self):
@@ -334,3 +365,7 @@ class ControlModeRepresenter():
     def stopMoving(self):
         plc = self._res.plcManager
         plc.stopMoving()
+
+    def sendTimes(self):
+        self.sendLST()
+        self.sendHA()

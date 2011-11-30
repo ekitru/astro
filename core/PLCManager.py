@@ -270,17 +270,23 @@ class PositionHelper(BaseHelper):
         dec = self._readCoordinate(self._axes['dec_task'])
         return ra, dec
 
-    def setSetpointPosition(self, ra, dec, ha, st):
+    def setSetpointPosition(self, ra, dec):
         """ Store new setpoint position for telescope
         Attr:
             ra -  in radians
             dec - in radians
         """
         self.logger.info('Set new setpoint')
-        self.logger.info('RA: ' + str(ra) + ', DEC: ' + str(dec) + ', HA: ' + str(ha) + ', ST: ' + str(st))
+        self.logger.info('RA: ' + str(ra) + ', DEC: ' + str(dec))
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
+        self.setHA(ha)
+        self.setST(st)
+
+    def setHA(self, ha):
         self._writeCoordinate(self._axes['ha_task'], ha)
+
+    def setST(self, st):
         self._writeCoordinate(self._axes['st_task'], st)
 
     def getFocus(self):
