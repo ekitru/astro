@@ -159,12 +159,11 @@ class Object(object):
 
 
 class SetPoint(object):
-    """ Holding set point position: Ra, Dec, Ha, Focus. This values will be used for sending setpoint to PLC """
+    """ Holding set point position: Ra, Dec. This values will be used for sending setpoint to PLC """
 
-    def __init__(self, ra=0, dec=0, focus=0):
+    def __init__(self, ra=0, dec=0):
         self._ra = float(ra)
         self._dec = float(dec)
-        self._focus = float(focus)
 
     def setPosition(self, ra, dec):
         """ Set setpoint position
@@ -173,29 +172,17 @@ class SetPoint(object):
         ra, dec = getCoordinates(str(ra), str(dec))
         self._ra, self._dec = normCoordinates(ra, dec)
 
-    def setFocus(self, focus):
-        """ Set setpoint focus
-        Attr:
-            focus - focus as float """
-        if focus:
-            self._focus = float(focus)
-        else:
-            self._focus = None
-
-    def getFocus(self):
-        return self._focus
 
     def getData(self):
         """ Get position as strings """
         data = dict()
         data['ra'], data['dec'] = rad2str(self._ra, self._dec)
-        data['focus'] = str(self._focus)
         return data
 
     def getRawData(self):
         """ get setpoint in radians """
         data = dict()
-        data['ra'], data['dec'], data['focus'] = self._ra, self._dec, self._focus
+        data['ra'], data['dec'] = self._ra, self._dec
         return data
 
 

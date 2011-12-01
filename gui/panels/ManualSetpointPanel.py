@@ -15,7 +15,6 @@ class ManualSetpointPanel(SimplePanel):
         SimplePanel.__init__(self, parent, id)
 
         self._setpoint = resources.getSetPoint()
-        self._focus = 0
 
         captions = self.CreateCaptionPanel(codes)
         fields = self.CreateFieldsPanel()
@@ -121,8 +120,9 @@ class ManualSetpointPanel(SimplePanel):
         self.__setSetpointSpeed(1)
 
     def update(self, controller):
-        data = self._setpoint.getRawData()
-        #print(data)
+        pass
+#        data = self._setpoint.getRawData()
+#        print(data)
 
     def updateSetPoint(self):
         if self._checkCoordinates():  #if coordinates are correct

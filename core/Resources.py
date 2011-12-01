@@ -26,7 +26,7 @@ class Resources(object):
         self.observer = Observer(observerConfig)
         self.object = Object(self.observer)
 
-        self._setPoint = SetPoint(0, 0, 0)
+        self._setPoint = SetPoint(0, 0)
         self.initResources()
 
     def initResources(self):
@@ -66,8 +66,6 @@ class Resources(object):
         if self.object.selected():
             position = self.object.getEquatorialPosition()
             self.getSetPoint().setPosition(*position)
-            focus = self.plcManager.getPositionHelper().getFocus()
-            self.getSetPoint().setFocus(focus[0])
 
     def getDbManager(self):
         return self._dbManager

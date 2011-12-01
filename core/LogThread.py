@@ -77,7 +77,7 @@ class LogThread(object):
     def _getCurrentFocus(self):
         """ current telescope positions are taken directly from plc """
         focus = self._position.getFocus()
-        return focus[0]
+        return focus
 
     def _getTemperature(self):
         """ current dome and telescope temperatures """
