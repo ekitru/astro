@@ -178,8 +178,8 @@ class TelescopeModeRepresenter(object):
             flags = self._mode.readConnectionStatus()
             connState = self._getConnStatus(flags)
 
-            status['pCommCheck1'] = str(connState[0])
-            status['pCommCheck2'] = str(connState[1])
+            status['pCommCheck1'] = connState[0]
+            status['pCommCheck2'] = connState[1]
             status['pMoveStop'] = self._getMovingStatus()
             status['pMovable'] = self._getMovingFlag()
             status['pState_service_mode'] = self._getServiceMode()
@@ -194,7 +194,15 @@ class TelescopeModeRepresenter(object):
         self.conStat1[0], self.conStat2[0] = status[0], status[1]
         status = self.conStat1[0] ^ self.conStat1[1], self.conStat2[0] ^ self.conStat2[1]
         self.conStat1[1], self.conStat2[1] = self.conStat1[0], self.conStat2[0]
-        return status
+        return self._translateStatus(status[0]), self._translateStatus(status[1])
+
+    def _translateStatus(self, state):
+        if state:
+            return 'pCommStatus_ok'
+        else:
+            return 'pCommStatus_broken'
+
+
 
     def _getMovingStatus(self):
         if self._mode.readMovingStatus():
