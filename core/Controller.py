@@ -1,6 +1,7 @@
 from posixpath import join
 import logging
 from time import strftime
+import datetime
 import ephem
 
 from Exceptions import   ClosingException
@@ -111,14 +112,21 @@ class ObjectRepresenter(object):
         return {'rise': rt, 'set': st}
 
     def getExpositionTime(self):
-        time = self._object.getExpositionTime() or 'N/A'
-        return str(time)
+        time = self._object.getExpositionTime()
+        if time:
+            expTime = self._roundTime(str(time))
+        else:
+            expTime = 'N/A'
+        return expTime
 
     def _parseTime(self, time):
         if time:
             return str(time.strftime('%H:%M:%S'))
         else:
             return 'N/A'
+
+    def _roundTime(self, time):
+        return time.split(".")[0]
 
 
 class TimeRepresenter(object):
@@ -270,7 +278,7 @@ class PositionRepresenter(object):
         """ dict(position, value), keys 'ra','dec' """
         try:
             ra, dec = self._position.getSetpointPosition()
-            print(ra, dec)
+#            print(ra, dec)
         except Exception as e:
             ra, dec = None, None
             self._position.logger.exception(e)
