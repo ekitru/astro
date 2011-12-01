@@ -74,7 +74,7 @@ class ControlModePanel(SimplePanel):
     def update(self):
         self.controlRepr.sendTimes()
 
-        if self.controlRepr.isMoveable():
+        if self.controlRepr.isMovable():
             self.butStart.Enable()
         else:
             self.butStart.Disable()

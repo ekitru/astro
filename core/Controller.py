@@ -169,7 +169,7 @@ class TelescopeModeRepresenter(object):
             status['pCommCheck1'] = str(stat[0])
             status['pCommCheck2'] = str(stat[1])
             status['pMoveStop'] = self._getMovingStatus()
-            status['pMoveable'] = self._getMovingFlag()
+            status['pMovable'] = self._getMovingFlag()
             status['pState_service_mode'] = self._getServiceMode()
             status['pState_control_mode'] = self._getControlMode()
             status['pState_tempT'] = self._getTubeTemp()
@@ -186,9 +186,9 @@ class TelescopeModeRepresenter(object):
 
     def _getMovingFlag(self):
         if self._mode.readMovingFlag():
-            return 'pMoveableTrue'
+            return 'pMovableTrue'
         else:
-            return 'pMoveableFalse'
+            return 'pMovableFalse'
 
     def _getServiceMode(self):
         mode = self._mode.readServiceMode()
@@ -321,19 +321,15 @@ class ControlModeRepresenter():
         plc = self._res.plcManager
         plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'])
 
-    def sendFocus(self, focus):
-        plc = self._res.plcManager
-        if focus:
-            plc.getPositionHelper().setFocus(focus)
 
     def sendLST(self):
         plc = self._res.plcManager
-        print('Send new LST: ',self.getCurrentST())
+#        print('Send new LST: ',self.getCurrentST())
         plc.getPositionHelper().setST(self.getCurrentST())
 
     def sendHA(self):
         plc = self._res.plcManager
-        print('Send new HA: ',self.getCurrentHA())
+#        print('Send new HA: ',self.getCurrentHA())
         plc.getPositionHelper().setHA(self.getCurrentHA())
 
     def setNewSetPoint(self):
@@ -341,10 +337,7 @@ class ControlModeRepresenter():
         print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']))
 
         self.sendPosition(data)
-        self.sendFocus(data['focus'])
-        #        plc.getPositionHelper.setST(data['st'])
         self.sendLST()
-        #        plc.getPositionHelper.setHA(data['ha'])
         self.sendHA()
 
 
@@ -355,7 +348,7 @@ class ControlModeRepresenter():
         plc = self._res.plcManager
         plc.takeControl()
 
-    def isMoveable(self):
+    def isMovable(self):
         return self._res.plcManager.getModeHelper().readMovingFlag()
 
     def startMoving(self):
