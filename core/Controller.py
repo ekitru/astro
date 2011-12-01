@@ -159,6 +159,8 @@ class TimeRepresenter(object):
 
 class TelescopeModeRepresenter(object):
     """ Telescope mode and statuses representer  """
+    conStat1 = [False,False]
+    conStat2 = [False,False]
 
     def __init__(self, modeHelper):
         self._mode = modeHelper
@@ -173,9 +175,11 @@ class TelescopeModeRepresenter(object):
         """
         status = dict()
         try:
-            stat = self._mode.readConnectionStatus()
-            status['pCommCheck1'] = str(stat[0])
-            status['pCommCheck2'] = str(stat[1])
+            flags = self._mode.readConnectionStatus()
+            status = self._getConnStatus(flags)
+
+            status['pCommCheck1'] = str(status[0])
+            status['pCommCheck2'] = str(status[1])
             status['pMoveStop'] = self._getMovingStatus()
             status['pMovable'] = self._getMovingFlag()
             status['pState_service_mode'] = self._getServiceMode()
@@ -184,6 +188,12 @@ class TelescopeModeRepresenter(object):
             status['pState_tempD'] = self._getDomeTemp()
         except Exception as e:
             print(e)
+        return status
+
+    def _getConnStatus(self, status):
+        self.conStat1[0], self.conStat2[0] = status[0], status[1]
+        status = self.conStat1[0] ^ self.conStat1[1], self.conStat2[0] ^ self.conStat2[1]
+        self.conStat1[1], self.conStat2[1] = self.conStat1[0], self.conStat2[0]
         return status
 
     def _getMovingStatus(self):
