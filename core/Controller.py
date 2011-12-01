@@ -176,10 +176,10 @@ class TelescopeModeRepresenter(object):
         status = dict()
         try:
             flags = self._mode.readConnectionStatus()
-            status = self._getConnStatus(flags)
+            connState = self._getConnStatus(flags)
 
-            status['pCommCheck1'] = str(status[0])
-            status['pCommCheck2'] = str(status[1])
+            status['pCommCheck1'] = str(connState[0])
+            status['pCommCheck2'] = str(connState[1])
             status['pMoveStop'] = self._getMovingStatus()
             status['pMovable'] = self._getMovingFlag()
             status['pState_service_mode'] = self._getServiceMode()
