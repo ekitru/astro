@@ -11,18 +11,18 @@ class MainGui(wx.Frame):
     def __init__(self, parent, title, controller):
         super(MainGui, self).__init__(parent, title=title, size=(706, 388))
         #        InspectionTool().Show()
-        trans = controller.codes
+        self.trans = controller.codes
         self.controller = controller
         self.resources = controller.resources
 
-        self.objectPanel = ObjectPanel(self, ID_OBJECT_PANEL, codes=trans)
-        self.positioningPanel = PositionPanel(self, codes=trans)
-        self.controlModePanel = ControlModePanel(self, codes=trans, control=controller.tsControl)
-        self.manualSetpointPanel = ManualSetpointPanel(self, ID_MANUAL_PANEL, codes=trans, resources=self.resources)
+        self.objectPanel = ObjectPanel(self, ID_OBJECT_PANEL, codes=self.trans)
+        self.positioningPanel = PositionPanel(self, codes=self.trans)
+        self.controlModePanel = ControlModePanel(self, codes=self.trans, control=controller.tsControl)
+        self.manualSetpointPanel = ManualSetpointPanel(self, ID_MANUAL_PANEL, codes=self.trans, resources=self.resources)
 
-        self.timeDatePanel = TimeDatePanel(parent=self, codes=trans)
-        self.telescopeModePanel = TelescopeModePanel(parent=self, codes=trans, mode=controller.tsMode)
-        self.statusPanel = StatusPanel(parent=self, codes=trans, tsStatus=controller.tsStatus)
+        self.timeDatePanel = TimeDatePanel(parent=self, codes=self.trans)
+        self.telescopeModePanel = TelescopeModePanel(parent=self, codes=self.trans, mode=controller.tsMode)
+        self.statusPanel = StatusPanel(parent=self, codes=self.trans, tsStatus=controller.tsStatus)
 
         leftColon = wx.BoxSizer(wx.VERTICAL)
         leftColon.Add(self.objectPanel, flag=wx.DOWN | wx.EXPAND, border=5)
@@ -58,11 +58,13 @@ class MainGui(wx.Frame):
         self.Bind(wx.EVT_MENU, menu.OnAlarms, id=ID_ALARMS_DIALOG)
         self.CreateStatusBar()
 
-        self.SetStatusText(trans.get('mainSuccStart'))
+        self.SetStatusText(self.trans.get('mainSuccStart'))
 
         self.SetSizer(commonSizer)
         self.Layout()
         self.Centre()
+
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
 
 
     def update(self, event):
@@ -82,3 +84,12 @@ class MainGui(wx.Frame):
         self.Layout()
         self.Fit()
         self.Show()
+
+    def OnClose(self, event):
+        dlg = wx.MessageDialog(self,
+            self.trans.get('mainCloseConf'),
+            self.trans.get('mainCloseConfExit'), wx.OK|wx.CANCEL|wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+        dlg.Destroy()
+        if result == wx.ID_OK:
+            self.Destroy()
