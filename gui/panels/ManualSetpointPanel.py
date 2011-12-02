@@ -79,50 +79,42 @@ class ManualSetpointPanel(SimplePanel):
             self.inFieldDEC.SetValue(data['dec'])
 
     def OnButtonUp(self, event):
-        sign = 1
+        event.Skip()
         speed = self.__getSetpointSpeed()
-        self.__changeInputFieldValue(self._incrementRa, self.inFieldRA, speed, sign)
+        self._changeInputFieldValue(self._incrementRa, self.inFieldRA, speed, 1)
 
     def OnButtonDown(self, event):
-        sign = -1
+        event.Skip()
         speed = self.__getSetpointSpeed()
-        self.__changeInputFieldValue(self._incrementRa, self.inFieldRA, speed, sign)
+        self._changeInputFieldValue(self._incrementRa, self.inFieldRA, speed, -1)
 
     def OnButtonLeft(self, event):
-        sign = -1
+        event.Skip()
         speed = self.__getSetpointSpeed()
-        self.__changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, sign)
+        self._changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, -1)
 
     def OnButtonRight(self, event):
-        sign = 1
+        event.Skip()
         speed = self.__getSetpointSpeed()
-        self.__changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, sign)
+        self._changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, 1)
 
     def OnButtonSelHour(self, event):
-        butSelHour = self.butSelHour
-        butSelMin = self.butSelMin
-        butSelSec = self.butSelSec
-        self.__handleToggleLogic(butSelHour, butSelMin, butSelSec)
-        self.__setSetpointSpeed(3)
+        event.Skip()
+        self.__handleToggleLogic(self.butSelHour, self.butSelMin, self.butSelSec)
+        self._setSetpointSpeed(3)
 
     def OnButtonSelMin(self, event):
-        butSelHour = self.butSelHour
-        butSelMin = self.butSelMin
-        butSelSec = self.butSelSec
-        self.__handleToggleLogic(butSelMin, butSelHour, butSelSec)
-        self.__setSetpointSpeed(2)
+        event.Skip()
+        self.__handleToggleLogic(self.butSelMin, self.butSelHour, self.butSelSec)
+        self._setSetpointSpeed(2)
 
     def OnButtonSelSec(self, event):
-        butSelHour = self.butSelHour
-        butSelMin = self.butSelMin
-        butSelSec = self.butSelSec
-        self.__handleToggleLogic(butSelSec, butSelHour, butSelMin)
-        self.__setSetpointSpeed(1)
+        event.Skip()
+        self.__handleToggleLogic(self.butSelSec, self.butSelHour, self.butSelMin)
+        self._setSetpointSpeed(1)
 
     def update(self, controller):
         pass
-#        data = self._setpoint.getRawData()
-#        print(data)
 
     def updateSetPoint(self):
         if self._checkCoordinates():  #if coordinates are correct
@@ -140,10 +132,10 @@ class ManualSetpointPanel(SimplePanel):
     def __getSetpointSpeed(self):
         return self._setpointSpeed
 
-    def __setSetpointSpeed(self, speed):
+    def _setSetpointSpeed(self, speed):
         self._setpointSpeed = speed
 
-    def __changeInputFieldValue(self, incrementFunction, inputField, speed, sign):
+    def _changeInputFieldValue(self, incrementFunction, inputField, speed, sign):
         coordinate = str(inputField.GetValue())
         coordinate = incrementFunction(coordinate, speed, sign)
         return inputField.SetValue(coordinate)
