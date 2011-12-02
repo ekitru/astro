@@ -22,6 +22,8 @@ class AstroMenu(wx.MenuBar):
     def OnSelectObject(self, event):
         """ Select object from DB, also allows to add new object """
         event.Skip(False)
+        if self.controller.tsControl.isMoving():
+            return
         dialog = SelectObjectDialog(self, self.controller)
         ret = dialog.ShowModal()
         dialog.Destroy()
