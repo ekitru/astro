@@ -26,7 +26,7 @@ class Resources(object):
         self.observer = Observer(observerConfig)
         self.object = Object(self.observer)
 
-        self._setPoint = SetPoint()
+        self.setPoint = SetPoint()
         self.initResources()
 
     def initResources(self):
@@ -42,7 +42,7 @@ class Resources(object):
     def initPlcResources(self):
         self.plcManager = PLCManager()
         self.logger.info('Init SetPoint object')
-        self._setPoint = SetPoint()
+        self.setPoint = SetPoint()
 
     def __del__(self):
         self.logger.info('Closing resources')
@@ -60,12 +60,7 @@ class Resources(object):
             self.object.init(star['id'], star['name'], star['ra'], star['dec'])
 
     def getSetPoint(self):
-        return  self._setPoint
-
-    def updateSetPoint(self):
-        if self.object.selected():
-            position = self.object.getEquatorialPosition()
-            self.getSetPoint().setPosition(*position)
+        return  self.setPoint
 
     def getDbManager(self):
         return self._dbManager

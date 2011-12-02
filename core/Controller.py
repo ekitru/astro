@@ -326,42 +326,46 @@ class PositionRepresenter(object):
 class ControlModeRepresenter():
     def __init__(self, resources):
         self._res = resources
+        self._taskRa = 0
 
-    def updateSetPoint(self):
-        self._res.updateSetPoint()
+    def updateSetPointByObjectCoordinates(self):
+        object = self._res.object
+        setPoint = self._res.setPoint
+
+        if object.selected():
+            ra,dec = object.getEquatorialPosition()
+            setPoint.setPosition(ra, dec)
 
     def getCurrentSetPoint(self):
-        return self._res._setPoint.getRawData()
+        return self._res.setPoint.getRawData()
 
     def getCurrentST(self):
         time = ephem.hours(self._res.observer.getLST()).real
         return time
 
     def getCurrentHA(self):
-        data = self.getCurrentSetPoint()
-        ra = data['ra']
         st = self.getCurrentST()
-        return ephem.hours(st-ra).norm.real
+        return ephem.hours(st-self._taskRa).norm.real
 
     def sendPosition(self, data):
         plc = self._res.plcManager
         plc.getPositionHelper().setSetpointPosition(ra=data['ra'], dec=data['dec'])
+        self._taskRa = data['ra']
 
 
     def sendLST(self):
         plc = self._res.plcManager
-        print('Send new LST: ',self.getCurrentST())
+#        print('Send new LST: ',self.getCurrentST())
         plc.getPositionHelper().setST(self.getCurrentST())
 
     def sendHA(self):
         plc = self._res.plcManager
-        print('Send new HA: ',self.getCurrentHA())
+#        print('Send new HA: ',self.getCurrentHA())
         plc.getPositionHelper().setHA(self.getCurrentHA())
 
     def setNewSetPoint(self):
         data = self.getCurrentSetPoint()
-        print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']))
-
+#        print('RA', getHours(data['ra']), 'DEC', getDegrees(data['dec']))
         self.sendPosition(data)
         self.sendLST()
         self.sendHA()

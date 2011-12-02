@@ -293,7 +293,7 @@ class PositionHelper(BaseHelper):
         self._writeCoordinate(self._axes['dec_task'], dec)
 
     def setHA(self, ha):
-        print('HA', ha)
+#        print('HA', ha)
         self._writeCoordinate(self._axes['ha_task'], ha)
 
     def setST(self, st):

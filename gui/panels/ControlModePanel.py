@@ -45,7 +45,6 @@ class ControlModePanel(SimplePanel):
         event.Skip()
         self._showManualControl(False)
         self.controlRepr.takeControl()
-        self.controlRepr.updateSetPoint()
 
 
     def OnManSetpointRadBut(self, event):
@@ -72,20 +71,24 @@ class ControlModePanel(SimplePanel):
 
 
     def update(self):
-        self.controlRepr.sendTimes()
+        print('Setpoint: ', self.controlRepr._res.setPoint.getData())
 
-        if self.controlRepr.isMovable() and  not self.controlRepr.isMoving():
-            self.butStart.Enable()
-        else:
-            self.butStart.Disable()
+        self.controlRepr.sendTimes()
+        self._startButtonControl()
 
         if self.controlRepr.isRemoveControl():
             self.rbRemoteControl.SetValue(True) #switch to remove control
             self._getManualControlPanel().Hide()
 
         if self.rbObjectSetpoint.GetValue():
-            self.controlRepr.updateSetPoint()
-        if self.rbManualSetpoint.GetValue():
-            self._getManualControlPanel().updateSetPointCoordinates\
-                ()
+            self.controlRepr.updateSetPointByObjectCoordinates()
+
+        if self.rbManualSetpoint.GetValue(): #continously update setpoint from manual control
+            self._getManualControlPanel().updateSetPointCoordinates()
+
+    def _startButtonControl(self):
+        if self.controlRepr.isMovable() and  not self.controlRepr.isMoving(): #if movable and not started yet
+            self.butStart.Enable()
+        else:
+            self.butStart.Disable()
 
