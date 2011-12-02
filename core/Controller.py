@@ -377,6 +377,10 @@ class ControlModeRepresenter():
     def isMovable(self):
         return self._res.plcManager.getModeHelper().readMovingFlag()
 
+    def isMoving(self):
+        plc = self._res.plcManager
+        return plc.getModeHelper().readMovingStatus()
+
     def startMoving(self):
         plc = self._res.plcManager
         plc.startMoving()
