@@ -86,5 +86,6 @@ class ControlModePanel(SimplePanel):
         if self.rbObjectSetpoint.GetValue():
             self.controlRepr.updateSetPoint()
         if self.rbManualSetpoint.GetValue():
-            self._getManualControlPanel().updateSetPoint()
+            self._getManualControlPanel().updateSetPointCoordinates\
+                ()
 
