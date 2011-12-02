@@ -80,56 +80,56 @@ class ManualSetpointPanel(SimplePanel):
 
     def OnButtonUp(self, event):
         event.Skip()
-        speed = self.__getSetpointSpeed()
+        speed = self._getSetpointSpeed()
         self._changeInputFieldValue(self._incrementRa, self.inFieldRA, speed, 1)
 
     def OnButtonDown(self, event):
         event.Skip()
-        speed = self.__getSetpointSpeed()
+        speed = self._getSetpointSpeed()
         self._changeInputFieldValue(self._incrementRa, self.inFieldRA, speed, -1)
 
     def OnButtonLeft(self, event):
         event.Skip()
-        speed = self.__getSetpointSpeed()
+        speed = self._getSetpointSpeed()
         self._changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, -1)
 
     def OnButtonRight(self, event):
         event.Skip()
-        speed = self.__getSetpointSpeed()
+        speed = self._getSetpointSpeed()
         self._changeInputFieldValue(self._incrementDec, self.inFieldDEC, speed, 1)
 
     def OnButtonSelHour(self, event):
         event.Skip()
-        self.__handleToggleLogic(self.butSelHour, self.butSelMin, self.butSelSec)
+        self._handleToggleLogic(self.butSelHour, self.butSelMin, self.butSelSec)
         self._setSetpointSpeed(3)
 
     def OnButtonSelMin(self, event):
         event.Skip()
-        self.__handleToggleLogic(self.butSelMin, self.butSelHour, self.butSelSec)
+        self._handleToggleLogic(self.butSelMin, self.butSelHour, self.butSelSec)
         self._setSetpointSpeed(2)
 
     def OnButtonSelSec(self, event):
         event.Skip()
-        self.__handleToggleLogic(self.butSelSec, self.butSelHour, self.butSelMin)
+        self._handleToggleLogic(self.butSelSec, self.butSelHour, self.butSelMin)
         self._setSetpointSpeed(1)
 
     def update(self, controller):
         pass
 
-    def updateSetPoint(self):
-        if self._checkCoordinates():  #if coordinates are correct
+    def updateSetPointCoordinates(self):
+        if self._validCoordinates():
             ra, dec = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue()
             print(ra,dec)
             self._setpoint.setPosition(ra, dec)
 
-    def __handleToggleLogic(self, but1, but2, but3):
+    def _handleToggleLogic(self, but1, but2, but3):
         if but1.GetValue():
             but2.SetValue(False)
             but3.SetValue(False)
         else:
             but1.SetValue(True)
 
-    def __getSetpointSpeed(self):
+    def _getSetpointSpeed(self):
         return self._setpointSpeed
 
     def _setSetpointSpeed(self, speed):
@@ -164,6 +164,6 @@ class ManualSetpointPanel(SimplePanel):
             dec = astronomy.normDec(dec)
         return str(dec)
 
-    def _checkCoordinates(self):
+    def _validCoordinates(self):
         ra, dec = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue()
         return astronomy.checkCoordinates(ra, dec)
