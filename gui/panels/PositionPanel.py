@@ -13,6 +13,8 @@ class PositionPanel(SimplePanel):
 
         pPosSizer = wx.GridSizer(4, 3, 5, 10)
 
+        self.curHA = self.CreateField()
+        self.taskHA = self.CreateField()
         self.curRA = self.CreateField()
         self.taskRA = self.CreateField()
         self.curDEC = self.CreateField()
@@ -22,6 +24,10 @@ class PositionPanel(SimplePanel):
         pPosSizer.Add(self.CreateField())
         pPosSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         pPosSizer.Add(self.CreateCaption(codes.get('pPosEnd')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosHA')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosSizer.Add(self.curHA, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.taskHA, flag=wx.ALL | wx.ALIGN_CENTER)
 
         pPosSizer.Add(self.CreateCaption(codes.get('pPosRA')), flag=wx.ALL | wx.ALIGN_RIGHT)
         pPosSizer.Add(self.curRA, flag=wx.ALL | wx.ALIGN_CENTER)
@@ -42,6 +48,10 @@ class PositionPanel(SimplePanel):
 
     def update(self, controller):
         posRepr = controller.tsPosition
+
+        ha = posRepr.getCurrentHourAngle()
+        self.curHA.SetLabel(ha)
+        self.taskHA.SetLabel(ha) #TODO
 
         position = posRepr.getCurrentPosition()
         self.curRA.SetLabel(position['ra'])

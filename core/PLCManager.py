@@ -264,13 +264,20 @@ class PositionHelper(BaseHelper):
             addr - starting address, 2 words will be used
             number - coordinate in radians
         """
-#        print('write coordinate to'+str(addr),number)
+        #        print('write coordinate to'+str(addr),number)
         number = long(float(number) * COORD_SCALE)
         self._conn.writeNumber32bit(addr, number)
 
+    def getCurrentHourAngle(self):
+        return self._readCoordinate(self._axes['ha_cur'])
+
+    def getTaskHourAngle(self):
+        return self._readCoordinate(self._axes['ha_task'])
+
     def getCurrentPosition(self):
         """ Returns current telescope position in radians """
-        ra = self._readCoordinate(self._axes['ra_cur'])
+        #TODO ask Ivan ra = self._readCoordinate(self._axes['ra_cur'])
+        ra = self._readCoordinate(self._axes['st_task']) - self.getCurrentHourAngle()
         dec = self._readCoordinate(self._axes['dec_cur'])
         return ra, dec
 
@@ -292,8 +299,7 @@ class PositionHelper(BaseHelper):
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
 
-    def setHA(self, ha):
-#        print('HA', ha)
+    def setTaskHA(self, ha):
         self._writeCoordinate(self._axes['ha_task'], ha)
 
     def setST(self, st):

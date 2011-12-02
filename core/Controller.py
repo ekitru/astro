@@ -283,14 +283,31 @@ class PositionRepresenter(object):
     def __init__(self, positionHelper):
         self._position = positionHelper
 
+    def getCurrentHourAngle(self):
+        try:
+            ha = self._position.getCurrentHourAngle()
+            ha = getHours(ha)
+        except Exception as e:
+            ha = None
+            self._position.logger.exception(e)
+        return str(ha)
+
+    def getTaskHourAngle(self):
+        try:
+            ha = self._position.getTaskHourAngle()
+            ha = getHours(ha)
+        except Exception as e:
+            ha = None
+            self._position.logger.exception(e)
+        return str(ha)
+
     def getCurrentPosition(self):
-        """ dict(position, value), keys 'ra','dec' """
         try:
             ra, dec = self._position.getCurrentPosition()
         except Exception as e:
             ra, dec = None, None
             self._position.logger.exception(e)
-        return self._parsePosition(ra, dec)
+        return self._parseCoordinates(ra, dec)
 
     def getSetpointPosition(self):
         """ dict(position, value), keys 'ra','dec' """
@@ -300,9 +317,9 @@ class PositionRepresenter(object):
         except Exception as e:
             ra, dec = None, None
             self._position.logger.exception(e)
-        return self._parsePosition(ra, dec)
+        return self._parseCoordinates(ra, dec)
 
-    def _parsePosition(self, ra, dec):
+    def _parseCoordinates(self, ra, dec):
         if ra is not None and dec is not None:
             position = rad2str(ra, dec)
         else:
@@ -315,12 +332,6 @@ class PositionRepresenter(object):
         except Exception:
             current = None
         return str(current)
-#
-#    def setST(self, st):
-#        self._position.setST(self, st)
-#
-#    def setHA(self, ha):
-#        self._position.setHA(self, ha)
 
 
 class ControlModeRepresenter():
@@ -361,7 +372,7 @@ class ControlModeRepresenter():
     def sendHA(self):
         plc = self._res.plcManager
 #        print('Send new HA: ',self.getCurrentHA())
-        plc.getPositionHelper().setHA(self.getCurrentHA())
+        plc.getPositionHelper().setTaskHA(self.getCurrentHA())
 
     def setNewSetPoint(self):
         data = self.getCurrentSetPoint()
