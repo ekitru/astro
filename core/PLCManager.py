@@ -143,9 +143,18 @@ class PLCManager(object):
         return self._positionHelper
 
     def isConnected(self):
+        self._dummyRead()
         return self._conn._master._is_opened
 
+    def _dummyRead(self):
+        try:
+            self._conn.readFlag(1000)
+        except Exception:
+            pass
+
     # =====================================
+
+
     def readAlarms(self):
         ret = dict()
         for key in self._alarms:
@@ -255,6 +264,7 @@ class PositionHelper(BaseHelper):
             addr - starting address, 2 words will be used
             number - coordinate in radians
         """
+        print('write coordinate to'+str(addr),number)
         number = long(float(number) * COORD_SCALE)
         self._conn.writeNumber32bit(addr, number)
 
@@ -278,10 +288,12 @@ class PositionHelper(BaseHelper):
         """
         self.logger.info('Set new setpoint')
         self.logger.info('RA: ' + str(ra) + ', DEC: ' + str(dec))
+        print('RA: ' + str(ra) + ', DEC: ' + str(dec))
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
 
     def setHA(self, ha):
+        print('HA', ha)
         self._writeCoordinate(self._axes['ha_task'], ha)
 
     def setST(self, st):
