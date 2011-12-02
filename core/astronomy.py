@@ -182,7 +182,7 @@ class SetPoint(object):
     def getRawData(self):
         """ get setpoint in radians """
         data = dict()
-        data['ra'], data['dec'] = self._ra, self._dec
+        data['ra'], data['dec'] = self._ra.real, self._dec.real
         return data
 
 
