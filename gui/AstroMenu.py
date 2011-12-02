@@ -25,7 +25,6 @@ class AstroMenu(wx.MenuBar):
         dialog = SelectObjectDialog(self, self.controller)
         ret = dialog.ShowModal()
         dialog.Destroy()
-
         if ret == wx.ID_OK:
             self.controller.forceLog()
 
