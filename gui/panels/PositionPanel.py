@@ -51,7 +51,8 @@ class PositionPanel(SimplePanel):
 
         ha = posRepr.getCurrentHourAngle()
         self.curHA.SetLabel(ha)
-        self.taskHA.SetLabel(ha) #TODO
+        ha = posRepr.getTaskHourAngle()
+        self.taskHA.SetLabel(ha)
 
         position = posRepr.getCurrentPosition()
         self.curRA.SetLabel(position['ra'])
