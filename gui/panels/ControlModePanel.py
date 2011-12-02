@@ -74,11 +74,16 @@ class ControlModePanel(SimplePanel):
         print('Setpoint: ', self.controlRepr._res.setPoint.getData())
 
         self.controlRepr.sendTimes()
-        self._startButtonControl()
+        self._switchStartButton()
+
+        if not self.butStart.Enabled:
+            self.rbObjectSetpoint.SetValue(True)
+            self._showManualControl(False)
+
 
         if self.controlRepr.isRemoveControl():
             self.rbRemoteControl.SetValue(True) #switch to remove control
-            self._getManualControlPanel().Hide()
+            self._showManualControl(False)
 
         if self.rbObjectSetpoint.GetValue():
             self.controlRepr.updateSetPointByObjectCoordinates()
@@ -86,7 +91,7 @@ class ControlModePanel(SimplePanel):
         if self.rbManualSetpoint.GetValue(): #continously update setpoint from manual control
             self._getManualControlPanel().updateSetPointCoordinates()
 
-    def _startButtonControl(self):
+    def _switchStartButton(self):
         if self.controlRepr.isMovable() and  not self.controlRepr.isMoving(): #if movable and not started yet
             self.butStart.Enable()
         else:
