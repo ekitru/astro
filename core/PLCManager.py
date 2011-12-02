@@ -264,7 +264,7 @@ class PositionHelper(BaseHelper):
             addr - starting address, 2 words will be used
             number - coordinate in radians
         """
-        print('write coordinate to'+str(addr),number)
+#        print('write coordinate to'+str(addr),number)
         number = long(float(number) * COORD_SCALE)
         self._conn.writeNumber32bit(addr, number)
 

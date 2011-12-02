@@ -315,12 +315,12 @@ class PositionRepresenter(object):
         except Exception:
             current = None
         return str(current)
-
-    def setST(self, st):
-        self._position.setST(self, st)
-
-    def setHA(self, ha):
-        self._position.setHA(self, ha)
+#
+#    def setST(self, st):
+#        self._position.setST(self, st)
+#
+#    def setHA(self, ha):
+#        self._position.setHA(self, ha)
 
 
 class ControlModeRepresenter():
@@ -350,12 +350,12 @@ class ControlModeRepresenter():
 
     def sendLST(self):
         plc = self._res.plcManager
-#        print('Send new LST: ',self.getCurrentST())
+        print('Send new LST: ',self.getCurrentST())
         plc.getPositionHelper().setST(self.getCurrentST())
 
     def sendHA(self):
         plc = self._res.plcManager
-#        print('Send new HA: ',self.getCurrentHA())
+        print('Send new HA: ',self.getCurrentHA())
         plc.getPositionHelper().setHA(self.getCurrentHA())
 
     def setNewSetPoint(self):

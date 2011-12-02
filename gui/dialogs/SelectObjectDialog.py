@@ -70,9 +70,9 @@ class SelectObjectDialog(ObjectListDialog):
 
     def OnListItemSelected(self, event):
         star = self.GetSelectedStar()
-        self.SetNewStar(star)
+        self.FillParameters(star)
 
-    def SetNewStar(self, star):
+    def FillParameters(self, star):
         inName = star['name'].strip()
         self.text.SetValue(inName)
         self.starName = inName
