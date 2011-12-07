@@ -32,3 +32,10 @@ CREATE TABLE IF NOT EXISTS `astro`.`log`
   FOREIGN KEY(`msg_id`) REFERENCES `astro`.`message`(`id`)
 );
 
+CREATE TABLE IF NOT EXISTS `astro`.`alarm_log`
+(
+ `id` INTEGER PRIMARY  KEY NOT NULL AUTO_INCREMENT,
+ `code` INTEGER DEFAULT NULL,
+ `time` INTEGER DEFAULT NULL,
+ `action` BOOLEAN DEFAULT FALSE
+);
