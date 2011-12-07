@@ -24,7 +24,8 @@ class DBQuery(object):
                 self.cursor.execute(sql, args)
                 return self.cursor.fetchone()
             except Exception as error:
-                raise DbException(error.args, self._logger)
+                self._logger.exception(error)
+                raise DbException(error, self._logger)
 
     def selectAll(self, sql, args=None, where=None):
         """ select multy records from DB, if where condition is presented
@@ -33,10 +34,12 @@ class DBQuery(object):
             try:
                 if where:
                     sql = sql + " WHERE " + where
+                print(sql, args)
                 self.cursor.execute(sql, args)
                 return self.cursor.fetchall()
             except Exception as error:
-                raise DbException(error.args, self._logger)
+                self._logger.exception(error)
+                raise DbException(error, self._logger)
 
     def insert(self, sql, args):
         with self._mutex:
@@ -46,7 +49,8 @@ class DBQuery(object):
                 return self.cursor.lastrowid
             except Exception as error:
                 self._db.rollback()
-                raise DbException(error.args, self._logger)
+                self._logger.exception(error)
+                raise DbException(error, self._logger)
 
     def update(self, sql, args):
         with self._mutex:
@@ -55,7 +59,8 @@ class DBQuery(object):
                 self._db.commit()
             except Exception as error:
                 self._db.rollback()
-                raise DbException(error.args, self._logger)
+                self._logger.exception(error)
+                raise DbException(error, self._logger)
 
     def delete(self, sql, args):
         with self._mutex:
@@ -64,7 +69,8 @@ class DBQuery(object):
                 self._db.commit()
             except Exception as error:
                 self._db.rollback()
-                raise DbException(error.args, self._logger)
+                self._logger.exception(error)
+                raise DbException(error, self._logger)
 
     def close(self):
         """ Close cursor if not closed. Also will be called during object deleting """
