@@ -1,5 +1,5 @@
 import wx
-from gui.dialogs import SelectObjectDialog, EditObjectDialog, MessageDialog, LogsDialog, SettingsDialog, AlarmDialog
+from gui.dialogs import *
 from ids import *
 
 __author__ = 'kitru'
@@ -62,6 +62,12 @@ class AstroMenu(wx.MenuBar):
         dialog.ShowModal()
         dialog.Destroy()
 
+    def OnAlarmLog(self,event):
+        """ Alarm logger  """
+        event.Skip(False)
+        dialog = AlarmLogDialog(self, self.controller)
+        dialog.ShowModal()
+        dialog.Destroy()
 
     def showDial(self, Dialog):
         """ Perform dialog opening and closing
@@ -101,9 +107,12 @@ class AstroMenu(wx.MenuBar):
                                     help=trans.get('smSettingsHelp'))
         menu.AppendItem(self.settings)
 
-        self.alarms = wx.MenuItem(menu, ID_ALARMS_DIALOG, text=trans.get('smAlarms') + '\tctrl+a',
-                                    help=trans.get('smAlarmsHelp'))
+        self.alarms = wx.MenuItem(menu, ID_ALARMS_DIALOG, text=trans.get('smActiveAlarms') + '\tctrl+p',
+                                    help=trans.get('smActiveAlarmsHelp'))
         menu.AppendItem(self.alarms)
+        self.alarmLog = wx.MenuItem(menu, ID_ALARM_LOG_DIALOG, text=trans.get('smAlarmLog') + '\tctrl+a',
+                                    help=trans.get('smAlarmLogHelp'))
+        menu.AppendItem(self.alarmLog)
         return menu
 
   
