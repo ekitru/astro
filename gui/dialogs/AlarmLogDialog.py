@@ -5,7 +5,7 @@ import wx
 import sys
 import datetime
 import time
-from db import Log
+from db.AlarmLog import AlarmLog
 from gui.panels.SimplePanel import SimplePanel
 
 __author__ = 'kitru'
@@ -19,7 +19,7 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
         wx.Dialog.__init__(self, parent, title=self.codes.get('dAlarmLogs_title'),
                            style=wx.CAPTION | wx.YES_NO | wx.YES_DEFAULT)
 
-        self._log = Log(resources.getDbManager())
+        self._log = AlarmLog(resources.getDbManager())
         self._list = self.CreateLists(self.codes)
         searchPanel = self.CreateSearchPanel(self.codes)
 
@@ -44,26 +44,27 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
     def CreateLists(self, codes):
         list = wx.ListCtrl(self, id=wx.ID_ANY, style=wx.LC_REPORT | wx.LC_SINGLE_SEL)
         list.SetMinSize((400, 300))
-        list.InsertColumn(col=0, heading=codes.get('dAlarmLogs_ID'), format=wx.LIST_FORMAT_LEFT, width=40)
-        list.InsertColumn(col=1, heading=codes.get('dAlarmLogs_time'), format=wx.LIST_FORMAT_LEFT, width=200)
-        list.InsertColumn(col=2, heading=codes.get('dAlarmLogs_status'), format=wx.LIST_FORMAT_LEFT, width=300)
+        list.InsertColumn(col=0, heading=codes.get('dAlarmLogs_code'), format=wx.LIST_FORMAT_LEFT, width=50)
+        list.InsertColumn(col=1, heading=codes.get('dAlarmLogs_desc'), format=wx.LIST_FORMAT_LEFT, width=320)
+        list.InsertColumn(col=2, heading=codes.get('dAlarmLogs_time'), format=wx.LIST_FORMAT_LEFT, width=180)
+        list.InsertColumn(col=3, heading=codes.get('dAlarmLogs_action'), format=wx.LIST_FORMAT_LEFT, width=80)
         return list
 
     def CreateSearchPanel(self, codes):
         sizer = wx.FlexGridSizer(1, 12, 5, 5)
 
-        self.name = wx.TextCtrl(self, size=(120, -1))
+        self.alarmCode = wx.TextCtrl(self, size=(100, -1))
         self.startDate = wx.DatePickerCtrl(self, dt=wx.DateTime().UNow(), size=(120, -1),
                                            style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
         self.endDate = wx.DatePickerCtrl(self, dt=wx.DateTime.UNow(), size=(120, -1),
                                          style=wx.DP_DEFAULT | wx.DP_ALLOWNONE | wx.DP_SHOWCENTURY)
 
         sizer.Add(self.CreateCaption(codes.get('dAlarmLogs_code')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
-        sizer.Add(self.name)
-        sizer.AddSpacer((40, -1))
+        sizer.Add(self.alarmCode)
+        sizer.AddSpacer((20, -1))
         sizer.Add(self.CreateCaption(codes.get('dAlarmLogs_from')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         sizer.Add(self.startDate)
-        sizer.AddSpacer((40, -1))
+        sizer.AddSpacer((20, -1))
         sizer.Add(self.CreateCaption(codes.get('dAlarmLogs_to')), flag=wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT)
         sizer.Add(self.endDate)
         sizer.AddSpacer((20, -1))
@@ -74,30 +75,21 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
     def FillList(self, logs):
         self._list.DeleteAllItems()
         for log in logs:
-            index = self._list.InsertStringItem(sys.maxint, str(log['id']))
-            self._list.SetStringItem(index, 1, str(log['time']))
-            self._list.SetStringItem(index, 2, unicode(log['name']))
-            self._list.SetStringItem(index, 3, str(log['sRa']))
-            self._list.SetStringItem(index, 4, str(log['sDec']))
-            self._list.SetStringItem(index, 5, unicode(log['msg']))
-            self._list.SetStringItem(index, 6, str(log['ra']))
-            self._list.SetStringItem(index, 7, str(log['dec']))
-            self._list.SetStringItem(index, 8, str(log['focus']))
-            self._list.SetStringItem(index, 9, str(log['temp_in']))
-            self._list.SetStringItem(index, 10, str(log['temp_out']))
-            self._list.SetStringItem(index, 11, self.parseAlarms(log))
+            alarm = self.parseAlarm(log['code'])
+            index = self._list.InsertStringItem(sys.maxint, str(log['code']))
+            self._list.SetStringItem(index, 1, str(alarm))
+            self._list.SetStringItem(index, 2, str(log['time']))
+            action = self.parseAction(log['action'])
+            self._list.SetStringItem(index, 3, str(action))
 
-    def parseAlarms(self, log):
-        status = str(log['status'])
-        if status:
-            statuses = status.split(',')
+    def parseAlarm(self, alarm):
+        return self.codes.get('al'+str(alarm))
+
+    def parseAction(self, act):
+        if act:
+            return self.codes.get('dAlarmLogs_on')
         else:
-            statuses = []
-        list = []
-        for alarm in statuses:
-            list.append(self.codes.get('al'+alarm))
-        alarms = ",".join(list)
-        return alarms
+            return self.codes.get('dAlarmLogs_off')
 
     def getStartDay(self, dateTime):
         """ Return first second of the day """
@@ -132,9 +124,9 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
         return startDate, endDate
 
     def findInLog(self):
-        name = self.name.GetValue()
+        code = self.alarmCode.GetValue()
         startDate, endDate = self.getPeriod()
-        logs = self._log.readLog(name, startDate, endDate)
+        logs = self._log.readLog(code, startDate, endDate)
         self.FillList(logs)
 
     def OnCancel(self, event):
@@ -144,7 +136,7 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
     def OnExport(self, event):
         event.Skip()
         path = join(os.getenv('HOME'), 'Desktop')
-        dialog = wx.FileDialog(self, message="File select", defaultDir=path, defaultFile="temp.log",
+        dialog = wx.FileDialog(self, message="File select", defaultDir=path, defaultFile="alarmHistory.log",
                                style=wx.SAVE | wx.OVERWRITE_PROMPT)
         if dialog.ShowModal() == wx.ID_OK:
             # Open the file for write, write, close
@@ -161,15 +153,7 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
     def parseDict(self, log):
         line = []
         line.append(str(log['id']))
+        line.append(str(log['code']))
         line.append(str(log['time']))
-        line.append(unicode(log['name']))
-        line.append(str(log['sRa']))
-        line.append(str(log['sDec']))
-        line.append(unicode(log['msg']))
-        line.append(str(log['ra']))
-        line.append(str(log['dec']))
-        line.append(str(log['focus']))
-        line.append(str(log['temp_in']))
-        line.append(str(log['temp_out']))
         line.append(str(log['status']))
         return line

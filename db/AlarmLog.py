@@ -34,7 +34,7 @@ class AlarmLog(DBQuery):
 
     def readLog(self, code=None, startDate=None, endDate=None):
         """ Read log, result can be filtered by star name or logging period """
-        select = "SELECT l.`id`, l.`code`, l.`time`, l.`action` FROM `alarm_log` l order by time"
+        select = "SELECT l.`id`, l.`code`, l.`time`, l.`action` FROM `alarm_log` l"
         condition = self.conditionConstruct(code, startDate, endDate)
         rows = self.selectAll(select, where=condition)
         list = []
@@ -55,7 +55,7 @@ class AlarmLog(DBQuery):
         if code:
             list.append("`code` =\"" + code + "\"")
         if startDate and endDate:
-            list.append("`time` between " + str(startDate) + " and " + str(endDate))
+            list.append("l.`time` between " + str(startDate) + " and " + str(endDate))
         row = " AND ".join(list)
         print('condition', row)
         return row
