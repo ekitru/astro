@@ -20,6 +20,8 @@ class PositionPanel(SimplePanel):
         self.curDEC = self.CreateField()
         self.taskDEC = self.CreateField()
         self.curFocus = self.CreateField()
+        self.curDome = self.CreateField()
+        self.taskDome = self.CreateField()
 
         pPosSizer.Add(self.CreateField())
         pPosSizer.Add(self.CreateCaption(codes.get('pPosCur')), flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
@@ -39,6 +41,11 @@ class PositionPanel(SimplePanel):
 
         pPosSizer.Add(self.CreateCaption(codes.get('pPosFoc')), flag=wx.ALL | wx.ALIGN_RIGHT)
         pPosSizer.Add(self.curFocus, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.CreateField())
+
+        pPosSizer.Add(self.CreateCaption(codes.get('pPosDome')), flag=wx.ALL | wx.ALIGN_RIGHT)
+        pPosSizer.Add(self.curDome, flag=wx.ALL | wx.ALIGN_CENTER)
+        pPosSizer.Add(self.taskDome, flag=wx.ALL | wx.ALIGN_CENTER)
 
         #Positioning panel sizer
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get('pPos')), wx.VERTICAL)
@@ -64,3 +71,7 @@ class PositionPanel(SimplePanel):
 
         focus = posRepr.getFocus()
         self.curFocus.SetLabel(focus)
+
+        position = posRepr.getDomePosition()
+        self.curDome.SetLabel(position['cur'])
+        self.taskDome.SetLabel(position['task'])

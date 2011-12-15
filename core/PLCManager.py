@@ -309,3 +309,9 @@ class PositionHelper(BaseHelper):
         """ Get current focus from PLC """
         cur = self._conn.readNumber32bit(self._axes['focus_cur']) / 100.0
         return cur
+
+    def getDomePosition(self):
+        """ Get dome positions: current and task """
+        cur = self._readCoordinate(self._axes['dome_cur'])
+        task = self._readCoordinate(self._axes['dome_task'])
+        return cur, task

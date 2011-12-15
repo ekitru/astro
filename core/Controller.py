@@ -1,7 +1,6 @@
 from posixpath import join
 import logging
 from time import strftime
-import datetime
 import ephem
 
 from Exceptions import   ClosingException
@@ -333,6 +332,15 @@ class PositionRepresenter(object):
             current = None
         return str(current)
 
+    def getDomePosition(self):
+        cur, task = self._position.getDomePosition()
+        cur = str(getDegrees(cur))
+        task = str(getDegrees(task))
+        print(cur,task)
+        pos = dict()
+        pos['cur'] = cur.split(':')[0]+':'+cur.split(':')[1]
+        pos['task'] = task.split(':')[0]+':'+task.split(':')[1]
+        return pos
 
 class ControlModeRepresenter():
     def __init__(self, resources):
