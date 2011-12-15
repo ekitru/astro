@@ -127,6 +127,9 @@ class Object(object):
         self._now()
         return self._fixedBody.alt, self._fixedBody.az
 
+    def getHorizon(self):
+        return  self._observer.horizon
+
     def getCurrentHA(self):
         """ Calculates current object HA for observer. """
         self._now()
