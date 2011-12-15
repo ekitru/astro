@@ -19,15 +19,17 @@ class Observer(ephem.Observer):
             longitude = confDict['longitude']
             elevation = confDict['elevation']
             temp = confDict['temperature']
+            horizon = confDict['horizon']
             #TODO add minimum level
-            self._createObserver(elevation, latitude, longitude, temp)
+            self._createObserver(elevation, latitude, longitude, horizon, temp)
         except Exception as ex:
             raise ConfigurationException(ex.args)
 
-    def _createObserver(self, elevation, latitude, longitude, temp):
+    def _createObserver(self, elevation, latitude, longitude, horizon, temp):
         self.long = ephem.degrees(str(longitude))
         self.lat = ephem.degrees(str(latitude))
         self.elevation = float(elevation)
+        self.horizon = str(horizon)
         self.temp = float(temp)  #temperature will be corrected by PLC later
 
     def getUTC(self):
