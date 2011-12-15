@@ -10,7 +10,7 @@ class ObjectPanel(SimplePanel):
     """
     def __init__(self, parent, id, codes):
         SimplePanel.__init__(self, parent, id)
-
+        self.codes = codes
         comSizer = wx.StaticBoxSizer(wx.StaticBox(self, label=codes.get("pObject")), wx.VERTICAL)
         comSizer.Add(self.CreateCoordinatesGrid(codes), flag=wx.ALL, border=10)
         comSizer.Add(wx.StaticLine(self, wx.ID_ANY, style=wx.LI_HORIZONTAL), flag=wx.ALL | wx.EXPAND)
@@ -52,10 +52,16 @@ class ObjectPanel(SimplePanel):
             codes - translation codes
         """
         sizer = wx.BoxSizer(wx.VERTICAL)
+        self.objAccess = self.CreateCoordinateField()
 
         objPos = self.CreateObjectPosition(codes)
-        sizer.Add(objPos, flag=wx.ALL, border=10)
+        objStatus = wx.BoxSizer(wx.HORIZONTAL)
+        objStatus.Add(self.CreateCaption(codes.get('pObjAccessible')), flag=wx.RIGHT | wx.ALIGN_RIGHT, border=10)
+        objStatus.Add(self.objAccess, flag=wx.ALL | wx.ALIGN_CENTER, proportion=2)
 
+
+        sizer.Add(objPos, flag=wx.LEFT | wx.RIGHT | wx.TOP, border=10)
+        sizer.Add(objStatus, flag=wx.ALL | wx.EXPAND, border=10)
         return sizer
 
     def CreateObjectPosition(self, codes):
@@ -110,3 +116,6 @@ class ObjectPanel(SimplePanel):
             # show exosition time
             exp = object.getExpositionTime()
             self.objExpositionTime.SetLabel(exp)
+
+            accesibility = object.isAccessible()
+            self.objAccess.SetLabel(self.codes.get(accesibility))

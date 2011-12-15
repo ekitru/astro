@@ -127,6 +127,16 @@ class ObjectRepresenter(object):
     def _roundTime(self, time):
         return time.split(".")[0]
 
+    def isAccessible(self):
+        alt, az = self._object.getHorizontalPosition()
+        horizon = self._object.getHorizon()
+        print('alt'+str(alt)+' and horizon '+str(horizon))
+        if alt.real>horizon.real:
+            return 'pObjVisible'
+        else:
+            return 'pObjNotVisible'
+
+
 
 class TimeRepresenter(object):
     """ Local time representation """
