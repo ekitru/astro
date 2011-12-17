@@ -47,7 +47,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
     def OnListItemActivated(self, event):
         star = self.GetSelectedStar()
-        dialog = UpdateStarDialog(self, self.controller, star)
+        dialog = UpdateStarDialog(self, self.controller.codes.get('dUpdateObj_title'), self.controller, star)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -68,7 +68,7 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
             event.Skip()
 
     def OnAddClicked(self, event):
-        dialog = AddStarDialog(self, self.controller)
+        dialog = AddStarDialog(self, self.controller.codes.get('dAddObj_title'), self.controller)
         dialog.ShowModal()
         dialog.Destroy()
         ObjectListDialog.OnListItemActivated(self, event)
@@ -82,8 +82,9 @@ class EditObjectDialog(ObjectListDialog, SimplePanel):
 
 
 class AddStarDialog(wx.Dialog):
-    def __init__(self, parent, controller):
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=controller.codes.get('dAddObj_title'), style=wx.CAPTION)
+    def __init__(self, parent, title, controller):
+        id = wx.ID_ANY
+        wx.Dialog.__init__(self, parent, id, title, style=wx.CAPTION)
         self.starManager = controller.resources.dbStar
         self.codes = controller.codes
         self.name = wx.TextCtrl(self, size=(120, -1))
@@ -150,8 +151,8 @@ class AddStarDialog(wx.Dialog):
         self.EndModal(wx.ID_CANCEL)
 
 class UpdateStarDialog(AddStarDialog):
-    def __init__(self, parent, controller, star):
-        AddStarDialog.__init__(self, parent, controller)
+    def __init__(self, title, parent, controller, star):
+        AddStarDialog.__init__(self, title, parent, controller)
         self.name.SetValue(star['name'])
         self.name.Disable()
         self.RA.SetValue(star['ra'])
