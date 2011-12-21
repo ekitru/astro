@@ -71,8 +71,7 @@ class ControlModePanel(SimplePanel):
 
 
     def update(self):
-        print('Setpoint: ', self.controlRepr._res.setPoint.getData())
-
+#        print('Setpoint: ', self.controlRepr._res.setPoint.getData())
         self.controlRepr.sendTimes()
         self._switchStartButton()
 
