@@ -38,5 +38,10 @@ class CommunicationConfig(SimpleConfig):
         logging.info('=== Read alarms  ===')
         return self.getConfigBySection('alarms')
 
+    def getAlarmsAddresses(self):
+        """ Addresses of alarms history logger, may raise Configuration Exception """
+        logging.info('=== Read alarms  ===')
+        return self.getConfigBySection('alarm log')
+
 
 
