@@ -71,7 +71,6 @@ class AlarmLog(DBQuery):
         self._code = code
 
     def setTime(self, time):
-        #TODO  make conversion
         self._timestamp = time
 
     def setAction(self, word):
