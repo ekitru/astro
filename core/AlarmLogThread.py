@@ -41,11 +41,9 @@ class AlarmLogThread(object):
         """ All logging stuff performs here. This method is calling by logging thread """
         with self._mutex:
             if self._resources.plcManager.isConnected():
-                #TODO
-                print('Alarm log should be here')
                 nextAlarm = self._plcHelper.getNextAlarm()
                 while nextAlarm:
                     print('Processing alarm')
-
+                    #TODO
                     time.sleep(1)
                     nextAlarm = self._plcHelper.getNextAlarm()
