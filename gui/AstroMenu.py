@@ -40,7 +40,7 @@ class AstroMenu(wx.MenuBar):
         event.Skip(False)
         ret = self.showDial(MessageDialog)
         if ret == wx.ID_OK:
-            print('updated msg')
+#            print('updated msg')
             self.controller.forceLog()
 
     def OnLogs(self, event):
