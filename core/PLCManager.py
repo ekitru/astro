@@ -116,6 +116,7 @@ class PLCManager(object):
         self._stateHelper = StateHelper(self._conn, configs, self.logger)
         self._modeHelper = ModeHelper(self._conn, configs, self.logger)
         self._positionHelper = PositionHelper(self._conn, configs, self.logger)
+        self._alarmHelper = AlarmHelper(self._conn, configs, self.logger)
         self.logger.info('Helpers are done')
 
         self._alarms = configs.getAlarms()
@@ -141,6 +142,12 @@ class PLCManager(object):
         @rtype PositionHelper
         """
         return self._positionHelper
+
+    def getAlarmHelper(self):
+        """ Return the alarm helper
+        @rtype AlarmHelper
+        """
+        return self._alarmHelper
 
     def isConnected(self):
         self._dummyRead()
@@ -315,3 +322,40 @@ class PositionHelper(BaseHelper):
         cur = self._readCoordinate(self._axes['dome_cur'])
         task = self._readCoordinate(self._axes['dome_task'])
         return cur, task
+
+class AlarmHelper(BaseHelper):
+    """ Alarm history helper"""
+
+    def __init__(self, connection, config, logger):
+        BaseHelper.__init__(self, connection, logger)
+        self._alarm = config.getAlarmsAddresses()
+        print(self._alarm)
+
+
+    def getNextlarm(self):
+        isAlarm = self._alarm['newalarm']
+        if self._conn.readNumber16bit(isAlarm) is 1:
+            print('Get new alarm')
+            time = self._getTime()
+            id = self._getID()
+            status = self._getStatus()
+            print('ID: '+str(id)+" status: "+str(status)+" time: "+str(time))
+            return id,status,time
+
+    def _getID(self):
+        return int(self._conn.readNumber16bit(self._alarm['id']))
+
+    def _getStatus(self):
+        status = self._conn.readNumber16bit(self._alarm['status'])
+        if status is 20:
+            return True
+        elif status is 10:
+            return False
+        else:
+            return None
+
+    def _getTime(self):
+        time = self._conn.readNumber32bit(self._alarm['time'])
+        return int(time)
+
+
