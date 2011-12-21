@@ -1,4 +1,3 @@
-from twisted.python.util import OrderedDict
 from db.DbQuery import DBQuery
 import time
 from core import astronomy
@@ -22,7 +21,7 @@ class Log(DBQuery):
     def _addRecord(self):
         sql = self._getSQL()
         args = self._getArgs()
-        print(sql,args)
+#        print(sql,args)
         self.insert(sql, args)
 
     def _getSQL(self):
@@ -68,7 +67,7 @@ class Log(DBQuery):
         if startDate and endDate:
             list.append("l.`time` between " + str(startDate) + " and " + str(endDate))
         row = " AND ".join(list)
-        print('condition', row)
+#        print('condition', row)
         return row
 
 

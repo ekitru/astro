@@ -119,7 +119,7 @@ class ManualSetpointPanel(SimplePanel):
     def updateSetPointCoordinates(self):
         if self._validCoordinates():
             ra, dec = self.inFieldRA.GetValue(), self.inFieldDEC.GetValue()
-            print(ra,dec)
+#            print(ra,dec)
             self._setpoint.setPosition(ra, dec)
 
     def _handleToggleLogic(self, but1, but2, but3):

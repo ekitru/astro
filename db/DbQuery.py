@@ -34,7 +34,7 @@ class DBQuery(object):
             try:
                 if where:
                     sql = sql + " WHERE " + where
-                print(sql, args)
+#                print(sql, args)
                 self.cursor.execute(sql, args)
                 return self.cursor.fetchall()
             except Exception as error:
