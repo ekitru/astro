@@ -1,14 +1,15 @@
-from posixpath import join
 import logging
 from time import strftime
-import ephem
+from posixpath import join
+from core.logger import getLogPath
 
 from Exceptions import   ClosingException
-from LogThread import LogThread
+from core.LogThread import LogThread
+from core.AlarmLogThread import AlarmLogThread
 from core.Resources import Resources
 from core.astronomy import rad2str, getHours, getDegrees
 from core.config.TranslationConfig import TranslationConfig
-from core.logger import getLogPath
+import ephem
 
 __author__ = 'kitru'
 
@@ -27,6 +28,7 @@ class Controller(object):
         self.tsPosition = PositionRepresenter(plcManager.getPositionHelper())
         self.tsControl = ControlModeRepresenter(self.resources)
 
+
     def __initLogger(self):
         """ Initialize base system logger  """
         logPath = getLogPath()
@@ -42,6 +44,7 @@ class Controller(object):
         #        try:
         logging.info('======= Program initialization =======')
         self.logThread = LogThread(self.resources)
+        self.alarmLogThred = AlarmLogThread(self.resources)
 
     #        except ConfigurationException as ce:
     #            logging.info('Error during initialization occure', ce)
@@ -56,6 +59,7 @@ class Controller(object):
         try:
             logging.info('======= Program closing =======')
             self.logThread.stop()
+            self.alarmLogThred.stop()
             del self.resources
         except Exception as e:
             raise ClosingException(e)

@@ -1,5 +1,6 @@
 import logging
 import threading
+import time
 from db.AlarmLog import AlarmLog
 
 __author__ = 'kitru'
@@ -17,7 +18,7 @@ class AlarmLogThread(object):
         self._plcHelper = self._resources.plcManager.getAlarmHelper()
         db = self._resources.getDbManager()
         self._log = AlarmLog(db)
-        self._period = 100000
+        self._period = 10
         self._start()
 #        except Exception as ex:
 #            raise ConfigurationException(ex)
@@ -42,7 +43,9 @@ class AlarmLogThread(object):
             if self._resources.plcManager.isConnected():
                 #TODO
                 print('Alarm log should be here')
-                nextAlarm = self._plcHelper.getNextlarm()
+                nextAlarm = self._plcHelper.getNextAlarm()
                 while nextAlarm:
-                    pass
-#                    nextAlarm = self._plcHelper.getNextAlarm()
+                    print('Processing alarm')
+
+                    time.sleep(1)
+                    nextAlarm = self._plcHelper.getNextAlarm()

@@ -332,7 +332,7 @@ class AlarmHelper(BaseHelper):
         print(self._alarm)
 
 
-    def getNextlarm(self):
+    def getNextAlarm(self):
         isAlarm = self._alarm['newalarm']
         if self._conn.readNumber16bit(isAlarm) is 1:
             print('Get new alarm')
@@ -340,6 +340,7 @@ class AlarmHelper(BaseHelper):
             id = self._getID()
             status = self._getStatus()
             print('ID: '+str(id)+" status: "+str(status)+" time: "+str(time))
+            self._conn.writeNumber16bit(isAlarm, 0)
             return id,status,time
 
     def _getID(self):
