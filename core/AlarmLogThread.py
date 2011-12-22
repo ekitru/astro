@@ -38,16 +38,15 @@ class AlarmLogThread(object):
             self._timer.join()
 
     def _doWork(self):
-        return #TODO temp solution`
         """ All logging stuff performs here. This method is calling by logging thread """
         with self._mutex:
+            print('Check for alarm')
             if self._resources.plcManager.isConnected():
                 nextAlarm = self._plcHelper.getNextAlarm()
                 while nextAlarm:
                     print('Processing alarm')
                     print(nextAlarm)
                     self.storeRecord(nextAlarm)
-                    time.sleep(1)
                     nextAlarm = self._plcHelper.getNextAlarm()
 
     def storeRecord(self, nextAlarm):
