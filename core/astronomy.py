@@ -20,7 +20,6 @@ class Observer(ephem.Observer):
             elevation = confDict['elevation']
             temp = confDict['temperature']
             horizon = confDict['horizon']
-            #TODO add minimum level
             self._createObserver(elevation, latitude, longitude, horizon, temp)
         except Exception as ex:
             raise ConfigurationException(ex.args)
@@ -41,6 +40,7 @@ class Observer(ephem.Observer):
         return self.sidereal_time()
 
     def getJulianDate(self):
+        """ Calculates current Julian date """
         return ephem.julian_date()
 
     def _now(self):
@@ -48,7 +48,7 @@ class Observer(ephem.Observer):
         self.date = ephem.now()
 
     def updateTemp(self, temp):
-        self.temp = float(temp) #TODO implement this
+        self.temp = float(temp) #TODO not very needed, not will be good to add this functionality
 
     def updatePressure(self, pressure):
         self.pressure = pressure #TODO not very needed, not will be good to add this functionality
@@ -109,17 +109,6 @@ class Object(object):
     def getEquatorialPosition(self):
         """ position for now """
         self._now()
-#        #TODO testing
-#        print(' >>>>----------------------')
-#        print('epoch2000 original: ',self.getPosition())
-#        print('Apparent Topocentric Position', (self._fixedBody.ra, self._fixedBody.dec))
-#        ra, dec = self._fixedBody.ra, self._fixedBody.dec
-#        print('epoch2011 = orig ',ra,dec)
-#        coord = ephem.Equatorial(ra, dec, epoch=ephem.now())
-#        print('coord', coord.ra, coord.dec)
-#        coord2 = ephem.Equatorial(coord, epoch=ephem.J2000)
-#        print('coord2', coord2.ra, coord2.dec)
-
         return self._fixedBody.ra, self._fixedBody.dec
 
     def getHorizontalPosition(self):
