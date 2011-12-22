@@ -34,6 +34,7 @@ class SimpleConfig(object):
             raise ConfigurationException(msg, self._logger)
 
     def saveConfiguration(self, fileName):
+        """ Save changes to configuration file.  """
         try:
             self._logger.info('Write configuration file: ' + fileName)
             self._config.write(codecs.open(fileName + '.conf', "w", "utf8"))
@@ -42,11 +43,11 @@ class SimpleConfig(object):
             raise ConfigurationException(msg, self._logger)
 
     def _getItemsBySection(self, section_name):
-        """ Return dictionary of selected section items """
         list = self._config.items(section_name)
         return dict(list)
 
     def getConfigBySection(self, section_name):
+        """ Return dictionary of selected section items """
         try:
             self._logger.info('Read section ' + '\"' + section_name + '\"')
             return self._getItemsBySection(section_name)
