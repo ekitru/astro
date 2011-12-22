@@ -187,11 +187,11 @@ class PLCManager(object):
 
     def startMoving(self):
         self.logger.info('Start moving')
-        self._conn.writeFlag(self._state['move_stop'], 1)
+        self._conn.writeFlag(self._state['move'], 1)
 
     def stopMoving(self):
         self.logger.info('Stop moving')
-        self._conn.writeFlag(self._state['move_stop'], 0)
+        self._conn.writeFlag(self._state['stop'], 1)
 
     def close(self):
         self.logger.info("Close Communication connection")
@@ -234,7 +234,7 @@ class ModeHelper(BaseHelper):
                 self._conn.readNumber16bit(self._state['comm_add_check']) == 1)
 
     def readMovingStatus(self):
-        return self._conn.readFlag(self._state['move_stop'])
+        return self._conn.readFlag(self._state['move'])
 
     def readMovingFlag(self):
         return self._conn.readFlag(self._state['moveable'])
