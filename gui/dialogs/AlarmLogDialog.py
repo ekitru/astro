@@ -151,9 +151,10 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
         dialog.Destroy()
 
     def parseDict(self, log):
+        print(log)
         line = []
         line.append(str(log['id']))
         line.append(str(log['code']))
         line.append(str(log['time']))
-        line.append(str(log['status']))
+        line.append(str(log['action']))
         return line
