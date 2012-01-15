@@ -42,7 +42,7 @@ class AlarmLog(DBQuery):
             data = dict()
             data['id'] = row[0]
             data['code'] = row[1]
-            data['time'] = time.ctime(int(row[2])-2*60*60) #TODO fix it, quick and agly solution
+            data['time'] = time.ctime(int(row[2]))
             data['action'] = row[3]
             list.append(data)
         self._log = list
