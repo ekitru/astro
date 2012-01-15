@@ -77,10 +77,10 @@ class AlarmLogDialog(wx.Dialog, SimplePanel):
         for log in logs:
             alarm = self.parseAlarm(log['code'])
             index = self._list.InsertStringItem(sys.maxint, str(log['code']))
-            self._list.SetStringItem(index, 1, str(alarm))
+            self._list.SetStringItem(index, 1, unicode(alarm))
             self._list.SetStringItem(index, 2, str(log['time']))
             action = self.parseAction(log['action'])
-            self._list.SetStringItem(index, 3, str(action))
+            self._list.SetStringItem(index, 3, unicode(action))
 
     def parseAlarm(self, alarm):
         return self.codes.get('al'+str(alarm))

@@ -34,7 +34,7 @@ class AlarmDialog(wx.Dialog, SimplePanel):
     def update(self, resources):
         alarms = resources.plcManager.readAlarms()
         for key in alarms:
-            field  =self._alarms[key]
+            field  = self._alarms[key]
             field.SetLabel(alarms[key])
 
 
