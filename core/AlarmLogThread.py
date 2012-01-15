@@ -52,5 +52,5 @@ class AlarmLogThread(object):
         self._log.cleanValues()
         self._log.setCode(nextAlarm[0])
         self._log.setAction(nextAlarm[1])
-        self._log.setTime(nextAlarm[2])
+        self._log.setTime(int(nextAlarm[2])+2*60*60)
         self._log.writeToLog()
