@@ -27,7 +27,8 @@ class LogThread(object):
     def _start(self):
         """ Starts timer to run, function is looped by itself.
         Should be interrupted by calling timer.cancel() in other case it will become a daemon  """
-        self._doWork()
+        if self._plc.isSwitchedOn():
+            self._doWork()
         self._timer = threading.Timer(self._period, self._start)
         self._timer.start()
 

@@ -149,9 +149,16 @@ class PLCManager(object):
         """
         return self._alarmHelper
 
+    def isSwitchedOn(self):
+        if self.isConnected() and self._conn.readFlag(1030) is 1: #TODO switcher check is hardcoded!
+            return True
+        else:
+            return False
+
     def isConnected(self):
         self._dummyRead()
         return self._conn._master._is_opened
+
 
     def _dummyRead(self):
         try:
@@ -203,6 +210,15 @@ class BaseHelper(object):
         self._conn = connection
         self.logger = logger
 
+    def isConnected(self):
+        self._dummyRead()
+        return self._conn._master._is_opened
+
+    def _dummyRead(self):
+        try:
+            self._conn.readFlag(1000)
+        except Exception:
+            pass
 
 class StateHelper(BaseHelper):
     """ Common telescope switchers state """
@@ -234,7 +250,10 @@ class ModeHelper(BaseHelper):
                 self._conn.readNumber16bit(self._state['comm_add_check']) == 1)
 
     def readMovingStatus(self):
-        return self._conn.readFlag(self._state['move'])
+        if self.isConnected():
+            return self._conn.readFlag(self._state['move'])
+        else:
+            return False
 
     def readMovingFlag(self):
         return self._conn.readFlag(self._state['moveable'])
