@@ -25,8 +25,7 @@ class AlarmLogThread(object):
     def _start(self):
         """ Starts timer to run, function is looped by itself.
         Should be interrupted by calling timer.cancel() in other case it will become a daemon  """
-        if self._resources.plcManager.isSwitchedOn():
-            self._doWork()
+        self._doWork()
         self._timer = threading.Timer(self._period, self._start)
         self._timer.start()
 
@@ -52,5 +51,5 @@ class AlarmLogThread(object):
         self._log.cleanValues()
         self._log.setCode(nextAlarm[0])
         self._log.setAction(nextAlarm[1])
-        self._log.setTime(int(nextAlarm[2])+2*60*60)
+        self._log.setTime(int(nextAlarm[2])-2*60*60)
         self._log.writeToLog()
