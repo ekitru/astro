@@ -1,5 +1,7 @@
+import ephem
 import modbus_tk.defines as cst
 import modbus_tk.modbus_tcp as modbus_tcp
+from core.astronomy import normRa
 
 from core.config.CommunicationConfig import CommunicationConfig
 from logger import openLog, closeLog
@@ -303,7 +305,8 @@ class PositionHelper(BaseHelper):
     def getCurrentPosition(self):
         """ Returns current telescope position in radians """
         #TODO ask Ivan ra = self._readCoordinate(self._axes['ra_cur'])
-        ra = self._readCoordinate(self._axes['st_task']) - self.getCurrentHourAngle()
+        raw_ra = self._readCoordinate(self._axes['st_task']) - self.getCurrentHourAngle()
+        ra = normRa(ephem.hours(raw_ra))
         dec = self._readCoordinate(self._axes['dec_cur'])
         return ra, dec
 

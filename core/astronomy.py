@@ -48,7 +48,6 @@ class Observer(ephem.Observer):
     def _now(self):
         """ Updates observer date to current date """
         self.date = ephem.now()
-        print("Current observer:"+str(self))
 
 #    def updateTemp(self, temp):
 #        self.temp = float(temp) #TODO not very needed, not will be good to add this functionality
