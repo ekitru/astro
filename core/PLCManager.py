@@ -307,8 +307,9 @@ class PositionHelper(BaseHelper):
         #TODO ask Ivan ra = self._readCoordinate(self._axes['ra_cur'])
         raw_ra = self._readCoordinate(self._axes['st_task']) - self.getCurrentHourAngle()
         ra = normRa(ephem.hours(raw_ra))
+        print("orig: "+str(raw_ra)+" norm: "+str(ra.real))
         dec = self._readCoordinate(self._axes['dec_cur'])
-        return ra, dec
+        return ra.real, dec
 
     def getSetpointPosition(self):
         """ Returns setpoint telescope position in radians """

@@ -26,7 +26,7 @@ class Controller(object):
         self.tsMode = TelescopeModeRepresenter(plcManager.getModeHelper())
         self.tsStatus = TelescopeStateRepresenter(plcManager.getStateHelper())
         self.tsPosition = PositionRepresenter(plcManager.getPositionHelper())
-        self.tsControl = ControlModeRepresenter(self.resources)
+        self.tsControl = ControlModeRepresenter(self.resources, self)
 
 
     def __initLogger(self):
@@ -357,8 +357,9 @@ class PositionRepresenter(object):
         return pos
 
 class ControlModeRepresenter():
-    def __init__(self, resources):
+    def __init__(self, resources, controller):
         self._res = resources
+        self.controller = controller
         self._taskRa = 0
 
     def updateSetPointByObjectCoordinates(self):
@@ -421,6 +422,7 @@ class ControlModeRepresenter():
     def startMoving(self):
         plc = self._res.plcManager
         plc.startMoving()
+        self.controller.forceLog()
 
     def stopMoving(self):
         plc = self._res.plcManager
