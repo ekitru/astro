@@ -19,17 +19,19 @@ class Observer(ephem.Observer):
             longitude = confDict['longitude']
             elevation = confDict['elevation']
             temp = confDict['temperature']
+            pressure = confDict['pressure']
             horizon = confDict['horizon']
-            self._createObserver(elevation, latitude, longitude, horizon, temp)
+            self._createObserver(elevation, latitude, longitude, horizon, temp, pressure)
         except Exception as ex:
             raise ConfigurationException(ex.args)
 
-    def _createObserver(self, elevation, latitude, longitude, horizon, temp):
+    def _createObserver(self, elevation, latitude, longitude, horizon, temp, pressure):
         self.long = ephem.degrees(str(longitude))
         self.lat = ephem.degrees(str(latitude))
         self.elevation = float(elevation)
         self.horizon = str(horizon)
         self.temp = float(temp)  #temperature will be corrected by PLC later
+        self.pressure = float(pressure)
 
     def getUTC(self):
         return self.date
@@ -46,12 +48,13 @@ class Observer(ephem.Observer):
     def _now(self):
         """ Updates observer date to current date """
         self.date = ephem.now()
+        print("Current observer:"+str(self))
 
-    def updateTemp(self, temp):
-        self.temp = float(temp) #TODO not very needed, not will be good to add this functionality
-
-    def updatePressure(self, pressure):
-        self.pressure = pressure #TODO not very needed, not will be good to add this functionality
+#    def updateTemp(self, temp):
+#        self.temp = float(temp) #TODO not very needed, not will be good to add this functionality
+#
+#    def updatePressure(self, pressure):
+#        self.pressure = pressure #TODO not very needed, not will be good to add this functionality
 
 
 class Object(object):
