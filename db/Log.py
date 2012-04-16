@@ -49,7 +49,7 @@ class Log(DBQuery):
             data['sRa'], data['sDec'] = astronomy.rad2str(row[3], row[4])
             data['msg'] = row[5]
             data['ra'], data['dec'] = astronomy.rad2str(row[6], row[7])
-            data['alt'] = row[8]
+            data['alt'] = str(astronomy.getDegrees(row[8]))
             data['focus'] = row[9]
             data['temp_in'], data['temp_out'] = row[10], row[11]
             data['status'] = row[12]

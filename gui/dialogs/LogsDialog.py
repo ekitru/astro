@@ -52,10 +52,11 @@ class LogsDialog(wx.Dialog, SimplePanel):
         list.InsertColumn(col=5, heading=codes.get('dLogs_text'), format=wx.LIST_FORMAT_LEFT, width=200)
         list.InsertColumn(col=6, heading=codes.get('dLogs_ra'), format=wx.LIST_FORMAT_LEFT, width=80)
         list.InsertColumn(col=7, heading=codes.get('dLogs_dec'), format=wx.LIST_FORMAT_LEFT, width=80)
-        list.InsertColumn(col=8, heading=codes.get('dLogs_focus'), format=wx.LIST_FORMAT_LEFT)
-        list.InsertColumn(col=9, heading=codes.get('dLogs_temp_in'), format=wx.LIST_FORMAT_LEFT)
-        list.InsertColumn(col=10, heading=codes.get('dLogs_temp_out'), format=wx.LIST_FORMAT_LEFT)
-        list.InsertColumn(col=11, heading=codes.get('dLogs_status'), format=wx.LIST_FORMAT_LEFT, width=300)
+        list.InsertColumn(col=8, heading=codes.get('dLogs_alt'), format=wx.LIST_FORMAT_LEFT, width=80)
+        list.InsertColumn(col=9, heading=codes.get('dLogs_focus'), format=wx.LIST_FORMAT_LEFT)
+        list.InsertColumn(col=10, heading=codes.get('dLogs_temp_in'), format=wx.LIST_FORMAT_LEFT)
+        list.InsertColumn(col=11, heading=codes.get('dLogs_temp_out'), format=wx.LIST_FORMAT_LEFT)
+        list.InsertColumn(col=12, heading=codes.get('dLogs_status'), format=wx.LIST_FORMAT_LEFT, width=300)
         return list
 
     def CreateSearchPanel(self, codes):
@@ -91,10 +92,11 @@ class LogsDialog(wx.Dialog, SimplePanel):
             self._list.SetStringItem(index, 5, unicode(log['msg']))
             self._list.SetStringItem(index, 6, str(log['ra']))
             self._list.SetStringItem(index, 7, str(log['dec']))
-            self._list.SetStringItem(index, 8, str(log['focus']))
-            self._list.SetStringItem(index, 9, str(log['temp_in']))
-            self._list.SetStringItem(index, 10, str(log['temp_out']))
-            self._list.SetStringItem(index, 11, self.parseAlarms(log))
+            self._list.SetStringItem(index, 8, str(log['alt']))
+            self._list.SetStringItem(index, 9, str(log['focus']))
+            self._list.SetStringItem(index, 10, str(log['temp_in']))
+            self._list.SetStringItem(index, 11, str(log['temp_out']))
+            self._list.SetStringItem(index, 12, self.parseAlarms(log))
 
     def parseAlarms(self, log):
         status = str(log['status'])
@@ -177,6 +179,7 @@ class LogsDialog(wx.Dialog, SimplePanel):
         line.append(unicode(log['msg']))
         line.append(str(log['ra']))
         line.append(str(log['dec']))
+        line.append(str(log['alt']))
         line.append(str(log['focus']))
         line.append(str(log['temp_in']))
         line.append(str(log['temp_out']))

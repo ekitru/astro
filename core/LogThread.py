@@ -10,9 +10,9 @@ class LogThread(object):
     Timer could be stopped be calling stop() method.  """
 
     def __init__(self, resources):
-#        try:
         self._mutex = threading.RLock()
         logging.info('Starting logging thread')
+        self._object = resources.object
         self._resources = resources
         db = self._resources.getDbManager()
         self._log = Log(db)
@@ -20,9 +20,8 @@ class LogThread(object):
         self._plc = self._resources.plcManager
         self._position = self._resources.plcManager.getPositionHelper()
         self._period = resources.config.getLoggingTime()
+        self._altitude = None
         self._start()
-#        except Exception as ex:
-#            raise ConfigurationException(ex)
 
     def _start(self):
         """ Starts timer to run, function is looped by itself.
@@ -49,6 +48,7 @@ class LogThread(object):
                 self._log.setCurrentFocus(self._getCurrentFocus())
                 self._log.setTemperature(*self._getTemperature())
                 self._log.setAlarmStatus(self._getAlarmStatus())
+                self._log.setCurrentAltitude(self._getAltitude())
                 self._log.writeToLog()
 
     def force(self):
@@ -74,6 +74,11 @@ class LogThread(object):
     def _getCurrentRaDec(self):
         """ current telescope positions are taken directly from plc """
         return self._position.getCurrentPosition()
+
+    def _getAltitude(self):
+        if self._object.selected():
+            alt, az = self._object.getHorizontalPosition()
+            return alt.real
 
     def _getCurrentFocus(self):
         """ current telescope positions are taken directly from plc """
