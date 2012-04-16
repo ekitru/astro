@@ -26,7 +26,7 @@ class LogThread(object):
     def _start(self):
         """ Starts timer to run, function is looped by itself.
         Should be interrupted by calling timer.cancel() in other case it will become a daemon  """
-        if self._plc.isSwitchedOn() or True:
+        if self._plc.isSwitchedOn():
             self._doWork()
         self._timer = threading.Timer(self._period, self._start)
         self._timer.start()
@@ -41,13 +41,13 @@ class LogThread(object):
     def _doWork(self):
         """ All logging stuff performs here. This method is calling by logging thread """
         with self._mutex:
-            if self._resources.plcManager.isConnected() or True:
+            if self._resources.plcManager.isConnected():
                 self._log.setStarId(self._getStarId())
                 self._log.setMsgId(self._getMsgId())
-                #self._log.setCurrentRaDec(*self._getCurrentRaDec())
-                #self._log.setCurrentFocus(self._getCurrentFocus())
-                #self._log.setTemperature(*self._getTemperature())
-                #self._log.setAlarmStatus(self._getAlarmStatus())
+                self._log.setCurrentRaDec(*self._getCurrentRaDec())
+                self._log.setCurrentFocus(self._getCurrentFocus())
+                self._log.setTemperature(*self._getTemperature())
+                self._log.setAlarmStatus(self._getAlarmStatus())
                 self._log.setCurrentAltitude(self._getAltitude())
                 self._log.writeToLog()
 

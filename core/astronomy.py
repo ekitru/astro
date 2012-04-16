@@ -111,6 +111,21 @@ class Object(object):
     def getEquatorialPosition(self):
         """ position for now """
         self._now()
+        #print("TEST")
+        #print("Zero pressure")
+        #self._observer.pressure=0
+        #self._now()
+        #print("ALT-AZ",self._fixedBody.alt, self._fixedBody.az)
+        #print("RA-DEC",self._fixedBody.ra,self._fixedBody.dec)
+        #print("RA-DEC OF",self._observer.radec_of(self._fixedBody.az, self._fixedBody.alt))
+        #
+        #print("Pressure 10000mm")
+        #self._observer.pressure=10000
+        #self._now()
+        #print("ALT-AZ",self._fixedBody.alt, self._fixedBody.az)
+        #print("RA-DEC",self._fixedBody.ra,self._fixedBody.dec)
+        #print("RA-DEC OF",self._observer.radec_of(self._fixedBody.az, self._fixedBody.alt))
+
         return self._fixedBody.ra, self._fixedBody.dec
 
     def getHorizontalPosition(self):
