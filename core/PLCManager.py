@@ -307,7 +307,7 @@ class PositionHelper(BaseHelper):
         #TODO ask Ivan ra = self._readCoordinate(self._axes['ra_cur'])
         raw_ra = self._readCoordinate(self._axes['st_task']) - self.getCurrentHourAngle()
         ra = normRa(ephem.hours(raw_ra))
-        print("orig: "+str(raw_ra)+" norm: "+str(ra.real))
+#        print("orig: "+str(raw_ra)+" norm: "+str(ra.real))
         dec = self._readCoordinate(self._axes['dec_cur'])
         return ra.real, dec
 
@@ -325,7 +325,7 @@ class PositionHelper(BaseHelper):
         """
         self.logger.info('Set new setpoint')
         self.logger.info('RA: ' + str(ra) + ', DEC: ' + str(dec))
-        print('RA: ' + str(ra) + ', DEC: ' + str(dec))
+#        print('RA: ' + str(ra) + ', DEC: ' + str(dec))
         self._writeCoordinate(self._axes['ra_task'], ra)
         self._writeCoordinate(self._axes['dec_task'], dec)
 

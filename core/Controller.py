@@ -134,7 +134,7 @@ class ObjectRepresenter(object):
     def isAccessible(self):
         alt, az = self._object.getHorizontalPosition()
         horizon = self._object.getHorizon()
-        print('alt'+str(alt)+' and horizon '+str(horizon))
+#        print('alt '+str(alt)+' and horizon '+str(horizon))
         if alt.real>horizon.real:
             return 'pObjVisible'
         else:
