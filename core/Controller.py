@@ -92,11 +92,11 @@ class ObjectRepresenter(object):
         Return:
             dict(name, ra, dec) for epoch 2000 """
         name = self._object.getName()
-        position = self._object.getPosition()
+        position = self._object.getOriginalPosition()
         ra, dec = rad2str(*position)
         return {'name': name, 'ra': ra, 'dec': dec}
 
-    def getPosition(self):
+    def getCurrentPosition(self):
         """ Return current equatorial and horizontl position """
         coord = self._object.getEquatorialPosition()
         ra, dec = rad2str(*coord)
@@ -367,7 +367,7 @@ class ControlModeRepresenter():
         setPoint = self._res.setPoint
 
         if object.selected():
-            ra,dec = object.getEquatorialPosition()
+            ra,dec = object.getEquatorialPosition() #FIX set position with defraction correction
             setPoint.setPosition(ra, dec)
 
     def getCurrentSetPoint(self):

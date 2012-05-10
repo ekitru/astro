@@ -101,7 +101,7 @@ class ObjectPanel(SimplePanel):
             self.objectOrigRA.SetLabel(data['ra'])
             self.objectOrigDEC.SetLabel(data['dec'])
             # show object current coordinates
-            coord = object.getPosition()
+            coord = object.getCurrentPosition()
             self.objectCurrRA.SetLabel(coord['ra'])
             self.objectCurrDEC.SetLabel(coord['dec'])
             self.objAltitude.SetLabel(coord['alt'])
