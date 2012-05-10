@@ -1,6 +1,7 @@
 # Ignore (generated) html files,
 *.pyc
 .idea
+astro_project.iml
 resources/logs/
 # except foo.html which is maintained by hand.
 #!foo.html
