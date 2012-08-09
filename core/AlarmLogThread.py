@@ -43,7 +43,6 @@ class AlarmLogThread(object):
                 nextAlarm = self._plcHelper.getNextAlarm()
                 while nextAlarm:
                     print('Processing alarm')
-                    self.showAlarmOnDisplay(nextAlarm)
                     print(nextAlarm)
                     self.storeRecord(nextAlarm)
                     nextAlarm = self._plcHelper.getNextAlarm()
