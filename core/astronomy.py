@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from math import sin, cos
 from numpy.lib.scimath import arcsin
+from numpy.lib.scimath import arccos
 from core.Exceptions import ConfigurationException
 
 import re
@@ -114,12 +115,12 @@ class Object(object):
         Lat = self._observer.lat
         Alt = self._fixedBody.alt
         Az = self._fixedBody.az
-        Ra = self._fixedBody.ra
+#        Ra = self._fixedBody.ra
 #        print("ALT-AZ", self._fixedBody.alt, self._fixedBody.az, "LST",self._observer.getLST())
         Dec = arcsin(sin(Alt) * sin(Lat) + cos(Alt) * cos(Lat) * cos(Az))
-#        HA = arccos((sin(Alt) - sin(Dec)*sin(Lat)) / (cos(Dec)*cos(Lat)))
+        HA = arccos((sin(Alt) - sin(Dec)*sin(Lat)) / (cos(Dec)*cos(Lat)))
 #        HA2 = arcsin(-sin(Az)*cos(Alt)/cos(Dec))
-#        Ra = self._observer.getLST() -HA
+        Ra = self._observer.getLST() -HA
 #        print('Calculated','HA',getHours(HA),'RA-DEC',getCoordinates(Ra,Dec))
 #        print('Original', 'HA', self.getCurrentHA(), 'RA-DEC',self._fixedBody.ra, self._fixedBody.dec)
 #        getHours(self._observer.long)
@@ -127,25 +128,17 @@ class Object(object):
 
     def printInfo(self):
         self._now()
-#        print("ALT-AZ", self._fixedBody.alt, self._fixedBody.az)
-#        print("RA-DEC OF", self._observer.radec_of(az=self._fixedBody.az, alt=self._fixedBody.alt))
-#        print('Object position: ', self._fixedBody._ra, self._fixedBody._dec)
-#        print('Astrometric Geocentric Position: ', self._fixedBody.a_ra, self._fixedBody.a_dec)
-#        print('Apparent Geocentric Position: ', self._fixedBody.g_ra, self._fixedBody.g_dec)
+        print("ALT-AZ", self._fixedBody.alt, self._fixedBody.az)
+        print("RA-DEC OF", self._observer.radec_of(az=self._fixedBody.az, alt=self._fixedBody.alt))
+        print('Object position: ', self._fixedBody._ra, self._fixedBody._dec)
+        print('Astrometric Geocentric Position: ', self._fixedBody.a_ra, self._fixedBody.a_dec)
+        print('Apparent Geocentric Position: ', self._fixedBody.g_ra, self._fixedBody.g_dec)
         print('Apparent Topocentric Position: ', self._fixedBody.ra, self._fixedBody.dec)
         print('Recalculated position:', self.recalculateEquatorialPosition())
 
     def getEquatorialPosition(self):
         """ position for now """
         self._now()
-#        print("TEST")
-#        print("Zero pressure")
-#        self._observer.pressure=0
-#        self.printInfo()
-#        print("Pressure 1005mm")
-#        self._observer.pressure=1005
-#        self.printInfo()
-#        return self._fixedBody.ra, self._fixedBody.dec
         self.printInfo()
         return self.recalculateEquatorialPosition()
 
