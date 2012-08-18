@@ -7,11 +7,15 @@ wxPython:
 
 modbus-tk :
     apt-get install python-setuptools
-    python setup.py install
+    python setup.py install (from modbus-tk folder, download from http://code.google.com/p/modbus-tk/downloads/list)
 
 PyEphem:
     apt-get install python-dev
     easy_install pyephem
+
+Numpy:
+    apt-get install python-pip
+    pip install numpy
 
 MySQL db:
     apt-get install
