@@ -1,5 +1,8 @@
 Needed modules:
 
+python:
+    2.6 or 2.7
+
 wxPython:
     python-wxgtk2.8
     python-wxtools
