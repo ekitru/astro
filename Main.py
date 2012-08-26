@@ -16,8 +16,4 @@ if __name__ == '__main__':
     MainGui(None, 'AstroLab', controller)
     controller.initialization()
     app.MainLoop()
-
-
-
-
     controller.freeResources()
