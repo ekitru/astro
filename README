@@ -23,4 +23,6 @@ Numpy:
 MySQL db:
     apt-get install
     apt-get install python-mysqldb
-
+    
+Database scheme can be found in db package: db_init.sql
+    mysql -u root -p <db_init.sql
