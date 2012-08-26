@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6 -B
+#!/usr/bin/python -B
 # -*- coding: UTF-8 -*-
 from core.Controller import Controller
 from core.Exceptions import InitializationException, ClosingException, GuiException
