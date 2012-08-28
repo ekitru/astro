@@ -92,8 +92,8 @@ class ObjectPanel(SimplePanel):
         return sizer
 
     def update(self, controller):
-        object = controller.object
         """Updates Objects name and coordinates """
+        object = controller.object
         if object.isSelected():
             # show object data
             data = object.getData()

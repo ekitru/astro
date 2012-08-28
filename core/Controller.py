@@ -82,7 +82,7 @@ class ObjectRepresenter(object):
 
     def __init__(self, starObject):
         """ object - astronomy object """
-        self._object = starObject;
+        self._object = starObject
 
     def isSelected(self):
         return self._object.selected()
